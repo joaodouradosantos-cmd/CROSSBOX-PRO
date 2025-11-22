@@ -293,6 +293,24 @@
       </div>
     </div>
 
+    <div class="card">
+      <div class="helper-text">Histórico de 1RM (últimos registos)</div>
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Exercício</th>
+              <th>1RM</th>
+              <th>Origem</th>
+              <th>PR</th>
+            </tr>
+          </thead>
+          <tbody id="rmLogBody"></tbody>
+        </table>
+      </div>
+    </div>
+
   </section>
 
   <!-- CARGAS -->
@@ -505,6 +523,11 @@ const PERC = [0.5,0.6,0.7,0.75,0.8,0.85,0.9,0.95];
 const STORAGE_RM = "crossfit_1rm";
 let dataRm = JSON.parse(localStorage.getItem(STORAGE_RM) || "{}");
 
+/* Histórico de 1RM */
+const STORAGE_RM_LOG = "crossfit_1rm_log";
+let rmLog = JSON.parse(localStorage.getItem(STORAGE_RM_LOG) || "[]");
+const rmLogBody = document.getElementById("rmLogBody");
+
 const sel = document.getElementById("exercise");
 const rm = document.getElementById("oneRm");
 const bodyTable = document.getElementById("tableBody");
@@ -551,6 +574,64 @@ function initSelect() {
 /* formatar kg com uma casa decimal */
 function formatKg(v) {
   return v.toFixed(1).replace(".", ",") + " kg";
+}
+
+/* ---- Histórico de 1RM ---- */
+function saveRmLog() {
+  localStorage.setItem(STORAGE_RM_LOG, JSON.stringify(rmLog));
+}
+
+function addRmLog(ex, val, source) {
+  const entry = {
+    ex,
+    val,
+    source, // "manual" ou "estimado"
+    date: new Date().toISOString().slice(0, 10)
+  };
+  rmLog.unshift(entry);
+  if (rmLog.length > 100) rmLog.length = 100; // limite de 100 entradas
+  saveRmLog();
+  renderRmLog();
+}
+
+function renderRmLog() {
+  if (!rmLogBody) return;
+  rmLogBody.innerHTML = "";
+  if (!rmLog.length) return;
+
+  // calcular PR por exercício
+  const maxByEx = {};
+  rmLog.forEach(e => {
+    if (!maxByEx[e.ex] || e.val > maxByEx[e.ex]) {
+      maxByEx[e.ex] = e.val;
+    }
+  });
+
+  rmLog.slice(0, 20).forEach(e => {
+    const tr = document.createElement("tr");
+
+    const tdDate = document.createElement("td");
+    tdDate.textContent = e.date || "";
+    tr.appendChild(tdDate);
+
+    const tdEx = document.createElement("td");
+    tdEx.textContent = e.ex;
+    tr.appendChild(tdEx);
+
+    const tdVal = document.createElement("td");
+    tdVal.textContent = formatKg(e.val);
+    tr.appendChild(tdVal);
+
+    const tdSrc = document.createElement("td");
+    tdSrc.textContent = e.source === "estimado" ? "Estimado" : "Direto";
+    tr.appendChild(tdSrc);
+
+    const tdPr = document.createElement("td");
+    tdPr.textContent = (e.val >= maxByEx[e.ex] - 0.0001) ? "PR" : "";
+    tr.appendChild(tdPr);
+
+    rmLogBody.appendChild(tr);
+  });
 }
 
 /* apagar um exercício específico */
@@ -606,13 +687,14 @@ function renderRm() {
   updateLoadSelect();
 }
 
-/* guardar / actualizar 1RM */
+/* guardar / actualizar 1RM (manual) */
 document.getElementById("addBtn").addEventListener("click", () => {
   const ex = sel.value;
   const val = parseFloat(rm.value);
   if (!ex || !val || val <= 0) return;
   dataRm[ex] = val;
   localStorage.setItem(STORAGE_RM, JSON.stringify(dataRm));
+  addRmLog(ex, val, "manual");
   rm.value = "";
   renderRm();
 });
@@ -746,13 +828,13 @@ if (btnApply1RM) {
     }
 
     let estVal = null;
-    if (lastEst1RM && lastEst1RM.exercise === exName) {
+    if (lastEst1RM && (lastEst1RM.exercise === exName || lastEst1RM.exercise === null)) {
       estVal = lastEst1RM.value;
     } else {
       const peso = parseFloat(calcPesoEl.value);
       const reps = parseInt(calcRepsEl.value, 10);
       if (!peso || peso <= 0 || !reps || reps <= 0) {
-        alert("Introduz carga e repetições válidas para calcular o 1RM.");
+        alert("Introduz carga e repetições válidos para calcular o 1RM.");
         return;
       }
       estVal = peso * (1 + reps / 30);
@@ -764,6 +846,7 @@ if (btnApply1RM) {
 
     dataRm[exName] = estVal;
     localStorage.setItem(STORAGE_RM, JSON.stringify(dataRm));
+    addRmLog(exName, estVal, "estimado");
     renderRm();
     calcResEl.textContent = "Novo 1RM guardado para " + exName + ": " + formatKg(estVal);
   });
@@ -863,6 +946,7 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
 initSelect();
 loadProfile();
 renderRm();
+renderRmLog();
 renderDiary();
 updateLoadSelect();
 
