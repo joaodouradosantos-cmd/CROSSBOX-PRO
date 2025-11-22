@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cross Moita – 1RM & Diário</title>
+  <title>Cross Moita – 1RM</title>
 
   <!-- Cor da barra de topo nos telemóveis -->
   <meta name="theme-color" content="#f2f2f2" />
@@ -15,11 +15,11 @@
       color-scheme: light;
     }
 
-    /* === FUNDO CLARO (CINZA SUAVE) === */
+    /* FUNDO CLARO */
     body {
       margin: 0;
-      background: #f2f2f2;   /* cinza muito claro */
-      color: #111111;        /* texto escuro */
+      background: #f2f2f2;
+      color: #111111;
       display: flex;
       justify-content: center;
       min-height: 100vh;
@@ -34,7 +34,7 @@
 
     header {
       text-align: center;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     #appLogo {
@@ -44,43 +44,12 @@
       margin: 0 auto 6px auto;
     }
 
-    h1 {
-      margin: 0;
-      font-size: 1.6rem;
-      color: #111;
-    }
-
     .subtitle {
       font-size: 0.85rem;
       color: #555;
     }
 
-    /* === TABS === */
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin: 14px 0;
-    }
-
-    .tab-btn {
-      flex: 1;
-      padding: 10px 0;
-      border-radius: 999px;
-      border: 1px solid #cccccc;
-      background: #e5e5e5;
-      color: #222;
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
-
-    .tab-btn.active {
-      background: #22c55e;
-      border-color: #22c55e;
-      color: #ffffff;
-      font-weight: 600;
-    }
-
-    /* === CARDS === */
+    /* CARDS */
     .card {
       background: #ffffff;
       border-radius: 14px;
@@ -127,12 +96,6 @@
       box-shadow: 0 0 0 1px rgba(34,197,94,0.2);
     }
 
-    textarea {
-      resize: vertical;
-      min-height: 60px;
-      max-height: 140px;
-    }
-
     .btn-primary {
       background: #22c55e;
       border-color: #22c55e;
@@ -150,6 +113,35 @@
       margin-left: 8px;
     }
 
+    /* TABS */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin: 10px 0 14px 0;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 0;
+      border-radius: 999px;
+      border: 1px solid #cccccc;
+      background: #e5e5e5;
+      color: #222;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .tab-btn.active {
+      background: #22c55e;
+      border-color: #22c55e;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* TABELAS */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -179,10 +171,7 @@
       border: 1px solid #e5e5e5;
     }
 
-    .section { display: none; }
-    .section.active { display: block; }
-
-    /* Botão de apagar nas tabelas (1RM e Diário) */
+    /* BOTÃO APAGAR */
     .btn-delete {
       padding: 4px 8px;
       border-radius: 999px;
@@ -198,7 +187,7 @@
     }
 
     .helper-text {
-      margin-top: 8px;
+      margin-top: 4px;
       font-size: 0.8rem;
       color: #444;
     }
@@ -210,52 +199,56 @@
 
   <header>
     <img id="appLogo" src="imagens/crossmoita_logo.png" alt="Cross Moita Logo">
-    <div class="subtitle">Registo pessoal de treinos</div>
+    <div class="subtitle">Registo pessoal de treinos de força</div>
   </header>
 
   <!-- RESUMO -->
   <section class="card" id="resumo">
-    <div class="helper-text"><strong>Resumo</strong></div>
+    <div class="helper-text"><strong>Resumo de força</strong></div>
     <div id="resumoPr" class="helper-text"></div>
     <div id="resumoTreinos" class="helper-text"></div>
   </section>
 
   <!-- PERFIL -->
   <section class="card" id="perfil">
-    <div class="form-row">
-      <div class="field">
-        <label>Sexo</label>
-        <select id="sexo">
-          <option value="">Selecionar</option>
-          <option value="homem">Homem</option>
-          <option value="mulher">Mulher</option>
-        </select>
+    <div id="perfilForm">
+      <div class="form-row">
+        <div class="field">
+          <label>Sexo</label>
+          <select id="sexo">
+            <option value="">Selecionar</option>
+            <option value="homem">Homem</option>
+            <option value="mulher">Mulher</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Idade</label>
+          <input id="idade" type="number" min="10" max="100" />
+        </div>
       </div>
-      <div class="field">
-        <label>Idade</label>
-        <input id="idade" type="number" min="10" max="100" />
+
+      <div class="form-row">
+        <div class="field">
+          <label>Altura (cm)</label>
+          <input id="altura" type="number" min="100" max="230" />
+        </div>
+        <div class="field">
+          <label>Peso (kg)</label>
+          <input id="peso" type="number" step="0.1" min="30" max="250" />
+        </div>
       </div>
+
+      <button class="btn-primary" id="saveProfile">Guardar perfil</button>
     </div>
 
-    <div class="form-row">
-      <div class="field">
-        <label>Altura (cm)</label>
-        <input id="altura" type="number" min="100" max="230" />
-      </div>
-      <div class="field">
-        <label>Peso (kg)</label>
-        <input id="peso" type="number" step="0.1" min="30" max="250" />
-      </div>
-    </div>
-
-    <button class="btn-primary" id="saveProfile">Guardar perfil</button>
+    <!-- Linha de resumo do perfil (fica sozinha depois de guardar) -->
     <div class="helper-text" id="profileInfo"></div>
   </section>
 
+  <!-- TABS -->
   <div class="tabs">
     <button class="tab-btn active" data-target="sec-1rm">1RM</button>
     <button class="tab-btn" data-target="sec-cargas">Cargas</button>
-    <button class="tab-btn" data-target="sec-diario">Diário</button>
   </div>
 
   <!-- 1RM -->
@@ -292,7 +285,7 @@
               <th>85%</th>
               <th>90%</th>
               <th>95%</th>
-              <th></th> <!-- coluna do botão apagar -->
+              <th></th>
             </tr>
           </thead>
           <tbody id="tableBody"></tbody>
@@ -376,65 +369,6 @@
     </div>
   </section>
 
-  <!-- DIÁRIO -->
-  <section id="sec-diario" class="section">
-
-    <div class="card">
-      <div class="form-row">
-        <div class="field">
-          <label>Data</label>
-          <input id="date" type="date">
-        </div>
-
-        <div class="field">
-          <label>WOD</label>
-          <input id="wod" type="text" placeholder="Ex.: Cindy, EMOM 10’...">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="field">
-          <label>Tipo</label>
-          <input id="tipo" type="text" placeholder="Força, Metcon, Skill...">
-        </div>
-
-        <div class="field">
-          <label>Resultado</label>
-          <input id="resultado" type="text" placeholder="Ex.: 10 rondas, 120 kg, 12:35...">
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Notas</label>
-        <textarea id="notas" placeholder="Sensações, ajustes, técnica, etc."></textarea>
-      </div>
-
-      <div style="margin-top:8px;">
-        <button class="btn-primary" id="saveDiary">Guardar</button>
-      </div>
-
-    </div>
-
-    <div class="card">
-      <div class="scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>WOD</th>
-              <th>Tipo</th>
-              <th>Resultado</th>
-              <th>Notas</th>
-              <th></th> <!-- lixo por linha -->
-            </tr>
-          </thead>
-          <tbody id="diaryBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-  </section>
-
 </div>
 
 <script>
@@ -447,20 +381,29 @@ const idadeEl = document.getElementById("idade");
 const alturaEl = document.getElementById("altura");
 const pesoEl = document.getElementById("peso");
 const profileInfo = document.getElementById("profileInfo");
+const perfilForm = document.getElementById("perfilForm");
 
 function updateProfileInfo() {
   if (!profileInfo) return;
+
   if (!profile || !profile.peso) {
-    profileInfo.textContent = "Preenche o perfil para calcular força relativa (1RM em função do peso corporal).";
+    profileInfo.textContent = "Preenche o perfil para personalizar a análise da tua força.";
+    if (perfilForm) perfilForm.style.display = "block";
     return;
   }
+
   let txt = "Peso atual: " + profile.peso + " kg";
   if (profile.idade) txt += " · Idade: " + profile.idade + " anos";
   if (profile.sexo) {
     const sx = profile.sexo === "homem" ? "Homem" : "Mulher";
     txt += " · Sexo: " + sx;
   }
+  if (profile.altura) txt += " · Altura: " + profile.altura + " cm";
+
   profileInfo.textContent = txt;
+
+  // Esconde o formulário para ganhar espaço quando já está definido
+  if (perfilForm) perfilForm.style.display = "none";
 }
 
 function loadProfile() {
@@ -487,7 +430,7 @@ if (saveProfileBtn) {
   });
 }
 
-/* ===== 1RM ===== */
+/* ===== 1RM / EXERCÍCIOS ===== */
 const MOVES = [
   "Chest Press",
   "Back Squat",
@@ -539,7 +482,7 @@ const sel = document.getElementById("exercise");
 const rm = document.getElementById("oneRm");
 const bodyTable = document.getElementById("tableBody");
 
-/* ==== CARGAS ==== */
+/* CARGAS */
 const REP_SCHEMES = [
   { reps: 1,  perc: 1.00 },
   { reps: 2,  perc: 0.96 },
@@ -564,15 +507,15 @@ const calcRepsEl = document.getElementById("calcReps");
 const calcResEl = document.getElementById("calc1rmResultado");
 const btnCalc1RM = document.getElementById("btnCalc1RM");
 const btnApply1RM = document.getElementById("btnApply1RM");
+let lastEst1RM = null;
 
-let lastEst1RM = null; // guarda última estimativa para poder aplicar
-
-/* RESUMO DOM */
+/* RESUMO */
 const resumoPrEl = document.getElementById("resumoPr");
 const resumoTreinosEl = document.getElementById("resumoTreinos");
 
-/* preencher select com exercícios (1RM e base) */
+/* Helpers */
 function initSelect() {
+  if (!sel) return;
   sel.innerHTML = "";
   MOVES.forEach(m => {
     const opt = document.createElement("option");
@@ -582,12 +525,11 @@ function initSelect() {
   });
 }
 
-/* formatar kg com uma casa decimal */
 function formatKg(v) {
   return v.toFixed(1).replace(".", ",") + " kg";
 }
 
-/* ---- Histórico de 1RM ---- */
+/* Histórico de 1RM */
 function saveRmLog() {
   localStorage.setItem(STORAGE_RM_LOG, JSON.stringify(rmLog));
 }
@@ -600,7 +542,7 @@ function addRmLog(ex, val, source) {
     date: new Date().toISOString().slice(0, 10)
   };
   rmLog.unshift(entry);
-  if (rmLog.length > 100) rmLog.length = 100; // limite de 100 entradas
+  if (rmLog.length > 100) rmLog.length = 100;
   saveRmLog();
   renderRmLog();
   updateResumo();
@@ -611,7 +553,6 @@ function renderRmLog() {
   rmLogBody.innerHTML = "";
   if (!rmLog.length) return;
 
-  // calcular PR por exercício
   const maxByEx = {};
   rmLog.forEach(e => {
     if (!maxByEx[e.ex] || e.val > maxByEx[e.ex]) {
@@ -646,19 +587,18 @@ function renderRmLog() {
   });
 }
 
-/* apagar um exercício específico */
+/* Apagar exercício */
 function deleteEx(name) {
   if (!name) return;
-  if (confirm(`Apagar o exercício "${name}"?`)) {
-    delete dataRm[name];
-    localStorage.setItem(STORAGE_RM, JSON.stringify(dataRm));
-    renderRm();
-    updateLoadSelect();
-    updateResumo();
-  }
+  if (!confirm(`Apagar o exercício "${name}"?`)) return;
+  delete dataRm[name];
+  localStorage.setItem(STORAGE_RM, JSON.stringify(dataRm));
+  renderRm();
+  updateLoadSelect();
+  updateResumo();
 }
 
-/* desenhar tabela 1RM */
+/* Tabela 1RM */
 function renderRm() {
   bodyTable.innerHTML = "";
   Object.keys(dataRm).sort().forEach(name => {
@@ -700,7 +640,7 @@ function renderRm() {
   updateLoadSelect();
 }
 
-/* guardar / actualizar 1RM (manual) */
+/* Guardar / atualizar 1RM manual */
 document.getElementById("addBtn").addEventListener("click", () => {
   const ex = sel.value;
   const val = parseFloat(rm.value);
@@ -712,7 +652,7 @@ document.getElementById("addBtn").addEventListener("click", () => {
   renderRm();
 });
 
-/* ===== CARGAS (a partir do 1RM) ===== */
+/* CARGAS a partir de 1RM */
 function updateLoadSelect() {
   const names = Object.keys(dataRm).sort();
 
@@ -799,7 +739,7 @@ if (loadSel) {
   });
 }
 
-/* ===== Calculadora de 1RM estimado (Epley) ===== */
+/* Calculadora de 1RM estimado (Epley) */
 if (btnCalc1RM) {
   btnCalc1RM.addEventListener("click", () => {
     const peso = parseFloat(calcPesoEl.value);
@@ -811,7 +751,6 @@ if (btnCalc1RM) {
       return;
     }
 
-    // Fórmula de Epley: 1RM ≈ peso × (1 + reps / 30)
     const est1rm = peso * (1 + reps / 30);
     let txt = "1RM estimado: " + formatKg(est1rm);
 
@@ -847,7 +786,7 @@ if (btnApply1RM) {
       const peso = parseFloat(calcPesoEl.value);
       const reps = parseInt(calcRepsEl.value, 10);
       if (!peso || peso <= 0 || !reps || reps <= 0) {
-        alert("Introduz carga e repetições válidos para calcular o 1RM.";
+        alert("Introduz carga e repetições válidos para calcular o 1RM.");
         return;
       }
       estVal = peso * (1 + reps / 30);
@@ -865,96 +804,16 @@ if (btnApply1RM) {
   });
 }
 
-/* ===== DIÁRIO ===== */
-const STORAGE_DIARY = "crossfit_diary";
-let diary = JSON.parse(localStorage.getItem(STORAGE_DIARY) || "[]");
-
-const dateEl = document.getElementById("date");
-const wodEl = document.getElementById("wod");
-const tipoEl = document.getElementById("tipo");
-const resEl = document.getElementById("resultado");
-const notasEl = document.getElementById("notas");
-const diaryBody = document.getElementById("diaryBody");
-
-function renderDiary() {
-  diaryBody.innerHTML = "";
-  diary.forEach((d, index) => {
-    const tr = document.createElement("tr");
-
-    const tdDate = document.createElement("td");
-    tdDate.textContent = d.date || "";
-    tr.appendChild(tdDate);
-
-    const tdWod = document.createElement("td");
-    tdWod.textContent = d.wod || "";
-    tr.appendChild(tdWod);
-
-    const tdTipo = document.createElement("td");
-    tdTipo.textContent = d.tipo || "";
-    tr.appendChild(tdTipo);
-
-    const tdRes = document.createElement("td");
-    tdRes.textContent = d.resultado || "";
-    tr.appendChild(tdRes);
-
-    const tdNotas = document.createElement("td");
-    tdNotas.textContent = d.notas || "";
-    tr.appendChild(tdNotas);
-
-    const tdDelete = document.createElement("td");
-    const btn = document.createElement("button");
-    btn.textContent = "🗑";
-    btn.className = "btn-delete";
-    btn.addEventListener("click", () => deleteDiary(index));
-    tdDelete.appendChild(btn);
-    tr.appendChild(tdDelete);
-
-    diaryBody.appendChild(tr);
-  });
-
-  updateResumo();
-}
-
-function deleteDiary(index) {
-  if (index < 0 || index >= diary.length) return;
-  if (!confirm("Apagar este registo do diário?")) return;
-  diary.splice(index, 1);
-  localStorage.setItem(STORAGE_DIARY, JSON.stringify(diary));
-  renderDiary();
-}
-
-/* guardar registo no diário */
-document.getElementById("saveDiary").addEventListener("click", () => {
-  const entry = {
-    date: dateEl.value || "",
-    wod: wodEl.value.trim(),
-    tipo: tipoEl.value.trim(),
-    resultado: resEl.value.trim(),
-    notas: notasEl.value.trim()
-  };
-
-  if (!entry.date && !entry.wod && !entry.resultado && !entry.notas) return;
-
-  diary.unshift(entry);
-  localStorage.setItem(STORAGE_DIARY, JSON.stringify(diary));
-  renderDiary();
-
-  wodEl.value = "";
-  tipoEl.value = "";
-  resEl.value = "";
-  notasEl.value = "";
-});
-
-/* ===== RESUMO (PR + treinos) ===== */
+/* RESUMO (PR e nº de registos) */
 function updateResumo() {
   if (!resumoPrEl || !resumoTreinosEl) return;
 
-  // --- PRs ---
+  // PR
   if (!rmLog.length && !Object.keys(dataRm).length) {
     resumoPrEl.textContent = "Ainda não tens PR registados.";
   } else {
-    // usar rmLog se existir, senão dataRm
-    let maxByEx = {};
+    const maxByEx = {};
+
     if (rmLog.length) {
       rmLog.forEach(e => {
         if (!maxByEx[e.ex] || e.val > maxByEx[e.ex]) {
@@ -982,30 +841,14 @@ function updateResumo() {
     }
   }
 
-  // --- Treinos ---
-  if (!diary.length) {
-    resumoTreinosEl.textContent = "Ainda não tens treinos registados no diário.";
-  } else {
-    const total = diary.length;
-    const now = new Date();
-    const y = now.getFullYear();
-    const m = now.getMonth();
-    let mesCount = 0;
-
-    diary.forEach(d => {
-      if (!d.date) return;
-      const dt = new Date(d.date);
-      if (!isNaN(dt) && dt.getFullYear() === y && dt.getMonth() === m) {
-        mesCount++;
-      }
-    });
-
-    resumoTreinosEl.textContent =
-      "Treinos registados: " + total + " no total (" + mesCount + " este mês).";
-  }
+  // N.º de exercícios com 1RM e nº de registos no histórico
+  const nEx = Object.keys(dataRm).length;
+  const nReg = rmLog.length;
+  resumoTreinosEl.textContent =
+    "Exercícios com 1RM registado: " + nEx + " · Registos de 1RM no histórico: " + nReg + ".";
 }
 
-/* ===== TABS ===== */
+/* TABS */
 document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
@@ -1022,14 +865,8 @@ initSelect();
 loadProfile();
 renderRm();
 renderRmLog();
-renderDiary();
 updateLoadSelect();
 updateResumo();
-
-/* preenche data de hoje por defeito */
-if (!dateEl.value) {
-  dateEl.value = new Date().toISOString().slice(0, 10);
-}
 </script>
 
 </body>
