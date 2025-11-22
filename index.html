@@ -322,6 +322,33 @@
         <small>Valores aproximados. Ajusta conforme técnica e sensação de esforço.</small>
       </div>
     </div>
+
+    <div class="card">
+      <div class="form-row">
+        <div class="field">
+          <label>Exercício para estimar 1RM</label>
+          <select id="calcExercise"></select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Carga (kg)</label>
+          <input id="calcPeso" type="number" step="0.5" />
+        </div>
+        <div class="field">
+          <label>Repetições</label>
+          <input id="calcReps" type="number" min="1" max="20" />
+        </div>
+      </div>
+
+      <div style="margin-top:8px;">
+        <button class="btn-primary" id="btnCalc1RM">Calcular 1RM estimado</button>
+        <button class="btn-danger" id="btnApply1RM">Guardar como 1RM do exercício</button>
+      </div>
+
+      <div class="helper-text" id="calc1rmResultado"></div>
+    </div>
   </section>
 
   <!-- DIÁRIO -->
@@ -500,7 +527,17 @@ const loadBody = document.getElementById("loadBody");
 const strengthZone = document.getElementById("strengthZone");
 const hypertrophyZone = document.getElementById("hypertrophyZone");
 
-/* preencher select com exercícios */
+/* Calculadora de 1RM estimado */
+const calcExSel = document.getElementById("calcExercise");
+const calcPesoEl = document.getElementById("calcPeso");
+const calcRepsEl = document.getElementById("calcReps");
+const calcResEl = document.getElementById("calc1rmResultado");
+const btnCalc1RM = document.getElementById("btnCalc1RM");
+const btnApply1RM = document.getElementById("btnApply1RM");
+
+let lastEst1RM = null; // guarda última estimativa para poder aplicar
+
+/* preencher select com exercícios (1RM e base) */
 function initSelect() {
   sel.innerHTML = "";
   MOVES.forEach(m => {
@@ -582,27 +619,45 @@ document.getElementById("addBtn").addEventListener("click", () => {
 
 /* ===== CARGAS (a partir do 1RM) ===== */
 function updateLoadSelect() {
-  if (!loadSel) return;
   const names = Object.keys(dataRm).sort();
-  loadSel.innerHTML = "";
 
-  if (!names.length) {
-    const opt = document.createElement("option");
-    opt.value = "";
-    opt.textContent = "Regista primeiro o 1RM na aba 1RM";
-    loadSel.appendChild(opt);
-    renderLoadTable(null);
-    return;
+  if (loadSel) {
+    loadSel.innerHTML = "";
+    if (!names.length) {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "Regista primeiro o 1RM na aba 1RM";
+      loadSel.appendChild(opt);
+    } else {
+      names.forEach(name => {
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        loadSel.appendChild(opt);
+      });
+    }
   }
 
-  names.forEach(name => {
-    const opt = document.createElement("option");
-    opt.value = name;
-    opt.textContent = name;
-    loadSel.appendChild(opt);
-  });
+  if (calcExSel) {
+    calcExSel.innerHTML = "";
+    const opt0 = document.createElement("option");
+    opt0.value = "";
+    opt0.textContent = names.length ? "Escolher exercício (opcional)" : "Sem 1RM registado ainda";
+    calcExSel.appendChild(opt0);
 
-  renderLoadTable(loadSel.value);
+    names.forEach(name => {
+      const opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name;
+      calcExSel.appendChild(opt);
+    });
+  }
+
+  if (loadSel && names.length) {
+    renderLoadTable(loadSel.value);
+  } else {
+    renderLoadTable(null);
+  }
 }
 
 function renderLoadTable(exName) {
@@ -646,6 +701,71 @@ function renderLoadTable(exName) {
 if (loadSel) {
   loadSel.addEventListener("change", () => {
     renderLoadTable(loadSel.value);
+  });
+}
+
+/* ===== Calculadora de 1RM estimado (Epley) ===== */
+if (btnCalc1RM) {
+  btnCalc1RM.addEventListener("click", () => {
+    const peso = parseFloat(calcPesoEl.value);
+    const reps = parseInt(calcRepsEl.value, 10);
+
+    if (!peso || peso <= 0 || !reps || reps <= 0) {
+      calcResEl.textContent = "Introduz uma carga e número de repetições válidos.";
+      lastEst1RM = null;
+      return;
+    }
+
+    // Fórmula de Epley: 1RM ≈ peso × (1 + reps / 30)
+    const est1rm = peso * (1 + reps / 30);
+    let txt = "1RM estimado: " + formatKg(est1rm);
+
+    if (profile && profile.peso) {
+      const rel = est1rm / profile.peso;
+      txt += " (" + rel.toFixed(2) + "x peso corporal)";
+    }
+
+    const exName = calcExSel.value || "";
+    if (exName) {
+      txt += " · Exercício selecionado: " + exName;
+    } else {
+      txt += " · (Podes escolher um exercício e gravar este valor como 1RM.)";
+    }
+
+    calcResEl.textContent = txt;
+    lastEst1RM = { value: est1rm, exercise: exName || null };
+  });
+}
+
+if (btnApply1RM) {
+  btnApply1RM.addEventListener("click", () => {
+    let exName = calcExSel.value || "";
+    if (!exName) {
+      alert("Escolhe um exercício para guardar o 1RM estimado.");
+      return;
+    }
+
+    let estVal = null;
+    if (lastEst1RM && lastEst1RM.exercise === exName) {
+      estVal = lastEst1RM.value;
+    } else {
+      const peso = parseFloat(calcPesoEl.value);
+      const reps = parseInt(calcRepsEl.value, 10);
+      if (!peso || peso <= 0 || !reps || reps <= 0) {
+        alert("Introduz carga e repetições válidas para calcular o 1RM.");
+        return;
+      }
+      estVal = peso * (1 + reps / 30);
+    }
+
+    if (!confirm(`Guardar ${estVal.toFixed(1)} kg como novo 1RM para "${exName}"?`)) {
+      return;
+    }
+
+    dataRm[exName] = estVal;
+    localStorage.setItem(STORAGE_RM, JSON.stringify(dataRm));
+    renderRm();
+    calcResEl.textContent = "Novo 1RM guardado para " + exName + ": " + formatKg(estVal);
   });
 }
 
