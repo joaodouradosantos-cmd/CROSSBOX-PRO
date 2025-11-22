@@ -400,60 +400,6 @@
       <div class="helper-text" id="treinoSugestao" style="margin-top:4px; font-weight:500;"></div>
     </div>
 
-    <!-- FERRAMENTA DE CARGAS A PARTIR DO 1RM -->
-    <div class="card">
-      <div class="field">
-        <label>Exercício (com 1RM registado)</label>
-        <select id="loadExercise"></select>
-      </div>
-
-      <div class="scroll" style="margin-top:10px;">
-        <table>
-          <thead>
-            <tr>
-              <th>Reps</th>
-              <th>% 1RM</th>
-              <th>Carga sugerida</th>
-            </tr>
-          </thead>
-          <tbody id="loadBody"></tbody>
-        </table>
-      </div>
-
-      <div class="helper-text">
-        <div id="strengthZone"></div>
-        <div id="hypertrophyZone" style="margin-top:4px;"></div>
-        <small>Valores aproximados. Ajusta conforme técnica e sensação de esforço.</small>
-      </div>
-    </div>
-
-    <!-- CALCULADORA DE 1RM ESTIMADO -->
-    <div class="card">
-      <div class="form-row">
-        <div class="field">
-          <label>Exercício para estimar 1RM</label>
-          <select id="calcExercise"></select>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="field">
-          <label>Carga (kg)</label>
-          <input id="calcPeso" type="number" step="0.5" />
-        </div>
-        <div class="field">
-          <label>Repetições</label>
-          <input id="calcReps" type="number" min="1" max="20" />
-        </div>
-      </div>
-
-      <div style="margin-top:8px;">
-        <button class="btn-primary" id="btnCalc1RM">Calcular 1RM estimado</button>
-        <button class="btn-danger" id="btnApply1RM">Guardar como 1RM do exercício</button>
-      </div>
-
-      <div class="helper-text" id="calc1rmResultado"></div>
-    </div>
   </section>
 
 </div>
@@ -591,33 +537,6 @@ const treinoBody = document.getElementById("treinoBody");
 const treinoResumoEl = document.getElementById("treinoResumo");
 const treinoSugestaoEl = document.getElementById("treinoSugestao");
 
-/* CARGAS */
-const REP_SCHEMES = [
-  { reps: 1,  perc: 1.00 },
-  { reps: 2,  perc: 0.96 },
-  { reps: 3,  perc: 0.93 },
-  { reps: 4,  perc: 0.90 },
-  { reps: 5,  perc: 0.87 },
-  { reps: 6,  perc: 0.85 },
-  { reps: 8,  perc: 0.80 },
-  { reps: 10, perc: 0.75 },
-  { reps: 12, perc: 0.70 }
-];
-
-const loadSel = document.getElementById("loadExercise");
-const loadBody = document.getElementById("loadBody");
-const strengthZone = document.getElementById("strengthZone");
-const hypertrophyZone = document.getElementById("hypertrophyZone");
-
-/* Calculadora de 1RM estimado */
-const calcExSel = document.getElementById("calcExercise");
-const calcPesoEl = document.getElementById("calcPeso");
-const calcRepsEl = document.getElementById("calcReps");
-const calcResEl = document.getElementById("calc1rmResultado");
-const btnCalc1RM = document.getElementById("btnCalc1RM");
-const btnApply1RM = document.getElementById("btnApply1RM");
-let lastEst1RM = null;
-
 /* RESUMO */
 const resumoPrEl = document.getElementById("resumoPr");
 const resumoTreinosEl = document.getElementById("resumoTreinos");
@@ -731,7 +650,6 @@ function deleteEx(name) {
   delete dataRm[name];
   localStorage.setItem(STORAGE_RM, JSON.stringify(dataRm));
   renderRm();
-  updateLoadSelect();
   updateResumo();
 }
 
@@ -772,8 +690,6 @@ function renderRm() {
 
     bodyTable.appendChild(tr);
   });
-
-  updateLoadSelect();
 }
 
 /* Guardar / atualizar 1RM manual */
@@ -866,7 +782,7 @@ function renderTreinos() {
   let blocosHipertrofia = 0;
   let blocosLeve = 0;
 
-  lista.forEach((e, index) => {
+  lista.forEach(e => {
     const tr = document.createElement("tr");
 
     const tdDate = document.createElement("td");
@@ -939,21 +855,21 @@ function renderTreinos() {
     "Carga total do treino: " + formatKg(totalCarga) +
     " · Séries totais: " + totalSeries;
 
-  // Sugestão de melhoria para objetivo: crescer e ganhar força
+  // Sugestão de melhoria (objetivo: crescer e ganhar força)
   let sugestao = "";
 
   if (blocosForca === 0 && blocosHipertrofia === 0) {
-    sugestao = "Para crescer e ganhar força, procura incluir blocos a ~70–85% 1RM, entre 5–10 repetições, nos principais levantamentos (agachamentos, puxadas, empurrões).";
+    sugestao = "Para crescer e ganhar força, inclui blocos a ~70–85% 1RM, entre 5–10 repetições, nos principais levantamentos.";
   } else if (blocosForca > 0 && blocosHipertrofia === 0) {
-    sugestao = "O treino de hoje está muito focado em força máxima. Para ganhar mais massa muscular, adiciona 2–4 séries de 6–10 repetições a ~70–75% 1RM em 1–2 exercícios grandes.";
+    sugestao = "Treino muito focado em força máxima. Para ganhar mais massa, adiciona 2–4 séries de 6–10 repetições a ~70–75% 1RM em 1–2 exercícios grandes.";
   } else if (blocosHipertrofia > 0 && blocosForca === 0) {
     sugestao = "Estás a trabalhar bem a hipertrofia. Para reforçar a força, inclui 2–3 séries mais pesadas (3–5 repetições a ~80–85% 1RM) em movimentos fundamentais.";
   } else {
-    sugestao = "Boa combinação de força e hipertrofia. Mantém esta lógica: 2–3 exercícios principais pesados (3–5 reps a 80–85% 1RM) e 2–3 exercícios de apoio com 6–12 reps a 65–75% 1RM.";
+    sugestao = "Boa combinação de força e hipertrofia. Mantém: 2–3 exercícios principais pesados (3–5 reps a 80–85% 1RM) e 2–3 exercícios de apoio com 6–12 reps a 65–75% 1RM.";
   }
 
   if (profile && profile.idade && profile.idade > 40) {
-    sugestao += " Ajusta o volume à recuperação: prioriza qualidade de movimento e evita acumular fadiga excessiva em semanas consecutivas.";
+    sugestao += " Ajusta o volume à recuperação: prioriza qualidade de movimento e evita acumular fadiga excessiva.";
   }
 
   treinoSugestaoEl.textContent = sugestao;
@@ -961,158 +877,6 @@ function renderTreinos() {
 
 if (treinoAddBtn) {
   treinoAddBtn.addEventListener("click", addTreinoEntry);
-}
-
-/* === CARGAS a partir de 1RM === */
-function updateLoadSelect() {
-  const names = Object.keys(dataRm).sort();
-
-  if (loadSel) {
-    loadSel.innerHTML = "";
-    if (!names.length) {
-      const opt = document.createElement("option");
-      opt.value = "";
-      opt.textContent = "Regista primeiro o 1RM na aba 1RM";
-      loadSel.appendChild(opt);
-    } else {
-      names.forEach(name => {
-        const opt = document.createElement("option");
-        opt.value = name;
-        opt.textContent = name;
-        loadSel.appendChild(opt);
-      });
-    }
-  }
-
-  if (calcExSel) {
-    calcExSel.innerHTML = "";
-    const opt0 = document.createElement("option");
-    opt0.value = "";
-    opt0.textContent = names.length ? "Escolher exercício (opcional)" : "Sem 1RM registado ainda";
-    calcExSel.appendChild(opt0);
-
-    names.forEach(name => {
-      const opt = document.createElement("option");
-      opt.value = name;
-      opt.textContent = name;
-      calcExSel.appendChild(opt);
-    });
-  }
-
-  if (loadSel && names.length) {
-    renderLoadTable(loadSel.value);
-  } else {
-    renderLoadTable(null);
-  }
-}
-
-function renderLoadTable(exName) {
-  loadBody.innerHTML = "";
-  strengthZone.textContent = "";
-  hypertrophyZone.textContent = "";
-
-  if (!exName || !dataRm[exName]) return;
-
-  const oneRmVal = dataRm[exName];
-
-  REP_SCHEMES.forEach(row => {
-    const tr = document.createElement("tr");
-
-    const tdReps = document.createElement("td");
-    tdReps.textContent = row.reps + " reps";
-    tr.appendChild(tdReps);
-
-    const tdPerc = document.createElement("td");
-    tdPerc.textContent = (row.perc * 100).toFixed(0) + "%";
-    tr.appendChild(tdPerc);
-
-    const tdCarga = document.createElement("td");
-    tdCarga.textContent = formatKg(oneRmVal * row.perc);
-    tr.appendChild(tdCarga);
-
-    loadBody.appendChild(tr);
-  });
-
-  const stLow  = formatKg(oneRmVal * 0.80);
-  const stHigh = formatKg(oneRmVal * 0.90);
-  const hypLow  = formatKg(oneRmVal * 0.70);
-  const hypHigh = formatKg(oneRmVal * 0.80);
-
-  strengthZone.textContent =
-    `Força (3–5 reps): ~80–90% 1RM → ${stLow} – ${stHigh}`;
-  hypertrophyZone.textContent =
-    `Hipertrofia (6–12 reps): ~70–80% 1RM → ${hypLow} – ${hypHigh}`;
-}
-
-if (loadSel) {
-  loadSel.addEventListener("change", () => {
-    renderLoadTable(loadSel.value);
-  });
-}
-
-/* === Calculadora de 1RM estimado (Epley) === */
-if (btnCalc1RM) {
-  btnCalc1RM.addEventListener("click", () => {
-    const peso = parseFloat(calcPesoEl.value);
-    const reps = parseInt(calcRepsEl.value, 10);
-
-    if (!peso || peso <= 0 || !reps || reps <= 0) {
-      calcResEl.textContent = "Introduz uma carga e número de repetições válidos.";
-      lastEst1RM = null;
-      return;
-    }
-
-    const est1rm = peso * (1 + reps / 30);
-    let txt = "1RM estimado: " + formatKg(est1rm);
-
-    if (profile && profile.peso) {
-      const rel = est1rm / profile.peso;
-      txt += " (" + rel.toFixed(2) + "x peso corporal)";
-    }
-
-    const exName = calcExSel.value || "";
-    if (exName) {
-      txt += " · Exercício selecionado: " + exName;
-    } else {
-      txt += " · (Podes escolher um exercício e gravar este valor como 1RM.)";
-    }
-
-    calcResEl.textContent = txt;
-    lastEst1RM = { value: est1rm, exercise: exName || null };
-  });
-}
-
-if (btnApply1RM) {
-  btnApply1RM.addEventListener("click", () => {
-    let exName = calcExSel.value || "";
-    if (!exName) {
-      alert("Escolhe um exercício para guardar o 1RM estimado.");
-      return;
-    }
-
-    let estVal = null;
-    if (lastEst1RM && (lastEst1RM.exercise === exName || lastEst1RM.exercise === null)) {
-      estVal = lastEst1RM.value;
-    } else {
-      const peso = parseFloat(calcPesoEl.value);
-      const reps = parseInt(calcRepsEl.value, 10);
-      if (!peso || peso <= 0 || !reps || reps <= 0) {
-        alert("Introduz carga e repetições válidos para calcular o 1RM.");
-        return;
-      }
-      estVal = peso * (1 + reps / 30);
-    }
-
-    if (!confirm(`Guardar ${estVal.toFixed(1)} kg como novo 1RM para "${exName}"?`)) {
-      return;
-    }
-
-    dataRm[exName] = estVal;
-    localStorage.setItem(STORAGE_RM, JSON.stringify(dataRm));
-    addRmLog(exName, estVal, "estimado");
-    renderRm();
-    calcResEl.textContent = "Novo 1RM guardado para " + exName + ": " + formatKg(estVal);
-  });
 }
 
 /* === RESUMO (PR e nº de registos) === */
@@ -1175,7 +939,6 @@ initSelect();
 loadProfile();
 renderRm();
 renderRmLog();
-updateLoadSelect();
 updateResumo();
 
 /* Data do treino = hoje por defeito */
