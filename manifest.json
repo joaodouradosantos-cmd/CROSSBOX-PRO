@@ -1,6 +1,6 @@
 {
-  "name": "Cross Moita – 1RM",
-  "short_name": "Cross Moita",
+  "name": "CrossBox",
+  "short_name": "CrossBox",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f2f2f2",
