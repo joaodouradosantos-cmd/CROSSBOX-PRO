@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CrossFit Moita</title>
+  <title>CROSSBOX</title>
 
   <meta name="theme-color" content="#f2f2f2" />
   <link rel="manifest" href="manifest.json" />
@@ -62,7 +62,6 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.04);
     }
 
-    /* PERFIL SEM “CARTÃO” BRANCO */
     #perfil.card {
       background: transparent;
       border: none;
@@ -281,13 +280,14 @@
 
   <header>
     <button id="editProfileBtnHeader" class="btn-edit-profile">Editar perfil</button>
-    <img id="appLogo" src="imagens/crossmoita_logo.png" alt="Cross Moita Logo">
-    <div class="subtitle" id="appSubtitle">Registo de treinos</div>
+    <img id="appLogo" src="imagens/crossmoita_logo.png" alt="CROSSBOX logo">
+    <div class="subtitle" id="subtitleText">Registo pessoal de treinos de força</div>
   </header>
 
   <!-- PERFIL -->
   <section class="card" id="perfil">
     <div id="perfilForm">
+
       <div class="form-row">
         <div class="field">
           <label>Nome</label>
@@ -548,7 +548,7 @@
 
         <div class="form-row">
           <div class="field">
-            <label>Objetivo</label>
+            <label>Objetivo de treino</label>
             <select id="calcObjetivo">
               <option value="">Automático</option>
               <option value="forca">Força</option>
@@ -556,22 +556,15 @@
               <option value="tecnica">Técnica / Volume leve</option>
             </select>
           </div>
-        </div>
-
-        <div class="form-row">
           <div class="field">
-            <label>Peso objetivo (kg – opcional)</label>
-            <input id="calcTargetKg" type="number" step="0.5" min="0" />
-          </div>
-          <div class="field">
-            <label>Prazo (semanas – opcional)</label>
-            <input id="calcWeeks" type="number" min="1" />
+            <label>Objetivo de 1RM (kg) – opcional</label>
+            <input id="calcObjetivoPeso" type="number" step="0.5" min="0" />
           </div>
         </div>
 
         <button class="btn-primary" id="calcBtn">Calcular</button>
         <div class="helper-text" id="calcResultado" style="margin-top:6px;">
-          Escolhe um exercício com 1RM registado, indica o nº de repetições e, se quiseres, o objetivo (força / hipertrofia / técnica).
+          Escolhe um exercício com 1RM registado, indica o nº de repetições e, se quiseres, o objetivo (força / hipertrofia / técnica) e o 1RM que gostarias de atingir.
         </div>
       </div>
     </section>
@@ -650,19 +643,20 @@ const alturaEl = document.getElementById("altura");
 const pesoEl = document.getElementById("peso");
 const perfilForm = document.getElementById("perfilForm");
 const editProfileBtnHeader = document.getElementById("editProfileBtnHeader");
+const subtitleText = document.getElementById("subtitleText");
+
+function updateSubtitle() {
+  if (!subtitleText) return;
+  if (profile && profile.nome) {
+    subtitleText.textContent = "Registo de treinos de " + profile.nome;
+  } else {
+    subtitleText.textContent = "Registo pessoal de treinos de força";
+  }
+}
 
 function updateProfileInfo() {
   if (perfilForm) perfilForm.style.display = "none";
-}
-
-function updateSubtitle() {
-  const sub = document.getElementById("appSubtitle");
-  if (!sub) return;
-  if (profile && profile.nome && profile.nome.trim() !== "") {
-    sub.textContent = `Registo de treinos do ${profile.nome}`;
-  } else {
-    sub.textContent = "Registo de treinos";
-  }
+  updateSubtitle();
 }
 
 function loadProfile() {
@@ -674,14 +668,13 @@ function loadProfile() {
   if (profile.altura) alturaEl.value = profile.altura;
   if (profile.peso) pesoEl.value = profile.peso;
   updateProfileInfo();
-  updateSubtitle();
 }
 
 const saveProfileBtn = document.getElementById("saveProfile");
 if (saveProfileBtn) {
   saveProfileBtn.addEventListener("click", () => {
     profile = {
-      nome: nomeEl && nomeEl.value ? nomeEl.value.trim() : "",
+      nome: nomeEl ? (nomeEl.value || "").trim() : "",
       nivel: nivelEl ? (nivelEl.value || "") : "",
       sexo: sexoEl.value || "",
       idade: idadeEl.value ? parseInt(idadeEl.value, 10) : "",
@@ -690,7 +683,6 @@ if (saveProfileBtn) {
     };
     localStorage.setItem(STORAGE_PROFILE, JSON.stringify(profile));
     updateProfileInfo();
-    updateSubtitle();
     registerBackupMeta("Perfil atualizado");
     alert("Perfil atualizado.");
   });
@@ -781,7 +773,7 @@ const MOVES_PT = {
   "Kettlebell Lunges": "Passadas com kettlebell"
 };
 
-/* GUIA – LISTA TIPO JSON (inclui mais exercícios que MOVES) */
+/* GUIA – LISTA TIPO JSON */
 const EXER_INFO = [
   { en: "Chest Press", pt: "Supino com barra", descricao: "Empurrar a barra para longe do peito, deitado no banco, controlando a descida e a subida." },
   { en: "Back Squat", pt: "Agachamento com barra nas costas", descricao: "Agachamento com a barra apoiada nas costas, descendo até pelo menos à paralela e subindo com o tronco firme." },
@@ -903,8 +895,7 @@ const dailyHistoryBody = document.getElementById("dailyHistoryBody");
 const calcExEl = document.getElementById("calcExercicio");
 const calcRepsEl = document.getElementById("calcReps");
 const calcObjEl = document.getElementById("calcObjetivo");
-const calcTargetKgEl = document.getElementById("calcTargetKg");
-const calcWeeksEl = document.getElementById("calcWeeks");
+const calcObjetivoPesoEl = document.getElementById("calcObjetivoPeso");
 const calcResEl = document.getElementById("calcResultado");
 const calcBtn = document.getElementById("calcBtn");
 
@@ -927,7 +918,7 @@ function formatKg(v) {
   return v.toFixed(1).replace(".", ",") + " kg";
 }
 
-/* Selects – só nomes em inglês (para 1RM e WOD) */
+/* Selects – só nomes em inglês */
 function initSelects() {
   if (sel) {
     sel.innerHTML = "";
@@ -1095,7 +1086,7 @@ document.getElementById("addBtn").addEventListener("click", () => {
   renderRm();
 });
 
-/* ===== MELHORAMENTO (CALCULADORA) ===== */
+/* ===== MELHORAMENTO ===== */
 function getPercentRange(reps, objetivo) {
   let minP, maxP;
 
@@ -1125,6 +1116,26 @@ function getPercentRange(reps, objetivo) {
   return { minP, maxP };
 }
 
+/* estimativa de semanas para atingir objetivo de 1RM */
+function estimateWeeksToGoal(current1RM, target1RM) {
+  if (!current1RM || !target1RM || target1RM <= current1RM) return 0;
+
+  const ratio = target1RM / current1RM;
+  let nivel = profile && profile.nivel ? profile.nivel : "intermedio";
+
+  let weeklyGrowth;
+  if (nivel === "iniciante") {
+    weeklyGrowth = 0.02;   // ~2%/semana
+  } else if (nivel === "avancado") {
+    weeklyGrowth = 0.005;  // ~0.5%/semana
+  } else {
+    weeklyGrowth = 0.01;   // ~1%/semana
+  }
+
+  const weeks = Math.log(ratio) / Math.log(1 + weeklyGrowth);
+  return Math.max(1, Math.round(weeks));
+}
+
 if (calcBtn) {
   calcBtn.addEventListener("click", () => {
     if (!calcExEl || !calcRepsEl || !calcResEl) return;
@@ -1132,8 +1143,7 @@ if (calcBtn) {
     const ex = calcExEl.value;
     const reps = parseInt(calcRepsEl.value || "0", 10);
     const obj = calcObjEl ? calcObjEl.value : "";
-    const targetKgVal = calcTargetKgEl ? parseFloat(calcTargetKgEl.value || "0") : 0;
-    const weeksVal = calcWeeksEl ? parseInt(calcWeeksEl.value || "0", 10) : 0;
+    const objetivoPeso = calcObjetivoPesoEl ? parseFloat(calcObjetivoPesoEl.value || "0") : 0;
 
     if (!ex || !dataRm[ex]) {
       calcResEl.textContent = "Escolhe um exercício com 1RM registado.";
@@ -1154,57 +1164,34 @@ if (calcBtn) {
     if (obj === "hipertrofia") objetivoTexto = "hipertrofia";
     if (obj === "tecnica") objetivoTexto = "técnica / volume leve";
 
-    let msg =
+    let baseTexto =
       `Para ${reps} repetições em ${ex}, com objetivo ${objetivoTexto}, ` +
       `a carga sugerida é entre ${(minP*100).toFixed(0)}% e ${(maxP*100).toFixed(0)}% do 1RM: ` +
       `${formatKg(minLoad)} – ${formatKg(maxLoad)}. Ajusta ligeiramente para bater certo com os discos que tens.`;
 
-    // Se o utilizador definir um peso objetivo e/ou prazo, acrescentamos orientação extra
-    if (targetKgVal && !isNaN(targetKgVal)) {
-      if (targetKgVal <= oneRmVal) {
-        msg += `\n\nO peso objetivo (${formatKg(targetKgVal)}) está abaixo ou muito próximo do teu 1RM atual. Foca-te em consolidar técnica, controlar o volume e manter consistência semanal.`;
+    if (objetivoPeso > 0) {
+      if (objetivoPeso <= oneRmVal) {
+        baseTexto += ` Já tens um 1RM de ${formatKg(oneRmVal)} que é igual ou superior ao objetivo definido (${formatKg(objetivoPeso)}).`;
       } else {
-        if (weeksVal && weeksVal > 0) {
-          const incPercent = ((targetKgVal - oneRmVal) / oneRmVal) * 100;
-          const incPerWeek = incPercent / weeksVal;
-          let dificuldade;
-          if (incPerWeek <= 1) {
-            dificuldade = "uma progressão realista";
-          } else if (incPerWeek <= 2) {
-            dificuldade = "uma progressão exigente mas ainda possível";
-          } else {
-            dificuldade = "uma progressão muito agressiva e pouco realista para a maioria das pessoas";
-          }
+        const semanas = estimateWeeksToGoal(oneRmVal, objetivoPeso);
+        let nivel = profile && profile.nivel ? profile.nivel : "";
+        let nivelLabel = "";
+        if (nivel === "iniciante") nivelLabel = "iniciante";
+        else if (nivel === "avancado") nivelLabel = "avançado";
+        else if (nivel === "intermedio") nivelLabel = "intermédio";
 
-          const nivel = (profile && profile.nivel) ? profile.nivel.toLowerCase() : "";
-          let freq = "2–3 sessões semanais";
-          let seriesReps = "3–5 séries de 3–6 repetições entre 75–90% do 1RM atual";
-
-          if (nivel === "iniciante") {
-            freq = "2–3 sessões semanais focadas no movimento principal";
-            seriesReps = "3–4 séries de 5–8 repetições entre 70–80% do 1RM atual";
-          } else if (nivel === "intermedio") {
-            freq = "2–3 sessões semanais com variações do movimento principal";
-            seriesReps = "4–5 séries de 3–6 repetições entre 75–85% do 1RM atual";
-          } else if (nivel === "avancado") {
-            freq = "2–3 sessões semanais mais específicas (força + variações técnicas)";
-            seriesReps = "3–6 séries entre 2–5 repetições a 80–90% do 1RM atual";
-          }
-
-          msg += `\n\nObjetivo: chegar a ${formatKg(targetKgVal)} em cerca de ${weeksVal} semanas (${dificuldade}). ` +
-                 `Uma sugestão, tendo em conta o teu nível, é realizar ${freq} de ${ex}, com ${seriesReps}, ` +
-                 `aumentando 2,5–5 kg quando conseguires todas as séries com boa técnica e sem falhas.`;
-        } else {
-          msg += `\n\nTens como objetivo chegar a ${formatKg(targetKgVal)}. Define um prazo em semanas para obteres uma recomendação mais detalhada de volume e frequência.`;
-        }
+        baseTexto += ` Para passar de ${formatKg(oneRmVal)} para ${formatKg(objetivoPeso)}, ` +
+          (nivelLabel ? `ao nível ${nivelLabel} ` : "") +
+          `uma estimativa razoável é cerca de ${semanas} semanas de treino consistente `;
+        baseTexto += `com 2–3 blocos pesados por semana neste exercício, respeitando recuperação e técnica.`;
       }
     }
 
-    calcResEl.textContent = msg;
+    calcResEl.textContent = baseTexto;
   });
 }
 
-/* ===== GRÁFICO 1RM ===== */
+/* === GRÁFICO DE 1RM === */
 function updateRmChart() {
   if (!rmChartCanvas || !graphExerciseEl) return;
 
@@ -1294,7 +1281,7 @@ if (graphExerciseEl) {
   graphExerciseEl.addEventListener("change", updateRmChart);
 }
 
-/* ===== WOD ===== */
+/* === WOD === */
 function saveTreinos() {
   localStorage.setItem(STORAGE_TREINO, JSON.stringify(treinos));
 }
@@ -1418,14 +1405,24 @@ function renderDailyHistory() {
   });
 }
 
+/* Sugestão motivadora */
 function buildSugestao(lista, totalCarga, totalSeries, blocosForca, blocosHipertrofia, blocosLeve, dia) {
   let partes = [];
 
+  const nome = profile && profile.nome ? profile.nome : null;
+  const nivel = profile && profile.nivel ? profile.nivel : null;
+
   if (totalSeries === 0 || totalCarga === 0) {
-    return "Hoje o treino ficou muito leve. Se o objetivo é ganhar força e músculo, planeia pelo menos 2–3 blocos de trabalho com carga moderada a alta.";
+    const inicio = nome ? `Hoje o treino ficou muito leve, ${nome}.` : "Hoje o treino ficou muito leve.";
+    partes.push(inicio + " Se o objetivo é ganhar força e músculo, planeia pelo menos 2–3 blocos de trabalho com carga moderada a alta.");
+    return partes.join(" ");
   }
 
-  partes.push("Bom trabalho hoje, treino concluído em " + dia + "!");
+  if (nome) {
+    partes.push("Bom trabalho hoje, " + nome + ", treino concluído em " + dia + "!");
+  } else {
+    partes.push("Bom trabalho hoje, treino concluído em " + dia + "!");
+  }
 
   const idade = profile && profile.idade ? profile.idade : null;
   const sexo = profile && profile.sexo ? profile.sexo : null;
@@ -1444,6 +1441,14 @@ function buildSugestao(lista, totalCarga, totalSeries, blocosForca, blocosHipert
   } else {
     partes.push("Boa combinação de força e hipertrofia hoje.");
     partes.push("Mantém a lógica de 2–3 exercícios principais mais pesados (3–5 reps a 80–85% do 1RM) e 2–3 exercícios de apoio com 6–12 reps a 65–75% do 1RM.");
+  }
+
+  if (nivel === "iniciante") {
+    partes.push("Estando numa fase inicial, o foco deve ser consolidar a técnica e aumentar gradualmente a carga, sem pressa em chegar ao máximo absoluto.");
+  } else if (nivel === "intermedio") {
+    partes.push("Ao nível intermédio, a chave é a consistência: 2–3 sessões fortes por semana, com progressões pequenas mas regulares na carga.");
+  } else if (nivel === "avancado") {
+    partes.push("Ao nível avançado, pequenos ajustes de carga e gestão da fadiga fazem a diferença; prioriza qualidade de movimento e ciclos de descarga quando necessário.");
   }
 
   if (sexo === "homem") {
@@ -1647,6 +1652,7 @@ function renderTreinos() {
   renderDailyHistory();
 }
 
+/* Eventos WOD */
 if (treinoAddBtn) {
   treinoAddBtn.addEventListener("click", addTreinoEntry);
 }
@@ -1663,7 +1669,7 @@ if (toggleDailyHistoryBtn && dailyHistorySection) {
   });
 }
 
-/* ===== BACKUP ===== */
+/* BACKUP */
 function formatDateTime(dt) {
   const d = new Date(dt);
   if (isNaN(d.getTime())) return "";
@@ -1861,6 +1867,7 @@ renderTreinos();
 updateBackupInfo();
 renderGuiaExercicios();
 
+/* SERVICE WORKER */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
     navigator.serviceWorker.register("service-worker.js");
