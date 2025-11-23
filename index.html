@@ -141,7 +141,7 @@
       color: #444;
     }
 
-    /* Tabs principais: 1RM / OPÇÕES */
+    /* Tabs principais: 1RM / OPÇÕES (com efeito 3D) */
     .tabs {
       display: flex;
       gap: 8px;
@@ -157,6 +157,13 @@
       color: #222;
       cursor: pointer;
       font-size: 0.9rem;
+      box-shadow: 0 4px 0 #b3b3b3;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease, border-color 0.1s ease, color 0.1s ease;
+    }
+
+    .tab-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 0 #aaaaaa;
     }
 
     .tab-btn.active {
@@ -164,6 +171,8 @@
       border-color: #22c55e;
       color: #ffffff;
       font-weight: 600;
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #15803d;
     }
 
     .section { display: none; }
@@ -372,9 +381,13 @@
     <div class="card">
       <h3 style="margin-top:0; margin-bottom:8px;">Opções</h3>
       <div class="options-grid">
-        <button class="btn-secondary opt-btn" data-target="opt-wod">
+        <button class="btn-secondary opt-btn" data-target="opt-wod-registo">
           <span class="opt-emoji">🟩</span>
-          <span>WOD</span>
+          <span>WOD – Registo</span>
+        </button>
+        <button class="btn-secondary opt-btn" data-target="opt-wod-hist">
+          <span class="opt-emoji">📋</span>
+          <span>WOD – Histórico</span>
         </button>
         <button class="btn-secondary opt-btn" data-target="opt-calc">
           <span class="opt-emoji">🧮</span>
@@ -390,15 +403,14 @@
         </button>
       </div>
       <div class="helper-text" style="margin-top:8px;">
-        Escolhe uma opção para abrir o respetivo módulo.
+        Toca num dos blocos para abrir o módulo pretendido.
       </div>
     </div>
 
-    <!-- OPÇÃO 1: WOD -->
-    <section id="opt-wod" class="option-section active">
-
+    <!-- OPÇÃO 1A: WOD – REGISTO -->
+    <section id="opt-wod-registo" class="option-section">
       <div class="card">
-        <h3 style="margin-top:0; margin-bottom:8px;">🟩 WOD do dia</h3>
+        <h3 style="margin-top:0; margin-bottom:8px;">🟩 WOD do dia – Registo</h3>
 
         <div class="form-row">
           <div class="field">
@@ -451,9 +463,12 @@
           A carga de cada exercício é calculada como: peso × repetições × rondas.
         </div>
       </div>
+    </section>
 
+    <!-- OPÇÃO 1B: WOD – HISTÓRICO -->
+    <section id="opt-wod-hist" class="option-section">
       <div class="card">
-        <h3 style="margin-top:0; margin-bottom:8px;">Registo e histórico</h3>
+        <h3 style="margin-top:0; margin-bottom:8px;">📋 Registo e histórico do WOD</h3>
         <div class="scroll">
           <table>
             <thead>
@@ -478,7 +493,7 @@
         <div class="helper-text" id="weeklyHistory" style="margin-top:6px;"></div>
 
         <button class="btn-secondary" id="toggleDailyHistory" style="margin-top:8px;">
-          Histórico diário
+          Histórico diário completo
         </button>
 
         <div id="dailyHistorySection" style="display:none; margin-top:8px;">
@@ -503,12 +518,10 @@
           </div>
         </div>
       </div>
-
     </section>
 
     <!-- OPÇÃO 2: CARGA SUGERIDA -->
     <section id="opt-calc" class="option-section">
-
       <div class="card">
         <h3 style="margin-top:0; margin-bottom:8px;">🧮 Carga sugerida</h3>
 
@@ -540,12 +553,10 @@
           Escolhe um exercício com 1RM registado, indica o nº de repetições e, se quiseres, o objetivo (força / hipertrofia / técnica).
         </div>
       </div>
-
     </section>
 
     <!-- OPÇÃO 3: GRÁFICOS -->
     <section id="opt-graficos" class="option-section">
-
       <div class="card">
         <h3 style="margin-top:0; margin-bottom:8px;">📈 Gráfico de evolução do 1RM</h3>
         <div class="field">
@@ -556,7 +567,6 @@
           <canvas id="rmChart" style="width:100%; max-height:260px;"></canvas>
         </div>
       </div>
-
     </section>
 
     <!-- OPÇÃO 4: BACKUP -->
@@ -1356,7 +1366,7 @@ function renderWeeklyHistory() {
     lines.join("<br>");
 }
 
-/* Render WOD do dia */
+/* Render WOD do dia (lista do dia selecionado) */
 function renderTreinos() {
   if (!treinoBody) return;
   treinoBody.innerHTML = "";
@@ -1365,8 +1375,10 @@ function renderTreinos() {
   const lista = treinos.filter(t => t.date === dia);
 
   if (!lista.length) {
-    treinoResumoEl.textContent = "Sem WOD registado para " + dia + ".";
-    treinoSugestaoEl.textContent = "";
+    if (treinoResumoEl) {
+      treinoResumoEl.textContent = "Sem WOD registado para " + dia + ".";
+    }
+    if (treinoSugestaoEl) treinoSugestaoEl.textContent = "";
     renderWeeklyHistory();
     renderDailyHistory();
     return;
@@ -1448,8 +1460,10 @@ function renderTreinos() {
     }
   });
 
-  treinoResumoEl.textContent =
-    "Resumo do dia " + dia + ": carga total do WOD = " + formatKg(totalCarga);
+  if (treinoResumoEl) {
+    treinoResumoEl.textContent =
+      "Resumo do dia " + dia + ": carga total do WOD = " + formatKg(totalCarga);
+  }
 
   const sugestao = buildSugestao(
     lista,
@@ -1460,7 +1474,7 @@ function renderTreinos() {
     blocosLeve,
     dia
   );
-  treinoSugestaoEl.textContent = sugestao;
+  if (treinoSugestaoEl) treinoSugestaoEl.textContent = sugestao;
 
   renderWeeklyHistory();
   renderDailyHistory();
