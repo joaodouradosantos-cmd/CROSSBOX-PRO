@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CrossFit Moita</title>
+  <title>Cross Moita – 1RM</title>
 
   <!-- Cor da barra de topo nos telemóveis -->
   <meta name="theme-color" content="#f2f2f2" />
@@ -13,6 +13,9 @@
   <link rel="apple-touch-icon" sizes="180x180" href="imagens/crossmoita_logo.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+  <!-- Chart.js para o gráfico de 1RM -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     :root {
@@ -119,14 +122,13 @@
     }
 
     .btn-secondary {
-      background: #e5e5e5;
-      border-color: #cccccc;
-      color: #222;
-      font-weight: 500;
-      cursor: pointer;
-      padding: 8px 12px;
+      padding: 8px 10px;
       border-radius: 999px;
+      border: 1px solid #cccccc;
+      background: #e5e5e5;
+      color: #222;
       font-size: 0.8rem;
+      cursor: pointer;
       white-space: nowrap;
     }
 
@@ -242,31 +244,6 @@
     .btn-edit-profile:active {
       transform: scale(0.97);
     }
-
-    /* Botões Carga / Gráfico */
-    .inline-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-      align-items: center;
-    }
-
-    /* SVG do gráfico */
-    #rmChart {
-      width: 100%;
-      max-width: 100%;
-      height: 180px;
-      border: 1px solid #e5e5e5;
-      border-radius: 8px;
-      background: #fafafa;
-    }
-
-    #graficoInfo {
-      margin-top: 6px;
-      font-size: 0.8rem;
-      color: #444;
-    }
   </style>
 </head>
 
@@ -275,7 +252,7 @@
 
   <header>
     <img id="appLogo" src="imagens/crossmoita_logo.png" alt="Cross Moita Logo">
-    <div class="subtitle">Registo pessoal de treinos</div>
+    <div class="subtitle">Registo pessoal de treinos de força</div>
   </header>
 
   <!-- PERFIL -->
@@ -369,55 +346,54 @@
       </div>
     </div>
 
-    <!-- BOTÕES: CARGA SUGERIDA + GRÁFICO -->
+    <!-- CARTÃO: CARGA SUGERIDA + GRÁFICO -->
     <div class="card">
-      <div class="inline-actions">
+      <div class="form-row" style="margin-bottom:8px; gap:8px;">
         <button class="btn-secondary" id="toggleCalc">Carga sugerida</button>
-        <button class="btn-secondary" id="toggleGrafico">Gráfico 1RM</button>
-      </div>
-    </div>
-
-    <!-- MÓDULO: CÁLCULO DE CARGA SUGERIDA (ESCONDIDO ATÉ CLICAR) -->
-    <div class="card" id="calcCard" style="display:none;">
-      <div class="form-row">
-        <div class="field">
-          <label>Exercício (com 1RM registado)</label>
-          <select id="calcExercicio"></select>
-        </div>
-        <div class="field">
-          <label>N.º de repetições planeadas</label>
-          <input id="calcReps" type="number" min="1" />
-        </div>
+        <button class="btn-secondary" id="toggleGraph">Gráfico</button>
       </div>
 
-      <div class="form-row">
-        <div class="field">
-          <label>Objetivo</label>
-          <select id="calcObjetivo">
-            <option value="">Automático</option>
-            <option value="forca">Força</option>
-            <option value="hipertrofia">Hipertrofia</option>
-            <option value="tecnica">Técnica / Volume leve</option>
-          </select>
+      <!-- SEÇÃO ESCONDIDA: CÁLCULO DE CARGA SUGERIDA -->
+      <div id="calcSection" style="display:none;">
+        <div class="form-row">
+          <div class="field">
+            <label>Exercício (com 1RM registado)</label>
+            <select id="calcExercicio"></select>
+          </div>
+          <div class="field">
+            <label>N.º de repetições planeadas</label>
+            <input id="calcReps" type="number" min="1" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label>Objetivo</label>
+            <select id="calcObjetivo">
+              <option value="">Automático</option>
+              <option value="forca">Força</option>
+              <option value="hipertrofia">Hipertrofia</option>
+              <option value="tecnica">Técnica / Volume leve</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="calcBtn">Calcular</button>
+        <div class="helper-text" id="calcResultado" style="margin-top:6px;">
+          Escolhe um exercício com 1RM registado, indica o nº de repetições e, se quiseres, o objetivo (força / hipertrofia / técnica).
         </div>
       </div>
 
-      <button class="btn-primary" id="calcBtn">Calcular carga sugerida</button>
-      <div class="helper-text" id="calcResultado">
-        Escolhe um exercício com 1RM registado, indica o nº de repetições e, se quiseres, o objetivo (força / hipertrofia / técnica).
-      </div>
-    </div>
-
-    <!-- NOVO CARD: GRÁFICO 1RM (ESCONDIDO ATÉ CLICAR) -->
-    <div class="card" id="graficoCard" style="display:none;">
-      <div class="form-row">
+      <!-- SEÇÃO ESCONDIDA: GRÁFICO 1RM -->
+      <div id="graphSection" style="display:none; margin-top:10px;">
         <div class="field">
-          <label>Exercício para ver gráfico 1RM</label>
-          <select id="graficoExercicio"></select>
+          <label>Exercício para gráfico de 1RM</label>
+          <select id="graphExercise"></select>
+        </div>
+        <div style="margin-top:8px;">
+          <canvas id="rmChart" style="width:100%; max-height:240px;"></canvas>
         </div>
       </div>
-      <svg id="rmChart" viewBox="0 0 320 180" preserveAspectRatio="none"></svg>
-      <div id="graficoInfo"></div>
     </div>
 
   </section>
@@ -479,7 +455,7 @@
       </div>
     </div>
 
-    <!-- TABELA DO WOD, RESUMO, SUGESTÃO, HISTÓRICO SEMANAL -->
+    <!-- TABELA DO WOD, RESUMO, SUGESTÃO, HISTÓRICO SEMANAL + HISTÓRICO DIÁRIO -->
     <div class="card">
       <div class="scroll">
         <table>
@@ -503,6 +479,34 @@
       <div class="helper-text" id="treinoResumo"></div>
       <div class="helper-text" id="treinoSugestao" style="margin-top:4px; font-weight:500;"></div>
       <div class="helper-text" id="weeklyHistory" style="margin-top:6px;"></div>
+
+      <!-- BOTÃO HISTÓRICO DIÁRIO -->
+      <button class="btn-secondary" id="toggleDailyHistory" style="margin-top:8px;">
+        Histórico diário
+      </button>
+
+      <!-- SECÇÃO ESCONDIDA: HISTÓRICO DIÁRIO COMPLETO -->
+      <div id="dailyHistorySection" style="display:none; margin-top:8px;">
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Exercício</th>
+                <th>Tipo</th>
+                <th>Rondas</th>
+                <th>Reps</th>
+                <th>Peso</th>
+                <th>% 1RM</th>
+                <th>Tempo</th>
+                <th>Carga</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="dailyHistoryBody"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
   </section>
@@ -623,6 +627,7 @@ const PERC = [
 ];
 
 const STORAGE_RM = "crossfit_1rm";
+/* histórico de 1RM para comparação e gráfico */
 const STORAGE_RM_HISTORY = "crossfit_1rm_history";
 
 let dataRm = JSON.parse(localStorage.getItem(STORAGE_RM) || "{}");
@@ -633,20 +638,22 @@ const rm = document.getElementById("oneRm");
 const bodyTable = document.getElementById("tableBody");
 
 /* MÓDULO CALCULADORA DE CARGA */
-const calcCard = document.getElementById("calcCard");
 const calcExEl = document.getElementById("calcExercicio");
 const calcRepsEl = document.getElementById("calcReps");
 const calcObjEl = document.getElementById("calcObjetivo");
 const calcResEl = document.getElementById("calcResultado");
 const calcBtn = document.getElementById("calcBtn");
+
+/* Botões de toggle das secções */
 const toggleCalcBtn = document.getElementById("toggleCalc");
+const toggleGraphBtn = document.getElementById("toggleGraph");
+const calcSection = document.getElementById("calcSection");
+const graphSection = document.getElementById("graphSection");
 
 /* GRÁFICO 1RM */
-const graficoCard = document.getElementById("graficoCard");
-const toggleGraficoBtn = document.getElementById("toggleGrafico");
-const graficoExEl = document.getElementById("graficoExercicio");
-const rmChart = document.getElementById("rmChart");
-const graficoInfo = document.getElementById("graficoInfo");
+const graphExerciseEl = document.getElementById("graphExercise");
+const rmChartCanvas = document.getElementById("rmChart");
+let rmChart = null;
 
 /* WOD */
 const STORAGE_TREINO = "crossfit_treinos";
@@ -664,6 +671,11 @@ const treinoBody = document.getElementById("treinoBody");
 const treinoResumoEl = document.getElementById("treinoResumo");
 const treinoSugestaoEl = document.getElementById("treinoSugestao");
 const weeklyHistoryEl = document.getElementById("weeklyHistory");
+
+/* Histórico diário DOM */
+const toggleDailyHistoryBtn = document.getElementById("toggleDailyHistory");
+const dailyHistorySection = document.getElementById("dailyHistorySection");
+const dailyHistoryBody = document.getElementById("dailyHistoryBody");
 
 /* Helpers */
 function initSelect() {
@@ -712,40 +724,37 @@ function refreshCalcExOptions() {
   });
 }
 
-/* opções do gráfico: qualquer exercício com 1RM ou histórico */
-function refreshGraficoOptions() {
-  if (!graficoExEl) return;
-  graficoExEl.innerHTML = "";
+/* atualizar lista para o gráfico */
+function refreshGraphExerciseOptions() {
+  if (!graphExerciseEl) return;
+  const allNames = new Set([
+    ...Object.keys(dataRm || {}),
+    ...Object.keys(rmHistory || {})
+  ]);
+  const names = Array.from(allNames).sort();
 
-  const setEx = new Set();
-  Object.keys(dataRm).forEach(e => setEx.add(e));
-  Object.keys(rmHistory).forEach(e => setEx.add(e));
-
-  const names = Array.from(setEx).sort();
+  graphExerciseEl.innerHTML = "";
   if (!names.length) {
     const opt = document.createElement("option");
     opt.value = "";
-    opt.textContent = "Sem dados de 1RM para gráfico";
-    graficoExEl.appendChild(opt);
-    graficoExEl.disabled = true;
-    graficoInfo.textContent = "Regista primeiro alguns 1RM para poderes ver a evolução.";
-    if (rmChart) rmChart.innerHTML = "";
+    opt.textContent = "Sem dados de 1RM";
+    graphExerciseEl.appendChild(opt);
+    graphExerciseEl.disabled = true;
+    updateRmChart();
     return;
   }
 
-  graficoExEl.disabled = false;
+  graphExerciseEl.disabled = false;
   names.forEach(n => {
     const opt = document.createElement("option");
     opt.value = n;
     opt.textContent = n;
-    graficoExEl.appendChild(opt);
+    graphExerciseEl.appendChild(opt);
   });
 
-  // desenhar logo o primeiro
-  renderRmChart(names[0]);
+  updateRmChart();
 }
 
-/* formata kg */
 function formatKg(v) {
   return v.toFixed(1).replace(".", ",") + " kg";
 }
@@ -778,6 +787,7 @@ function renderRm() {
       oneRmText += " (" + rel.toFixed(2) + "x peso corporal)";
     }
 
+    /* comparação com 1RM anterior */
     const histList = rmHistory[name] || [];
     if (histList.length) {
       const prev = histList[histList.length - 1];
@@ -814,6 +824,7 @@ function renderRm() {
   });
 
   refreshCalcExOptions();
+  refreshGraphExerciseOptions();
 }
 
 /* Guardar / atualizar 1RM manual (com histórico) */
@@ -839,27 +850,6 @@ document.getElementById("addBtn").addEventListener("click", () => {
   rm.value = "";
   renderRm();
 });
-
-/* === BOTÕES CARGA SUGERIDA / GRÁFICO === */
-if (toggleCalcBtn && calcCard) {
-  toggleCalcBtn.addEventListener("click", () => {
-    const visible = calcCard.style.display !== "none";
-    calcCard.style.display = visible ? "none" : "block";
-    if (!visible) {
-      refreshCalcExOptions();
-    }
-  });
-}
-
-if (toggleGraficoBtn && graficoCard) {
-  toggleGraficoBtn.addEventListener("click", () => {
-    const visible = graficoCard.style.display !== "none";
-    graficoCard.style.display = visible ? "none" : "block";
-    if (!visible) {
-      refreshGraficoOptions();
-    }
-  });
-}
 
 /* === CALCULADORA DE CARGA SUGERIDA === */
 function getPercentRange(reps, objetivo) {
@@ -925,98 +915,105 @@ if (calcBtn) {
   });
 }
 
-/* === GRÁFICO 1RM === */
-function renderRmChart(ex) {
-  if (!rmChart || !graficoInfo) return;
-  if (!ex) {
-    rmChart.innerHTML = "";
-    graficoInfo.textContent = "Escolhe um exercício para ver o gráfico.";
-    return;
-  }
-
-  const hist = (rmHistory[ex] || []).slice(); // cópia
-  const series = hist.map(h => ({
-    date: h.date,
-    value: h.value
-  }));
-
-  if (dataRm[ex]) {
-    series.push({
-      date: new Date().toISOString().slice(0,10),
-      value: dataRm[ex],
-      current: true
-    });
-  }
-
-  if (!series.length) {
-    rmChart.innerHTML = "";
-    graficoInfo.textContent = "Ainda não há dados de 1RM para este exercício.";
-    return;
-  }
-
-  series.sort((a, b) => a.date.localeCompare(b.date));
-
-  const values = series.map(p => p.value);
-  const minV = Math.min.apply(null, values);
-  const maxV = Math.max.apply(null, values);
-
-  const pad = 10;
-  const w = 320;
-  const h = 180;
-  const innerW = w - 2 * pad;
-  const innerH = h - 2 * pad;
-
-  const yMin = minV * 0.95;
-  const yMax = maxV * 1.05;
-
-  function xScale(i) {
-    if (series.length === 1) return pad + innerW / 2;
-    return pad + (innerW * i) / (series.length - 1);
-  }
-
-  function yScale(v) {
-    if (yMax === yMin) return pad + innerH / 2;
-    const t = (v - yMin) / (yMax - yMin);
-    return pad + (1 - t) * innerH;
-  }
-
-  const points = series.map((p, i) => xScale(i) + "," + yScale(p.value)).join(" ");
-
-  let svgContent = "";
-
-  // Eixo X simples (linha)
-  svgContent += `<line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="#ccc" stroke-width="1"/>`;
-  // Eixo Y simples
-  svgContent += `<line x1="${pad}" y1="${pad}" x2="${pad}" y2="${h-pad}" stroke="#ccc" stroke-width="1"/>`;
-
-  // Polilinha principal
-  svgContent += `<polyline points="${points}" fill="none" stroke="#22c55e" stroke-width="2"/>`;
-
-  // Pontos
-  series.forEach((p, i) => {
-    const cx = xScale(i);
-    const cy = yScale(p.value);
-    const isCurrent = !!p.current;
-    const r = isCurrent ? 4 : 3;
-    const color = isCurrent ? "#16a34a" : "#1d4ed8";
-    svgContent += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${color}" />`;
+/* === TOGGLE DAS SECÇÕES CARGA / GRÁFICO === */
+if (toggleCalcBtn && calcSection) {
+  toggleCalcBtn.addEventListener("click", () => {
+    const visible = calcSection.style.display === "block";
+    calcSection.style.display = visible ? "none" : "block";
   });
-
-  rmChart.innerHTML = svgContent;
-
-  const lista = series.map((p, i) => {
-    const rotulo = p.current ? "atual" : `#${i+1}`;
-    return `${rotulo} (${p.date}): ${formatKg(p.value)}`;
-  });
-
-  graficoInfo.textContent =
-    `Evolução do 1RM em ${ex}: ` + lista.join(" · ");
 }
 
-/* evento alterar exercício no gráfico */
-if (graficoExEl) {
-  graficoExEl.addEventListener("change", () => {
-    renderRmChart(graficoExEl.value);
+if (toggleGraphBtn && graphSection) {
+  toggleGraphBtn.addEventListener("click", () => {
+    const visible = graphSection.style.display === "block";
+    graphSection.style.display = visible ? "none" : "block";
+    if (!visible) {
+      refreshGraphExerciseOptions();
+    }
+  });
+}
+
+/* === GRÁFICO DE 1RM === */
+function updateRmChart() {
+  if (!rmChartCanvas || !graphExerciseEl) return;
+
+  const ex = graphExerciseEl.value;
+  let labels = [];
+  let values = [];
+
+  if (ex && (rmHistory[ex] || dataRm[ex])) {
+    const hist = (rmHistory[ex] || []).slice().sort((a, b) => {
+      return (a.date || "").localeCompare(b.date || "");
+    });
+
+    hist.forEach((entry, idx) => {
+      labels.push(entry.date || "h" + (idx + 1));
+      values.push(entry.value);
+    });
+
+    if (dataRm[ex]) {
+      labels.push("Atual");
+      values.push(dataRm[ex]);
+    }
+  }
+
+  const ctx = rmChartCanvas.getContext("2d");
+
+  if (rmChart) {
+    rmChart.destroy();
+    rmChart = null;
+  }
+
+  if (!labels.length) {
+    rmChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: ["Sem dados"],
+        datasets: [{
+          label: "1RM (kg)",
+          data: [0],
+          tension: 0.25
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: { display: false },
+          y: { display: false }
+        }
+      }
+    });
+    return;
+  }
+
+  rmChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        label: ex + " – 1RM (kg)",
+        data: values,
+        tension: 0.25
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: "Registos" }
+        },
+        y: {
+          title: { display: true, text: "Peso (kg)" },
+          beginAtZero: false
+        }
+      }
+    }
   });
 }
 
@@ -1064,19 +1061,85 @@ function addTreinoEntry() {
   treinos.unshift(entry);
   saveTreinos();
   renderTreinos();
-
-  treinoRondasEl.value = "";
-  treinoRepsEl.value = "";
-  treinoPesoEl.value = "";
-  treinoTempoEl.value = "";
 }
 
+/* apagar registo específico do WOD */
 function deleteTreinoEntry(index) {
   if (index < 0 || index >= treinos.length) return;
   if (!confirm("Apagar este registo de WOD?")) return;
   treinos.splice(index, 1);
   saveTreinos();
   renderTreinos();
+}
+
+/* === HISTÓRICO DIÁRIO COMPLETO === */
+function renderDailyHistory() {
+  if (!dailyHistoryBody) return;
+  dailyHistoryBody.innerHTML = "";
+
+  if (!treinos.length) {
+    return;
+  }
+
+  const sorted = treinos.slice().sort((a, b) => {
+    return (b.date || "").localeCompare(a.date || "");
+  });
+
+  sorted.forEach(t => {
+    const tr = document.createElement("tr");
+
+    const tdDate = document.createElement("td");
+    tdDate.textContent = t.date || "";
+    tr.appendChild(tdDate);
+
+    const tdEx = document.createElement("td");
+    tdEx.textContent = t.ex || "";
+    tr.appendChild(tdEx);
+
+    const tdTipo = document.createElement("td");
+    tdTipo.textContent = t.tipo || "";
+    tr.appendChild(tdTipo);
+
+    const tdR = document.createElement("td");
+    tdR.textContent = t.rondas || "";
+    tr.appendChild(tdR);
+
+    const tdReps = document.createElement("td");
+    tdReps.textContent = t.reps || "";
+    tr.appendChild(tdReps);
+
+    const tdPeso = document.createElement("td");
+    tdPeso.textContent = t.peso ? formatKg(t.peso) : "";
+    tr.appendChild(tdPeso);
+
+    const tdPerc = document.createElement("td");
+    if (t.perc1rm) {
+      tdPerc.textContent = (t.perc1rm * 100).toFixed(0) + "%";
+    } else {
+      tdPerc.textContent = "";
+    }
+    tr.appendChild(tdPerc);
+
+    const tdTempo = document.createElement("td");
+    tdTempo.textContent = t.tempo || "";
+    tr.appendChild(tdTempo);
+
+    const tdCarga = document.createElement("td");
+    tdCarga.textContent = t.carga ? formatKg(t.carga) : "";
+    tr.appendChild(tdCarga);
+
+    const tdDel = document.createElement("td");
+    const btn = document.createElement("button");
+    btn.textContent = "🗑";
+    btn.className = "btn-delete";
+    btn.addEventListener("click", () => {
+      deleteTreinoEntry(treinos.indexOf(t));
+    });
+    tdDel.appendChild(btn);
+    tr.appendChild(tdDel);
+
+    dailyHistoryBody.appendChild(tr);
+  });
 }
 
 /* === SUGESTÃO MOTIVADORA === */
@@ -1197,7 +1260,7 @@ function renderWeeklyHistory() {
     lines.join("<br>");
 }
 
-/* === RENDER WOD === */
+/* === RENDER WOD (DIA ATUAL) === */
 function renderTreinos() {
   if (!treinoBody) return;
   treinoBody.innerHTML = "";
@@ -1209,6 +1272,7 @@ function renderTreinos() {
     treinoResumoEl.textContent = "Sem WOD registado para " + dia + ".";
     treinoSugestaoEl.textContent = "";
     renderWeeklyHistory();
+    renderDailyHistory();
     return;
   }
 
@@ -1302,6 +1366,7 @@ function renderTreinos() {
   treinoSugestaoEl.textContent = sugestao;
 
   renderWeeklyHistory();
+  renderDailyHistory();
 }
 
 /* Eventos WOD */
@@ -1312,6 +1377,17 @@ if (treinoAddBtn) {
 /* Atualiza automaticamente quando mudas a data */
 if (treinoDataEl) {
   treinoDataEl.addEventListener("change", renderTreinos);
+}
+
+/* BOTÃO HISTÓRICO DIÁRIO */
+if (toggleDailyHistoryBtn && dailyHistorySection) {
+  toggleDailyHistoryBtn.addEventListener("click", () => {
+    const visible = dailyHistorySection.style.display === "block";
+    dailyHistorySection.style.display = visible ? "none" : "block";
+    if (!visible) {
+      renderDailyHistory();
+    }
+  });
 }
 
 /* TABS */
@@ -1339,6 +1415,11 @@ if (treinoDataEl && !treinoDataEl.value) {
   treinoDataEl.value = new Date().toISOString().slice(0, 10);
 }
 renderTreinos();
+
+/* Quando muda exercício do gráfico, atualizar chart */
+if (graphExerciseEl) {
+  graphExerciseEl.addEventListener("change", updateRmChart);
+}
 
 /* REGISTO DO SERVICE WORKER */
 if ("serviceWorker" in navigator) {
