@@ -21,7 +21,7 @@
     }
 
     body {
-      background: linear-gradient(to bottom, #e0e0e0 70%, #d4d4d4 100%);
+      background: linear-gradient(to bottom, #e0e0e0 90%, #d4d4d4 100%);
       color: #111;
       display: flex;
       justify-content: center;
@@ -243,12 +243,13 @@
       color: #444;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-end;
       gap: 8px;
     }
 
     #profileInfo {
       flex: 1;
+      display: none; /* não mostrar texto de perfil */
     }
 
     .btn-edit-profile {
@@ -316,7 +317,7 @@
 
     <div id="profileInfoWrapper">
       <span id="profileInfo"></span>
-      <button id="editProfileBtn" class="btn-edit-profile">Editar</button>
+      <button id="editProfileBtn" class="btn-edit-profile">Editar perfil</button>
     </div>
   </section>
 
@@ -387,7 +388,7 @@
         </button>
         <button class="btn-secondary opt-btn" data-target="opt-calc">
           <span class="opt-emoji">🧮</span>
-          <span>Carga sugerida</span>
+          <span>Melhoramento</span>
         </button>
         <button class="btn-secondary opt-btn" data-target="opt-graficos">
           <span class="opt-emoji">📈</span>
@@ -410,7 +411,7 @@
     <!-- WOD: REGISTO + HISTÓRICO JUNTO -->
     <section id="opt-wod" class="option-section">
       <div class="card">
-        <h3 style="margin-top:0; margin-bottom:8px;">🟩 WOD do dia</h3>
+        <h3 style="margin-top:0; margin-bottom:8px;">🟩 WOD</h3>
 
         <div class="form-row">
           <div class="field">
@@ -517,10 +518,10 @@
       </div>
     </section>
 
-    <!-- CARGA SUGERIDA -->
+    <!-- MELHORAMENTO (CARGA SUGERIDA) -->
     <section id="opt-calc" class="option-section">
       <div class="card">
-        <h3 style="margin-top:0; margin-bottom:8px;">🧮 Carga sugerida</h3>
+        <h3 style="margin-top:0; margin-bottom:8px;">🧮 Melhoramento</h3>
 
         <div class="form-row">
           <div class="field">
@@ -627,25 +628,13 @@ const perfilForm = document.getElementById("perfilForm");
 const editProfileBtn = document.getElementById("editProfileBtn");
 
 function updateProfileInfo() {
-  if (!profileInfo) return;
-
-  if (!profile || !profile.peso) {
-    profileInfo.textContent = "Preenche o perfil para personalizar a análise da tua força.";
-    if (perfilForm) perfilForm.style.display = "block";
-    return;
+  // Não mostrar dados do perfil, só manter o formulário escondido
+  if (profileInfo) {
+    profileInfo.textContent = "";
   }
-
-  let txt = "Peso atual: " + profile.peso + " kg";
-  if (profile.idade) txt += " · Idade: " + profile.idade + " anos";
-  if (profile.sexo) {
-    const sx = profile.sexo === "homem" ? "Homem" : "Mulher";
-    txt += " · Sexo: " + sx;
+  if (perfilForm) {
+    perfilForm.style.display = "none";
   }
-  if (profile.altura) txt += " · Altura: " + profile.altura + " cm";
-
-  profileInfo.textContent = txt;
-
-  if (perfilForm) perfilForm.style.display = "none";
 }
 
 function loadProfile() {
@@ -675,7 +664,10 @@ if (saveProfileBtn) {
 
 if (editProfileBtn) {
   editProfileBtn.addEventListener("click", () => {
-    if (perfilForm) perfilForm.style.display = "block";
+    if (perfilForm) {
+      const visible = perfilForm.style.display === "block";
+      perfilForm.style.display = visible ? "none" : "block";
+    }
   });
 }
 
@@ -967,7 +959,7 @@ const toggleDailyHistoryBtn = document.getElementById("toggleDailyHistory");
 const dailyHistorySection = document.getElementById("dailyHistorySection");
 const dailyHistoryBody = document.getElementById("dailyHistoryBody");
 
-/* Carga sugerida */
+/* Carga sugerida / Melhoramento */
 const calcExEl = document.getElementById("calcExercicio");
 const calcRepsEl = document.getElementById("calcReps");
 const calcObjEl = document.getElementById("calcObjetivo");
@@ -1001,7 +993,7 @@ function initSelects() {
     MOVES.forEach(m => {
       const opt = document.createElement("option");
       opt.value = m;
-      opt.textContent = m; // só EN
+      opt.textContent = m; // EN
       sel.appendChild(opt);
     });
   }
@@ -1011,7 +1003,7 @@ function initSelects() {
     MOVES.forEach(m => {
       const opt = document.createElement("option");
       opt.value = m;
-      opt.textContent = m; // só EN
+      opt.textContent = m; // EN
       treinoExEl.appendChild(opt);
     });
   }
@@ -1036,7 +1028,7 @@ function refreshCalcExOptions() {
   names.forEach(n => {
     const opt = document.createElement("option");
     opt.value = n;
-    opt.textContent = n; // só EN
+    opt.textContent = n; // EN
     calcExEl.appendChild(opt);
   });
 }
@@ -1065,7 +1057,7 @@ function refreshGraphExerciseOptions() {
   names.forEach(n => {
     const opt = document.createElement("option");
     opt.value = n;
-    opt.textContent = n; // só EN
+    opt.textContent = n; // EN
     graphExerciseEl.appendChild(opt);
   });
 
@@ -1166,7 +1158,7 @@ document.getElementById("addBtn").addEventListener("click", () => {
   renderRm();
 });
 
-/* === CALCULADORA DE CARGA SUGERIDA === */
+/* === MELHORAMENTO (CALCULADORA DE CARGA) === */
 function getPercentRange(reps, objetivo) {
   let minP, maxP;
 
@@ -1796,7 +1788,6 @@ if (importBackupBtn && backupFileInput) {
           return;
         }
 
-        // Validação simples
         if (!("dataRm" in data) && !("treinos" in data)) {
           alert("Este ficheiro não parece ser um backup válido da app.");
           return;
