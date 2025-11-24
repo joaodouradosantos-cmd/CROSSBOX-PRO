@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CrossBox</title>
 
-  <meta name="theme-color" content="#f2f2f2" />
+  <meta name="theme-color" content="#020617" />
   <link rel="manifest" href="manifest.json" />
 
   <link rel="apple-touch-icon" sizes="180x180" href="imagens/crossmoita_logo.png" />
@@ -16,13 +16,25 @@
 
   <style>
     :root {
-      font-family: system-ui, sans-serif;
-      color-scheme: light;
+      font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      color-scheme: dark;
+      --bg-gradient-top: #1f2933;
+      --bg-gradient-bottom: #020617;
+      --card-bg: #020617;
+      --card-border: #374151;
+      --card-radius: 16px;
+      --primary: #22c55e;
+      --primary-dark: #16a34a;
+      --secondary-bg: #111827;
+      --secondary-border: #4b5563;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
     }
 
     body {
-      background: linear-gradient(to bottom, #e0e0e0 90%, #d4d4d4 100%);
-      color: #111;
+      margin: 0;
+      background: radial-gradient(circle at top, #1f2933 0%, #020617 55%, #000000 100%);
+      color: var(--text-main);
       display: flex;
       justify-content: center;
       min-height: 100vh;
@@ -31,35 +43,47 @@
     .app {
       width: 100%;
       max-width: 900px;
-      padding: 16px;
+      padding: 16px 14px 24px 14px;
       box-sizing: border-box;
+      border-radius: 20px;
+      background: linear-gradient(to bottom, rgba(15,23,42,0.96), rgba(15,23,42,0.98));
+      box-shadow: 0 18px 45px rgba(0,0,0,0.7);
     }
 
     header {
       text-align: center;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       position: relative;
+      padding: 12px 8px 6px 8px;
+      border-radius: 18px;
+      background: radial-gradient(circle at top, #0f172a 0%, #020617 70%);
+      border: 1px solid rgba(148,163,184,0.35);
+      box-shadow: 0 12px 30px rgba(15,23,42,0.7);
     }
 
     #appLogo {
-      max-width: 220px;
+      max-width: 180px;
       height: auto;
       display: block;
-      margin: 0 auto 6px auto;
+      margin: 0 auto 4px auto;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.75));
     }
 
     .subtitle {
       font-size: 0.85rem;
-      color: #555;
+      color: #e5e7eb;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      opacity: 0.9;
     }
 
     .card {
-      background: #ffffff;
-      border-radius: 14px;
+      background: radial-gradient(circle at top left, #111827 0%, #020617 70%);
+      border-radius: var(--card-radius);
       padding: 14px;
       margin-bottom: 16px;
-      border: 1px solid #e0e0e0;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+      border: 1px solid var(--card-border);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.6);
     }
 
     /* PERFIL SEM “CARTÃO” BRANCO */
@@ -67,7 +91,7 @@
       background: transparent;
       border: none;
       box-shadow: none;
-      padding: 0;
+      padding: 0 2px;
       margin-bottom: 4px;
     }
 
@@ -93,51 +117,73 @@
 
     label {
       font-size: 0.8rem;
-      color: #444;
+      color: #9ca3af;
     }
 
-    input, select, textarea, button {
+    input,
+    select,
+    textarea,
+    button {
       padding: 10px;
-      border-radius: 10px;
-      background: #ffffff;
-      color: #111;
-      border: 1px solid #cccccc;
+      border-radius: 12px;
+      background: rgba(15,23,42,0.95);
+      color: #e5e7eb;
+      border: 1px solid #4b5563;
       font-size: 0.9rem;
-      box-sizing: border-box;
       font-family: inherit;
+      min-height: 40px; /* melhor toque em smartphone */
+      box-sizing: border-box;
     }
 
-    input:focus, select:focus, textarea:focus {
+    input::placeholder,
+    textarea::placeholder {
+      color: #6b7280;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
       outline: none;
-      border-color: #22c55e;
+      border-color: var(--primary);
       box-shadow: 0 0 0 1px rgba(34,197,94,0.2);
     }
 
     .btn-primary {
-      background: #22c55e;
-      border-color: #22c55e;
-      color: #ffffff;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      border-color: #16a34a;
+      color: #f9fafb;
       font-weight: 600;
       cursor: pointer;
+      box-shadow: 0 8px 18px rgba(34,197,94,0.45);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow: 0 4px 10px rgba(22,163,74,0.6);
+      filter: brightness(0.96);
     }
 
     .btn-secondary {
       padding: 8px 10px;
       border-radius: 999px;
-      border: 1px solid #cccccc;
-      background: #e5e5e5;
-      color: #222;
+      border: 1px solid #4b5563;
+      background: radial-gradient(circle at top, #111827 0%, #020617 80%);
+      color: #e5e7eb;
       font-size: 0.8rem;
       cursor: pointer;
       white-space: nowrap;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.6);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
     }
 
     .btn-secondary:active {
-      transform: scale(0.97);
+      transform: scale(0.97) translateY(1px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.7);
     }
 
     .btn-delete {
-      padding: 2px 4px;
+      padding: 2px 6px;
       border-radius: 999px;
       border: 1px solid #e5e5e5;
       background: #f97373;
@@ -153,7 +199,7 @@
     .helper-text {
       margin-top: 4px;
       font-size: 0.8rem;
-      color: #444;
+      color: #9ca3af;
     }
 
     .btn-edit-profile {
@@ -161,10 +207,11 @@
       border-radius: 999px;
       border: 1px solid #cccccc;
       background: #e5e5e5;
-      color: #222;
+      color: #222222;
       font-size: 0.65rem;
       cursor: pointer;
       white-space: nowrap;
+      transition: background 0.08s ease, transform 0.08s ease;
     }
 
     .btn-edit-profile:active {
@@ -187,31 +234,37 @@
       flex: 1;
       padding: 10px 0;
       border-radius: 999px;
-      border: 1px solid #cccccc;
-      background: #e5e5e5;
-      color: #222;
+      border: 1px solid #4b5563;
+      background: radial-gradient(circle at top, #111827 0%, #020617 80%);
+      color: #e5e7eb;
       cursor: pointer;
       font-size: 0.9rem;
-      box-shadow: 0 4px 0 #b3b3b3;
-      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease, border-color 0.1s ease, color 0.1s ease;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.65);
+      transition: transform 0.1s ease, box-shadow 0.1s ease,
+                  background 0.1s ease, border-color 0.1s ease, color 0.1s ease;
     }
 
     .tab-btn:hover {
       transform: translateY(-1px);
-      box-shadow: 0 5px 0 #aaaaaa;
+      box-shadow: 0 9px 18px rgba(0,0,0,0.75);
     }
 
     .tab-btn.active {
-      background: #22c55e;
-      border-color: #22c55e;
-      color: #ffffff;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      border-color: #16a34a;
+      color: #f9fafb;
       font-weight: 600;
       transform: translateY(2px);
-      box-shadow: 0 2px 0 #15803d;
+      box-shadow: 0 4px 10px rgba(22,163,74,0.8);
     }
 
-    .section { display: none; }
-    .section.active { display: block; }
+    .section { 
+      display: none;
+    }
+
+    .section.active { 
+      display: block; 
+    }
 
     .options-grid {
       display: grid;
@@ -244,19 +297,20 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 0.8rem;
-      color: #111;
+      color: var(--text-main);
     }
 
-    th, td {
+    th,
+    td {
       padding: 6px;
       text-align: center;
-      border-bottom: 1px solid #dddddd;
+      border-bottom: 1px solid #4b5563;
       white-space: nowrap;
     }
 
     th {
-      background: #f9f9f9;
-      color: #333;
+      background: #0b1120;
+      color: #e5e7eb;
       position: sticky;
       top: 0;
       z-index: 1;
@@ -266,13 +320,49 @@
       max-height: 260px;
       overflow: auto;
       border-radius: 10px;
-      border: 1px solid #e5e5e5;
+      border: 1px solid #374151;
+      -webkit-overflow-scrolling: touch; /* scroll suave no telemóvel */
     }
 
     #backupInfo {
       margin-top: 6px;
       font-size: 0.75rem;
-      color: #555;
+      color: #9ca3af;
+    }
+
+    /* Ajustes específicos para ecrãs pequenos */
+    @media (max-width: 480px) {
+      .app {
+        padding: 12px 8px 18px 8px;
+      }
+
+      header {
+        margin-bottom: 10px;
+      }
+
+      .card {
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+
+      .form-row {
+        flex-direction: column;
+      }
+
+      th,
+      td {
+        padding: 5px;
+        font-size: 0.75rem;
+      }
+
+      .tabs {
+        margin-top: 6px;
+      }
+
+      .tab-btn {
+        font-size: 0.8rem;
+        padding: 8px 0;
+      }
     }
   </style>
 </head>
@@ -406,10 +496,6 @@
           <span class="opt-emoji">📈</span>
           <span>Gráfico</span>
         </button>
-        <button class="btn-secondary opt-btn" data-target="opt-performance">
-          <span class="opt-emoji">🏅</span>
-          <span>Performance</span>
-        </button>
         <button class="btn-secondary opt-btn" data-target="opt-guia">
           <span class="opt-emoji">📚</span>
           <span>Guia exercícios</span>
@@ -541,7 +627,7 @@
 
         <div class="form-row">
           <div class="field">
-            <label>Exercício</label>
+            <label>Exercício (com 1RM registado)</label>
             <select id="calcExercicio"></select>
           </div>
           <div class="field">
@@ -575,7 +661,7 @@
 
         <button class="btn-primary" id="calcBtn">Calcular</button>
         <div class="helper-text" id="calcResultado" style="margin-top:6px;">
-          Escolhe um exercício, indica o nº de repetições e, se quiseres, o objetivo (força / hipertrofia / técnica).
+          Escolhe um exercício com 1RM registado, indica o nº de repetições e, se quiseres, o objetivo (força / hipertrofia / técnica).
         </div>
       </div>
     </section>
@@ -590,60 +676,6 @@
         </div>
         <div style="margin-top:8px;">
           <canvas id="rmChart" style="width:100%; max-height:260px;"></canvas>
-        </div>
-      </div>
-    </section>
-
-    <!-- PERFORMANCE -->
-    <section id="opt-performance" class="option-section">
-      <div class="card">
-        <h3 style="margin-top:0; margin-bottom:8px;">🏅 Performance física</h3>
-        <p class="helper-text">
-          Resumo automático com base nos teus registos de WOD, 1RM e metcons.
-        </p>
-
-        <h4 style="margin-top:10px; margin-bottom:4px;">WOD – dias com mais carga</h4>
-        <div class="scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Carga total</th>
-                <th>N.º exercícios</th>
-                <th>Melhor tempo metcon</th>
-              </tr>
-            </thead>
-            <tbody id="perfWodBody"></tbody>
-          </table>
-        </div>
-
-        <h4 style="margin-top:12px; margin-bottom:4px;">Top 1RM</h4>
-        <div class="scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Exercício</th>
-                <th>1RM</th>
-                <th>Rel. peso corporal</th>
-              </tr>
-            </thead>
-            <tbody id="perf1rmBody"></tbody>
-          </table>
-        </div>
-
-        <h4 style="margin-top:12px; margin-bottom:4px;">Metcon – melhores tempos</h4>
-        <div class="scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Exercício</th>
-                <th>Melhor tempo</th>
-                <th>Data</th>
-                <th>Carga aprox.</th>
-              </tr>
-            </thead>
-            <tbody id="perfMetconBody"></tbody>
-          </table>
         </div>
       </div>
     </section>
@@ -751,7 +783,6 @@ if (saveProfileBtn) {
     updateSubtitle();
     registerBackupMeta("Perfil atualizado");
     alert("Perfil atualizado.");
-    renderPerformance();
   });
 }
 
@@ -926,14 +957,6 @@ const EXER_INFO = [
   { en: "Shrug", pt: "Encolhimento de ombros", descricao: "Elevar os ombros em direção às orelhas segurando barra ou halteres, focando trapézios." }
 ];
 
-/* Lista completa de exercícios em inglês (para WOD, Melhoramento, Guia) */
-const ALL_EXERCISES = Array.from(new Set(EXER_INFO.map(ex => ex.en))).sort();
-
-/* Completar MOVES_PT com todos os exercícios do guia */
-EXER_INFO.forEach(ex => {
-  MOVES_PT[ex.en] = ex.pt;
-});
-
 const PERC = [
   0.25, 0.30, 0.35, 0.40,
   0.50, 0.60, 0.70, 0.75,
@@ -984,11 +1007,6 @@ let rmChart = null;
 const guiaBody = document.getElementById("guiaBody");
 const guiaSearch = document.getElementById("guiaSearch");
 
-/* Performance (rankings) */
-const perfWodBody = document.getElementById("perfWodBody");
-const perf1rmBody = document.getElementById("perf1rmBody");
-const perfMetconBody = document.getElementById("perfMetconBody");
-
 /* Backup */
 const exportBackupBtn = document.getElementById("exportBackupBtn");
 const importBackupBtn = document.getElementById("importBackupBtn");
@@ -999,7 +1017,7 @@ function formatKg(v) {
   return v.toFixed(1).replace(".", ",") + " kg";
 }
 
-/* Selects – 1RM só com MOVES (peso); WOD com ALL_EXERCISES */
+/* Selects – só nomes em inglês (para 1RM e WOD) */
 function initSelects() {
   if (sel) {
     sel.innerHTML = "";
@@ -1013,7 +1031,7 @@ function initSelects() {
 
   if (treinoExEl) {
     treinoExEl.innerHTML = "";
-    ALL_EXERCISES.forEach(m => {
+    MOVES.forEach(m => {
       const opt = document.createElement("option");
       opt.value = m;
       opt.textContent = m;
@@ -1022,22 +1040,22 @@ function initSelects() {
   }
 }
 
-/* Melhoramento – lista completa de exercícios; cálculo só funciona se tiver 1RM */
 function refreshCalcExOptions() {
   if (!calcExEl) return;
   calcExEl.innerHTML = "";
 
-  if (!ALL_EXERCISES.length) {
+  const names = Object.keys(dataRm).sort();
+  if (!names.length) {
     const opt = document.createElement("option");
     opt.value = "";
-    opt.textContent = "Sem exercícios disponíveis";
+    opt.textContent = "Nenhum 1RM registado";
     calcExEl.appendChild(opt);
     calcExEl.disabled = true;
     return;
   }
 
   calcExEl.disabled = false;
-  ALL_EXERCISES.forEach(n => {
+  names.forEach(n => {
     const opt = document.createElement("option");
     opt.value = n;
     opt.textContent = n;
@@ -1141,7 +1159,6 @@ function renderRm() {
 
   refreshCalcExOptions();
   refreshGraphExerciseOptions();
-  renderPerformance();
 }
 
 document.getElementById("addBtn").addEventListener("click", () => {
@@ -1208,16 +1225,12 @@ if (calcBtn) {
     const targetKgVal = calcTargetKgEl ? parseFloat(calcTargetKgEl.value || "0") : 0;
     const weeksVal = calcWeeksEl ? parseInt(calcWeeksEl.value || "0", 10) : 0;
 
-    if (!ex) {
-      calcResEl.textContent = "Escolhe um exercício.";
+    if (!ex || !dataRm[ex]) {
+      calcResEl.textContent = "Escolhe um exercício com 1RM registado.";
       return;
     }
     if (!reps || reps <= 0) {
       calcResEl.textContent = "Indica o número de repetições.";
-      return;
-    }
-    if (!dataRm[ex]) {
-      calcResEl.textContent = "Para calcular percentagens de carga, regista primeiro o 1RM desse exercício.";
       return;
     }
 
@@ -1236,6 +1249,7 @@ if (calcBtn) {
       `a carga sugerida é entre ${(minP*100).toFixed(0)}% e ${(maxP*100).toFixed(0)}% do 1RM: ` +
       `${formatKg(minLoad)} – ${formatKg(maxLoad)}. Ajusta ligeiramente para bater certo com os discos que tens.`;
 
+    // Se o utilizador definir um peso objetivo e/ou prazo, acrescentamos orientação extra
     if (targetKgVal && !isNaN(targetKgVal)) {
       if (targetKgVal <= oneRmVal) {
         msg += `\n\nO peso objetivo (${formatKg(targetKgVal)}) está abaixo ou muito próximo do teu 1RM atual. Foca-te em consolidar técnica, controlar o volume e manter consistência semanal.`;
@@ -1624,7 +1638,6 @@ function renderTreinos() {
     if (treinoSugestaoEl) treinoSugestaoEl.textContent = "";
     renderWeeklyHistory();
     renderDailyHistory();
-    renderPerformance();
     return;
   }
 
@@ -1722,7 +1735,6 @@ function renderTreinos() {
 
   renderWeeklyHistory();
   renderDailyHistory();
-  renderPerformance();
 }
 
 if (treinoAddBtn) {
@@ -1903,225 +1915,6 @@ if (guiaSearch) {
   guiaSearch.addEventListener("input", renderGuiaExercicios);
 }
 
-/* ===== PERFORMANCE (WOD / 1RM / METCON) ===== */
-function parseTimeToSeconds(str) {
-  if (!str) return null;
-  const clean = String(str).trim();
-  const parts = clean.split(":");
-  if (parts.length < 2 || parts.length > 3) return null;
-
-  const nums = parts.map(p => parseInt(p, 10));
-  if (nums.some(n => isNaN(n))) return null;
-
-  let h = 0, m = 0, s = 0;
-  if (nums.length === 2) {
-    m = nums[0];
-    s = nums[1];
-  } else {
-    h = nums[0];
-    m = nums[1];
-    s = nums[2];
-  }
-
-  if (m < 0 || s < 0 || s >= 60) return null;
-  return h * 3600 + m * 60 + s;
-}
-
-function formatSecondsToTime(totalSeconds) {
-  if (totalSeconds == null || isNaN(totalSeconds)) return "";
-  const t = Math.round(totalSeconds);
-  const h = Math.floor(t / 3600);
-  const m = Math.floor((t % 3600) / 60);
-  const s = t % 60;
-  const mm = String(m).padStart(2, "0");
-  const ss = String(s).padStart(2, "0");
-  if (h > 0) {
-    return `${h}:${mm}:${ss}`;
-  }
-  return `${m}:${ss}`;
-}
-
-function renderPerformance() {
-  /* WOD – dias com mais carga */
-  if (perfWodBody) {
-    perfWodBody.innerHTML = "";
-    if (!treinos.length) {
-      const tr = document.createElement("tr");
-      const td = document.createElement("td");
-      td.colSpan = 4;
-      td.textContent = "Ainda não existem WOD registados.";
-      tr.appendChild(td);
-      perfWodBody.appendChild(tr);
-    } else {
-      const map = {};
-      treinos.forEach(t => {
-        if (!t.date) return;
-        if (!map[t.date]) {
-          map[t.date] = {
-            cargaTotal: 0,
-            numEx: 0,
-            melhorTempoMetconSeg: null
-          };
-        }
-        map[t.date].cargaTotal += t.carga || 0;
-        map[t.date].numEx += 1;
-
-        if (t.tipo === "metcon" && t.tempo) {
-          const sec = parseTimeToSeconds(t.tempo);
-          if (sec != null) {
-            if (map[t.date].melhorTempoMetconSeg == null || sec < map[t.date].melhorTempoMetconSeg) {
-              map[t.date].melhorTempoMetconSeg = sec;
-            }
-          }
-        }
-      });
-
-      const rows = Object.keys(map).map(date => ({
-        date,
-        cargaTotal: map[date].cargaTotal,
-        numEx: map[date].numEx,
-        melhorTempoMetconSeg: map[date].melhorTempoMetconSeg
-      }));
-
-      rows.sort((a, b) => (b.cargaTotal || 0) - (a.cargaTotal || 0));
-
-      rows.slice(0, 10).forEach(r => {
-        const tr = document.createElement("tr");
-
-        const tdData = document.createElement("td");
-        tdData.textContent = r.date;
-        tr.appendChild(tdData);
-
-        const tdCarga = document.createElement("td");
-        tdCarga.textContent = formatKg(r.cargaTotal);
-        tr.appendChild(tdCarga);
-
-        const tdNum = document.createElement("td");
-        tdNum.textContent = r.numEx.toString();
-        tr.appendChild(tdNum);
-
-        const tdTempo = document.createElement("td");
-        tdTempo.textContent = r.melhorTempoMetconSeg != null
-          ? formatSecondsToTime(r.melhorTempoMetconSeg)
-          : "-";
-        tr.appendChild(tdTempo);
-
-        perfWodBody.appendChild(tr);
-      });
-
-      if (!perfWodBody.hasChildNodes()) {
-        const tr = document.createElement("tr");
-        const td = document.createElement("td");
-        td.colSpan = 4;
-        td.textContent = "Sem dados suficientes para gerar ranking.";
-        tr.appendChild(td);
-        perfWodBody.appendChild(tr);
-      }
-    }
-  }
-
-  /* Top 1RM */
-  if (perf1rmBody) {
-    perf1rmBody.innerHTML = "";
-    const nomes = Object.keys(dataRm || {});
-    if (!nomes.length) {
-      const tr = document.createElement("tr");
-      const td = document.createElement("td");
-      td.colSpan = 3;
-      td.textContent = "Ainda não registaste nenhum 1RM.";
-      tr.appendChild(td);
-      perf1rmBody.appendChild(tr);
-    } else {
-      const pesoCorporal = profile && profile.peso ? profile.peso : null;
-      const rows = nomes.map(name => ({
-        name,
-        value: dataRm[name]
-      })).sort((a, b) => (b.value || 0) - (a.value || 0));
-
-      rows.slice(0, 10).forEach(r => {
-        const tr = document.createElement("tr");
-
-        const tdName = document.createElement("td");
-        const label = MOVES_PT[r.name] ? `${r.name} – ${MOVES_PT[r.name]}` : r.name;
-        tdName.textContent = label;
-        tr.appendChild(tdName);
-
-        const tdVal = document.createElement("td");
-        tdVal.textContent = formatKg(r.value);
-        tr.appendChild(tdVal);
-
-        const tdRel = document.createElement("td");
-        if (pesoCorporal) {
-          const rel = r.value / pesoCorporal;
-          tdRel.textContent = rel.toFixed(2) + "x";
-        } else {
-          tdRel.textContent = "-";
-        }
-        tr.appendChild(tdRel);
-
-        perf1rmBody.appendChild(tr);
-      });
-    }
-  }
-
-  /* Metcon – melhores tempos (tipo = 'metcon') */
-  if (perfMetconBody) {
-    perfMetconBody.innerHTML = "";
-    const metconMap = {};
-
-    treinos.forEach(t => {
-      if (t.tipo !== "metcon" || !t.tempo) return;
-      const sec = parseTimeToSeconds(t.tempo);
-      if (sec == null) return;
-      const key = t.ex || "Metcon";
-      const existing = metconMap[key];
-      if (!existing || sec < existing.tempoSeg) {
-        metconMap[key] = {
-          exercicio: key,
-          tempoSeg: sec,
-          tempoStr: t.tempo,
-          date: t.date || "",
-          carga: t.carga || 0
-        };
-      }
-    });
-
-    const rows = Object.keys(metconMap).map(k => metconMap[k]).sort((a, b) => a.tempoSeg - b.tempoSeg);
-
-    if (!rows.length) {
-      const tr = document.createElement("tr");
-      const td = document.createElement("td");
-      td.colSpan = 4;
-      td.textContent = "Ainda não registaste metcons com tempo em formato mm:ss.";
-      tr.appendChild(td);
-      perfMetconBody.appendChild(tr);
-    } else {
-      rows.slice(0, 10).forEach(r => {
-        const tr = document.createElement("tr");
-
-        const tdEx = document.createElement("td");
-        const label = MOVES_PT[r.exercicio] ? `${r.exercicio} – ${MOVES_PT[r.exercicio]}` : r.exercicio;
-        tdEx.textContent = label;
-        tr.appendChild(tdEx);
-
-        const tdTempo = document.createElement("td");
-        tdTempo.textContent = r.tempoStr;
-        tr.appendChild(tdTempo);
-
-        const tdData = document.createElement("td");
-        tdData.textContent = r.date;
-        tr.appendChild(tdData);
-
-        const tdCarga = document.createElement("td");
-        tdCarga.textContent = r.carga ? formatKg(r.carga) : "-";
-        tr.appendChild(tdCarga);
-
-        perfMetconBody.appendChild(tr);
-      });
-    }
-  }
-}
-
 /* TABS PRINCIPAIS */
 document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -2157,7 +1950,6 @@ if (treinoDataEl && !treinoDataEl.value) {
 renderTreinos();
 updateBackupInfo();
 renderGuiaExercicios();
-renderPerformance();
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
