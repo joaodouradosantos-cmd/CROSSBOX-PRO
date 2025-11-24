@@ -21,12 +21,34 @@
     }
 
     body {
-      background: linear-gradient(to bottom, #e0e0e0 90%, #d4d4d4 100%);
-      color: #111;
-      display: flex;
-      justify-content: center;
-      min-height: 100vh;
-    }
+  background:
+    /* RASGOS CASTANHOS MAIS FORTES */
+    repeating-linear-gradient(
+      135deg,
+      rgba(60, 74, 40, 1) 0px,
+      rgba(60, 74, 40, 1) 110px,
+      rgba(80, 58, 34, 0.55) 130px,
+      rgba(80, 58, 34, 0.55) 155px
+    ),
+
+    /* MANCHAS PROFUNDAS EM CAMADAS */
+    repeating-linear-gradient(
+      25deg,
+      rgba(35, 25, 15, 0.45) 0px,
+      rgba(35, 25, 15, 0.45) 60px,
+      rgba(80, 62, 34, 0.35) 80px,
+      rgba(80, 62, 34, 0.35) 110px
+    ),
+
+    /* FUNDO PRINCIPAL VERDE TROPA */
+    linear-gradient(to bottom, #5e6b3a 0%, #3c4a28 100%);
+
+  color: #111;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
 
     .app {
       width: 100%;
@@ -2168,6 +2190,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
