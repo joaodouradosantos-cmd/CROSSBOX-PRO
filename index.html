@@ -82,15 +82,15 @@
     }
 
     .card {
-      background: #ffffff;
+      background: #f3f3f3;          /* antes #ffffff */
       border-radius: 14px;
       padding: 14px;
       margin-bottom: 16px;
-      border: 1px solid #e0e0e0;
+      border: 1px solid #d0d0d0;    /* antes #e0e0e0 */
       box-shadow: 0 4px 10px rgba(0,0,0,0.04);
     }
 
-    /* PERFIL SEM “CARTÃO” BRANCO */
+    /* PERFIL SEM “CARTÃO” */
     #perfil.card {
       background: transparent;
       border: none;
@@ -127,9 +127,9 @@
     input, select, textarea, button {
       padding: 10px;
       border-radius: 10px;
-      background: #ffffff;
+      background: #f9f9f9;          /* antes #ffffff */
       color: #111;
-      border: 1px solid #cccccc;
+      border: 1px solid #bbbbbb;    /* antes #cccccc */
       font-size: 0.9rem;
       box-sizing: border-box;
       font-family: inherit;
@@ -262,7 +262,7 @@
     }
 
     th {
-      background: #f9f9f9;
+      background: #ececec;          /* antes #f9f9f9 */
       color: #333;
       position: sticky;
       top: 0;
@@ -406,7 +406,7 @@
         </button>
         <button class="btn-secondary opt-btn" data-target="opt-calc">
           <span class="opt-emoji">🧮</span>
-          <span>Melhoramento</span>
+          <span>Objectivo</span>
         </button>
         <button class="btn-secondary opt-btn" data-target="opt-graficos">
           <span class="opt-emoji">📈</span>
@@ -443,6 +443,7 @@
           <div class="field">
             <label>Exercício</label>
             <select id="treinoExercicio"></select>
+            <input id="treinoExercicioSearch" type="text" placeholder="Procurar exercício..." style="margin-top:4px;" />
           </div>
         </div>
 
@@ -479,6 +480,10 @@
             <label>Tempo (opcional)</label>
             <input id="treinoTempo" type="text" placeholder="Ex.: 12:35, 20', AMRAP 10'..." />
           </div>
+          <div class="field">
+            <label>Distância (km – opcional)</label>
+            <input id="treinoKm" type="number" step="0.01" min="0" />
+          </div>
         </div>
 
         <button class="btn-primary" id="treinoAdd">Adicionar ao WOD</button>
@@ -501,6 +506,7 @@
                 <th>Peso</th>
                 <th>% 1RM</th>
                 <th>Tempo</th>
+                <th>Km</th>
                 <th>Carga</th>
                 <th></th>
               </tr>
@@ -529,6 +535,7 @@
                   <th>Peso</th>
                   <th>% 1RM</th>
                   <th>Tempo</th>
+                  <th>Km</th>
                   <th>Carga</th>
                   <th></th>
                 </tr>
@@ -540,10 +547,10 @@
       </div>
     </section>
 
-    <!-- MELHORAMENTO -->
+    <!-- OBJECTIVO -->
     <section id="opt-calc" class="option-section">
       <div class="card">
-        <h3 style="margin-top:0; margin-bottom:8px;">🧮 Melhoramento</h3>
+        <h3 style="margin-top:0; margin-bottom:8px;">🧮 Objectivo</h3>
 
         <div class="form-row">
           <div class="field">
@@ -615,6 +622,7 @@
               <tr>
                 <th>Data</th>
                 <th>Carga total</th>
+                <th>Km totais</th>
                 <th>N.º exercícios</th>
                 <th>Melhor tempo metcon</th>
               </tr>
@@ -645,6 +653,7 @@
                 <th>Exercício</th>
                 <th>Melhor tempo</th>
                 <th>Data</th>
+                <th>Km</th>
                 <th>Carga aprox.</th>
               </tr>
             </thead>
@@ -932,7 +941,7 @@ const EXER_INFO = [
   { en: "Shrug", pt: "Encolhimento de ombros", descricao: "Elevar os ombros em direção às orelhas segurando barra ou halteres, focando trapézios." }
 ];
 
-/* Lista completa de exercícios em inglês (para WOD, Melhoramento, Guia) */
+/* Lista completa de exercícios em inglês (para WOD, Objectivo, Guia) */
 const ALL_EXERCISES = Array.from(new Set(EXER_INFO.map(ex => ex.en))).sort();
 
 /* Completar MOVES_PT com todos os exercícios do guia */
@@ -958,11 +967,13 @@ let treinos = JSON.parse(localStorage.getItem(STORAGE_TREINO) || "[]");
 
 const treinoDataEl = document.getElementById("treinoData");
 const treinoExEl = document.getElementById("treinoExercicio");
+const treinoExSearchEl = document.getElementById("treinoExercicioSearch");
 const treinoTipoEl = document.getElementById("treinoTipo");
 const treinoRondasEl = document.getElementById("treinoRondas");
 const treinoRepsEl = document.getElementById("treinoReps");
 const treinoPesoEl = document.getElementById("treinoPeso");
 const treinoTempoEl = document.getElementById("treinoTempo");
+const treinoKmEl = document.getElementById("treinoKm");
 const treinoAddBtn = document.getElementById("treinoAdd");
 const treinoBody = document.getElementById("treinoBody");
 const treinoResumoEl = document.getElementById("treinoResumo");
@@ -972,7 +983,7 @@ const toggleDailyHistoryBtn = document.getElementById("toggleDailyHistory");
 const dailyHistorySection = document.getElementById("dailyHistorySection");
 const dailyHistoryBody = document.getElementById("dailyHistoryBody");
 
-/* MELHORAMENTO */
+/* OBJECTIVO */
 const calcExEl = document.getElementById("calcExercicio");
 const calcRepsEl = document.getElementById("calcReps");
 const calcObjEl = document.getElementById("calcObjetivo");
@@ -1005,6 +1016,11 @@ function formatKg(v) {
   return v.toFixed(1).replace(".", ",") + " kg";
 }
 
+function formatKm(v) {
+  if (!v || isNaN(v)) return "";
+  return v.toFixed(2).replace(".", ",") + " km";
+}
+
 /* Selects – 1RM só com MOVES (peso); WOD com ALL_EXERCISES */
 function initSelects() {
   if (sel) {
@@ -1022,13 +1038,38 @@ function initSelects() {
     ALL_EXERCISES.forEach(m => {
       const opt = document.createElement("option");
       opt.value = m;
-      opt.textContent = m;
+      const label = MOVES_PT[m] ? `${m} – ${MOVES_PT[m]}` : m;
+      opt.textContent = label;
       treinoExEl.appendChild(opt);
     });
   }
 }
 
-/* Melhoramento – lista completa de exercícios; cálculo só funciona se tiver 1RM */
+/* Filtro de exercícios na WOD */
+function filterTreinoExOptions() {
+  if (!treinoExEl) return;
+  const search = (treinoExSearchEl?.value || "").toLowerCase().trim();
+  const currentVal = treinoExEl.value;
+
+  treinoExEl.innerHTML = "";
+  ALL_EXERCISES.forEach(m => {
+    const label = MOVES_PT[m] ? `${m} – ${MOVES_PT[m]}` : m;
+    const texto = label.toLowerCase();
+    if (search && !texto.includes(search)) return;
+    const opt = document.createElement("option");
+    opt.value = m;
+    opt.textContent = label;
+    treinoExEl.appendChild(opt);
+  });
+
+  if (currentVal && Array.from(treinoExEl.options).some(o => o.value === currentVal)) {
+    treinoExEl.value = currentVal;
+  } else if (treinoExEl.options.length > 0) {
+    treinoExEl.selectedIndex = 0;
+  }
+}
+
+/* Objectivo – lista completa de exercícios; cálculo só funciona se tiver 1RM */
 function refreshCalcExOptions() {
   if (!calcExEl) return;
   calcExEl.innerHTML = "";
@@ -1174,7 +1215,7 @@ document.getElementById("addBtn").addEventListener("click", () => {
   renderRm();
 });
 
-/* ===== MELHORAMENTO (CALCULADORA) ===== */
+/* ===== OBJECTIVO (CALCULADORA) ===== */
 function getPercentRange(reps, objetivo) {
   let minP, maxP;
 
@@ -1396,6 +1437,7 @@ function addTreinoEntry() {
   const reps = parseInt(treinoRepsEl.value || "0", 10);
   const peso = parseFloat(treinoPesoEl.value || "0");
   const tempo = treinoTempoEl.value.trim();
+  const km = parseFloat(treinoKmEl.value || "0");
 
   if (!ex || !reps || reps <= 0) return;
 
@@ -1413,6 +1455,7 @@ function addTreinoEntry() {
     reps,
     peso,
     tempo,
+    km: isNaN(km) ? 0 : km,
     carga,
     perc1rm
   };
@@ -1481,6 +1524,10 @@ function renderDailyHistory() {
     const tdTempo = document.createElement("td");
     tdTempo.textContent = t.tempo || "";
     tr.appendChild(tdTempo);
+
+    const tdKm = document.createElement("td");
+    tdKm.textContent = formatKm(t.km || 0);
+    tr.appendChild(tdKm);
 
     const tdCarga = document.createElement("td");
     tdCarga.textContent = t.carga ? formatKg(t.carga) : "";
@@ -1679,6 +1726,10 @@ function renderTreinos() {
     const tdTempo = document.createElement("td");
     tdTempo.textContent = e.tempo || "";
     tr.appendChild(tdTempo);
+
+    const tdKm = document.createElement("td");
+    tdKm.textContent = formatKm(e.km || 0);
+    tr.appendChild(tdKm);
 
     const tdCarga = document.createElement("td");
     tdCarga.textContent = e.carga ? formatKg(e.carga) : "";
@@ -1954,7 +2005,7 @@ function renderPerformance() {
     if (!treinos.length) {
       const tr = document.createElement("tr");
       const td = document.createElement("td");
-      td.colSpan = 4;
+      td.colSpan = 5;
       td.textContent = "Ainda não existem WOD registados.";
       tr.appendChild(td);
       perfWodBody.appendChild(tr);
@@ -1965,11 +2016,13 @@ function renderPerformance() {
         if (!map[t.date]) {
           map[t.date] = {
             cargaTotal: 0,
+            kmTotal: 0,
             numEx: 0,
             melhorTempoMetconSeg: null
           };
         }
         map[t.date].cargaTotal += t.carga || 0;
+        map[t.date].kmTotal += t.km || 0;
         map[t.date].numEx += 1;
 
         if (t.tipo === "metcon" && t.tempo) {
@@ -1985,6 +2038,7 @@ function renderPerformance() {
       const rows = Object.keys(map).map(date => ({
         date,
         cargaTotal: map[date].cargaTotal,
+        kmTotal: map[date].kmTotal,
         numEx: map[date].numEx,
         melhorTempoMetconSeg: map[date].melhorTempoMetconSeg
       }));
@@ -2002,6 +2056,10 @@ function renderPerformance() {
         tdCarga.textContent = formatKg(r.cargaTotal);
         tr.appendChild(tdCarga);
 
+        const tdKm = document.createElement("td");
+        tdKm.textContent = formatKm(r.kmTotal || 0) || "-";
+        tr.appendChild(tdKm);
+
         const tdNum = document.createElement("td");
         tdNum.textContent = r.numEx.toString();
         tr.appendChild(tdNum);
@@ -2018,7 +2076,7 @@ function renderPerformance() {
       if (!perfWodBody.hasChildNodes()) {
         const tr = document.createElement("tr");
         const td = document.createElement("td");
-        td.colSpan = 4;
+        td.colSpan = 5;
         td.textContent = "Sem dados suficientes para gerar ranking.";
         tr.appendChild(td);
         perfWodBody.appendChild(tr);
@@ -2085,8 +2143,9 @@ function renderPerformance() {
         metconMap[key] = {
           exercicio: key,
           tempoSeg: sec,
-          tempoStr: t.empo,
+          tempoStr: t.tempo,
           date: t.date || "",
+          km: t.km || 0,
           carga: t.carga || 0
         };
       }
@@ -2097,7 +2156,7 @@ function renderPerformance() {
     if (!rows.length) {
       const tr = document.createElement("tr");
       const td = document.createElement("td");
-      td.colSpan = 4;
+      td.colSpan = 5;
       td.textContent = "Ainda não registaste metcons com tempo em formato mm:ss.";
       tr.appendChild(td);
       perfMetconBody.appendChild(tr);
@@ -2117,6 +2176,10 @@ function renderPerformance() {
         const tdData = document.createElement("td");
         tdData.textContent = r.date;
         tr.appendChild(tdData);
+
+        const tdKm = document.createElement("td");
+        tdKm.textContent = formatKm(r.km || 0) || "-";
+        tr.appendChild(tdKm);
 
         const tdCarga = document.createElement("td");
         tdCarga.textContent = r.carga ? formatKg(r.carga) : "-";
@@ -2156,6 +2219,11 @@ loadProfile();
 renderRm();
 refreshCalcExOptions();
 refreshGraphExerciseOptions();
+
+if (treinoExSearchEl) {
+  treinoExSearchEl.addEventListener("input", filterTreinoExOptions);
+  filterTreinoExOptions();
+}
 
 if (treinoDataEl && !treinoDataEl.value) {
   treinoDataEl.value = new Date().toISOString().slice(0, 10);
