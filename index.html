@@ -22,72 +22,81 @@
 
     body {
       background:
-        /* RASGOS CASTANHOS MAIS FORTES */
+        /* RISCOS ESCUROS TIPO ARRANHÕES */
         repeating-linear-gradient(
-          135deg,
-          rgba(60, 74, 40, 1) 0px,
-          rgba(60, 74, 40, 1) 110px,
-          rgba(80, 58, 34, 0.55) 130px,
-          rgba(80, 58, 34, 0.55) 155px
+          145deg,
+          rgba(18, 22, 15, 0.95) 0px,
+          rgba(18, 22, 15, 0.95) 120px,
+          rgba(12, 13, 10, 1) 121px,
+          rgba(12, 13, 10, 1) 132px
         ),
-
-        /* MANCHAS PROFUNDAS EM CAMADAS */
-        repeating-linear-gradient(
-          25deg,
-          rgba(35, 25, 15, 0.45) 0px,
-          rgba(35, 25, 15, 0.45) 60px,
-          rgba(80, 62, 34, 0.35) 80px,
-          rgba(80, 62, 34, 0.35) 110px
-        ),
-
-        /* FUNDO PRINCIPAL VERDE TROPA */
-        linear-gradient(to bottom, #5e6b3a 0%, #3c4a28 100%);
+        /* MANCHAS OLIVA / LAMA */
+        radial-gradient(circle at 12% 0%, rgba(116, 128, 76, 0.55) 0, transparent 55%),
+        radial-gradient(circle at 85% 100%, rgba(140, 110, 60, 0.45) 0, transparent 60%),
+        /* FUNDO PRINCIPAL VERDE TROPA ESCURO */
+        linear-gradient(to bottom, #4f5b32 0%, #262f1c 40%, #141710 100%);
 
       color: #111;
       display: flex;
       justify-content: center;
       min-height: 100vh;
+      background-attachment: fixed;
     }
 
     .app {
       width: 100%;
       max-width: 900px;
-      padding: 16px;
+      padding: 8px;
       box-sizing: border-box;
     }
 
     header {
       text-align: center;
-      margin-bottom: 12px;
+      margin-bottom: 6px;
       position: relative;
     }
 
     #appLogo {
-      max-width: 280px;
+      max-width: 340px;
       height: auto;
       display: block;
-      margin: 0 auto 2px auto;
+      margin: 0 auto 0px auto;
     }
 
     .subtitle {
-      font-size: 0.88rem;
-      color: #d6d6d6;
+      font-size: 0.90rem;
+      margin-top: -10px;
+      color: #e0e5d8;
       cursor: pointer;
       text-decoration: none;
-      transition: text-decoration 0.15s ease;
+      text-shadow: 0 2px 3px rgba(0, 0, 0, 0.6);
+      letter-spacing: 0.03em;
+      transition: text-decoration 0.15s ease, transform 0.1s ease;
     }
 
     .subtitle:hover {
       text-decoration: underline;
+      transform: translateY(-1px);
     }
 
     .card {
-      background: #f2f2f2;
+      background: #e1e1e1;
+      background-image:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(180, 180, 180, 0.12)),
+        repeating-linear-gradient(
+          135deg,
+          rgba(0, 0, 0, 0.09) 0px,
+          rgba(0, 0, 0, 0.09) 1px,
+          transparent 1px,
+          transparent 4px
+        );
       border-radius: 14px;
       padding: 14px;
       margin-bottom: 16px;
-      border: 1px solid #d4d4d4;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+      border: 1px solid #9d9d9d;
+      box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.35),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.06);
     }
 
     /* PERFIL SEM “CARTÃO” VISÍVEL */
@@ -121,67 +130,137 @@
 
     label {
       font-size: 0.8rem;
-      color: #444;
+      color: #2b2b2b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
-    input, select, textarea, button {
+    input,
+    select,
+    textarea,
+    button {
       padding: 10px;
       border-radius: 10px;
       background: #f8f8f8;
       color: #111;
-      border: 1px solid #c7c7c7;
+      border: 1px solid #b7b7b7;
       font-size: 0.9rem;
       box-sizing: border-box;
       font-family: inherit;
     }
 
-    input:focus, select:focus, textarea:focus {
+    input:focus,
+    select:focus,
+    textarea:focus {
       outline: none;
       border-color: #22c55e;
-      box-shadow: 0 0 0 1px rgba(34,197,94,0.2);
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.25);
     }
 
+    /* BOTÃO PRINCIPAL – ESTILO GUERRA SUJA */
     .btn-primary {
-      background: #22c55e;
-      border-color: #22c55e;
-      color: #ffffff;
-      font-weight: 600;
+      background:
+        linear-gradient(145deg, #1f7b3a, #0f4220);
+      border: 1px solid #050806;
+      color: #f4f4f4;
+      font-weight: 700;
       cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      box-shadow:
+        0 3px 0 #050806,
+        inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+      position: relative;
+      overflow: hidden;
     }
 
+    .btn-primary::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.08) 0px,
+          rgba(255, 255, 255, 0.08) 1px,
+          transparent 1px,
+          transparent 4px
+        );
+      mix-blend-mode: soft-light;
+      opacity: 0.32;
+      pointer-events: none;
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+      box-shadow:
+        0 1px 0 #050806,
+        inset 0 0 0 1px rgba(0, 0, 0, 0.3);
+    }
+
+    /* BOTÕES SECUNDÁRIOS – RISCADOS / BATTLE WORN */
     .btn-secondary {
       padding: 8px 10px;
       border-radius: 999px;
-      border: 1px solid #c7c7c7;
-      background: #e5e5e5;
-      color: #222;
+      border: 1px solid #303030;
+      background:
+        linear-gradient(145deg, #3b3f3a, #202320);
+      color: #f2f2f2;
       font-size: 0.8rem;
       cursor: pointer;
       white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      box-shadow:
+        0 3px 0 #050807,
+        inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-secondary::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.07) 0px,
+          rgba(255, 255, 255, 0.07) 1px,
+          transparent 1px,
+          transparent 5px
+        );
+      mix-blend-mode: soft-light;
+      opacity: 0.28;
+      pointer-events: none;
     }
 
     .btn-secondary:active {
-      transform: scale(0.97);
+      transform: translateY(1px);
+      box-shadow: 0 1px 0 #050807;
     }
 
+    /* BOTÃO APAGAR – MANTIDO MAS MAIS “BRUTO” */
     .btn-delete {
       padding: 2px 4px;
       border-radius: 999px;
-      border: 1px solid #e5e5e5;
-      background: #f97373;
+      border: 1px solid #3b0505;
+      background:
+        linear-gradient(145deg, #b93333, #7a1515);
       color: #ffffff;
       font-size: 0.75rem;
       cursor: pointer;
+      box-shadow: 0 2px 0 #2a0202;
     }
 
     .btn-delete:hover {
-      background: #ef4444;
+      background: linear-gradient(145deg, #ef4444, #b91c1c);
     }
 
     .helper-text {
       margin-top: 4px;
       font-size: 0.8rem;
-      color: #444;
+      color: #222;
     }
 
     .tabs {
@@ -194,27 +273,57 @@
       flex: 1;
       padding: 10px 0;
       border-radius: 999px;
-      border: 1px solid #c7c7c7;
-      background: #e5e5e5;
-      color: #222;
+      border: 1px solid #202320;
+      background:
+        linear-gradient(145deg, #32372f, #21241f);
+      color: #f1f1f1;
       cursor: pointer;
       font-size: 0.9rem;
-      box-shadow: 0 4px 0 #b3b3b3;
-      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease, border-color 0.1s ease, color 0.1s ease;
+      box-shadow:
+        0 4px 0 #050806,
+        inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+      transition:
+        transform 0.1s ease,
+        box-shadow 0.1s ease,
+        background 0.1s ease,
+        border-color 0.1s ease,
+        color 0.1s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tab-btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.08) 0px,
+          rgba(255, 255, 255, 0.08) 1px,
+          transparent 1px,
+          transparent 4px
+        );
+      mix-blend-mode: soft-light;
+      opacity: 0.3;
+      pointer-events: none;
     }
 
     .tab-btn:hover {
       transform: translateY(-1px);
-      box-shadow: 0 5px 0 #aaaaaa;
+      box-shadow: 0 5px 0 #040605;
     }
 
     .tab-btn.active {
-      background: #22c55e;
-      border-color: #22c55e;
+      background:
+        linear-gradient(145deg, #1f7b3a, #0f4220);
+      border-color: #0b2614;
       color: #ffffff;
-      font-weight: 600;
+      font-weight: 700;
       transform: translateY(2px);
-      box-shadow: 0 2px 0 #15803d;
+      box-shadow: 0 2px 0 #041207;
     }
 
     .section { display: none; }
@@ -254,7 +363,8 @@
       color: #111;
     }
 
-    th, td {
+    th,
+    td {
       padding: 6px;
       text-align: center;
       border-bottom: 1px solid #d9d9d9;
@@ -262,8 +372,8 @@
     }
 
     th {
-      background: #eaeaea;
-      color: #333;
+      background: #d5d5d5;
+      color: #222;
       position: sticky;
       top: 0;
       z-index: 1;
@@ -273,14 +383,14 @@
       max-height: 260px;
       overflow: auto;
       border-radius: 10px;
-      border: 1px solid #d4d4d4;
-      background: #f5f5f5;
+      border: 1px solid #b5b5b5;
+      background: #f0f0f0;
     }
 
     #backupInfo {
       margin-top: 6px;
       font-size: 0.75rem;
-      color: #555;
+      color: #222;
     }
   </style>
 </head>
@@ -375,7 +485,7 @@
               <th>1RM</th>
               <th>25%</th>
               <th>30%</th>
-              <th>35%</th>
+              <th>35%</th</th>
               <th>40%</th>
               <th>50%</th>
               <th>60%</th>
@@ -488,25 +598,8 @@
         </div>
 
         <button class="btn-primary" id="treinoAdd">Adicionar ao WOD</button>
-
-        <!-- STRAVA IMPORT -->
-        <button class="btn-secondary" id="stravaToggle" style="margin-left:6px; margin-top:6px;">
-          Colar dados Strava
-        </button>
-
-        <div id="stravaImport" style="display:none; margin-top:8px;">
-          <textarea id="stravaRaw" rows="3" style="width:100%;"
-            placeholder="Cola aqui o texto da atividade do Strava (ex.: Corrida · 5,37 km · 24:12)..."></textarea>
-          <button class="btn-secondary" id="stravaParseBtn" style="margin-top:6px;">
-            Preencher tempo e distância
-          </button>
-          <div class="helper-text">
-            A app tenta identificar automaticamente a distância em km e o tempo (mm:ss ou hh:mm:ss).
-          </div>
-        </div>
-
         <div class="helper-text">
-          A carga de cada exercício (kg) é calculada como: peso × repetições × rondas.  
+          A carga de cada exercício (kg) é calculada como: peso × repetições × rondas.
           A distância em metcon é somada à parte, em km.
         </div>
       </div>
@@ -1001,12 +1094,6 @@ const toggleDailyHistoryBtn = document.getElementById("toggleDailyHistory");
 const dailyHistorySection = document.getElementById("dailyHistorySection");
 const dailyHistoryBody = document.getElementById("dailyHistoryBody");
 
-/* STRAVA */
-const stravaToggleBtn = document.getElementById("stravaToggle");
-const stravaImportSection = document.getElementById("stravaImport");
-const stravaRawEl = document.getElementById("stravaRaw");
-const stravaParseBtn = document.getElementById("stravaParseBtn");
-
 /* OBJETIVO */
 const calcExEl = document.getElementById("calcExercicio");
 const calcRepsEl = document.getElementById("calcReps");
@@ -1042,36 +1129,6 @@ function formatKg(v) {
 
 function formatKm(v) {
   return v.toFixed(2).replace(".", ",") + " km";
-}
-
-/* STRAVA – parser de texto */
-function parseStravaText(text) {
-  const t = (text || "").replace(/\s+/g, " ").trim();
-  if (!t) return { distanciaKm: null, tempoStr: null };
-
-  let distanciaKm = null;
-  const distMatch = t.match(/(\d+(?:[.,]\d+)?)\s*km/i);
-  if (distMatch) {
-    distanciaKm = parseFloat(distMatch[1].replace(",", "."));
-  }
-
-  let timeRegex = /(\d{1,2}):(\d{2})(?::(\d{2}))?/g;
-  let best = null;
-  let match;
-  while ((match = timeRegex.exec(t)) !== null) {
-    let h = 0, m = 0, s = 0;
-    if (match[3] != null) { h = +match[1]; m = +match[2]; s = +match[3]; }
-    else { m = +match[1]; s = +match[2]; }
-    const total = h*3600 + m*60 + s;
-    if (best === null || total > best.total) {
-      best = { total, str: match[0] };
-    }
-  }
-
-  return {
-    distanciaKm,
-    tempoStr: best ? best.str : null
-  };
 }
 
 /* Selects – 1RM só com MOVES (peso); WOD com ALL_EXERCISES */
@@ -1255,42 +1312,6 @@ document.getElementById("addBtn").addEventListener("click", () => {
   registerBackupMeta("1RM atualizado");
   renderRm();
 });
-
-/* STRAVA – abrir/fechar caixa */
-if (stravaToggleBtn && stravaImportSection) {
-  stravaToggleBtn.addEventListener("click", () => {
-    stravaImportSection.style.display =
-      stravaImportSection.style.display === "block" ? "none" : "block";
-  });
-}
-
-/* STRAVA – analisar texto e preencher os campos */
-if (stravaParseBtn) {
-  stravaParseBtn.addEventListener("click", () => {
-    const raw = stravaRawEl.value || "";
-    const { distanciaKm, tempoStr } = parseStravaText(raw);
-
-    let done = false;
-
-    if (tempoStr && treinoTempoEl) {
-      treinoTempoEl.value = tempoStr;
-      done = true;
-    }
-    if (distanciaKm && treinoDistEl) {
-      treinoDistEl.value = distanciaKm.toString();
-      done = true;
-    }
-
-    if (!treinoTipoEl.value) treinoTipoEl.value = "metcon";
-    if (!treinoExEl.value) treinoExEl.value = "Running";
-
-    if (done) {
-      alert("Dados preenchidos a partir do texto Strava.");
-    } else {
-      alert("Não consegui identificar tempo ou distância no texto.");
-    }
-  });
-}
 
 /* ===== OBJETIVO (CALCULADORA) ===== */
 function getPercentRange(reps, objetivo) {
@@ -2324,3 +2345,8 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
+
+
+
+
