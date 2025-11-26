@@ -142,7 +142,7 @@
       padding: 10px;
       border-radius: 10px;
       background: #f8f8f8;
-      color: #111;
+      color: #222;
       border: 1px solid #b7b7b7;
       font-size: 0.9rem;
       box-sizing: border-box;
@@ -399,13 +399,14 @@
       background-color: #e1e1e1 !important;
     }
 
-    /* BOTÃO 📅 RESERVAS NO CANTO SUPERIOR DIREITO */
-    .reservas-btn {
+    /* BOTÃO RESERVAS NO CANTO SUPERIOR DIREITO */
+    #reservasBtn {
       position: absolute;
       top: 4px;
-      right: 8px;
-      font-size: 0.7rem;
+      right: 4px;
       padding: 4px 8px;
+      font-size: 0.7rem;
+      z-index: 5;
     }
   </style>
 </head>
@@ -415,7 +416,7 @@
   <header>
     <img id="appLogo" src="imagens/crossbox_logo.png" alt="Cross Moita Logo">
     <div class="subtitle" id="appSubtitle">Registo de treinos</div>
-    <button id="reservasBtn" class="btn-secondary reservas-btn">📅 Reservas</button>
+    <button id="reservasBtn" class="btn-secondary">Reservas</button>
   </header>
 
   <!-- PERFIL -->
@@ -467,13 +468,13 @@
     </div>
   </section>
 
-  <!-- SECÇÃO RESERVAS (MOSTRA/ESCONDE NO BOTÃO 📅) -->
-  <section id="sec-reservas" class="card" style="display:none; margin-top:4px;">
-    <h3 style="margin-top:0; margin-bottom:8px;">📅 Reservas de aulas</h3>
+  <!-- RESERVAS & PRESENÇAS (ALUNO) -->
+  <section class="card" id="sec-reservas" style="display:none; margin-bottom:10px;">
+    <h3 style="margin-top:0; margin-bottom:8px;">📆 Reservas & Presenças</h3>
 
     <div class="form-row">
       <div class="field">
-        <label>Data</label>
+        <label>Data da aula</label>
         <input id="reservaData" type="date" />
       </div>
       <div class="field">
@@ -485,35 +486,44 @@
     <div class="form-row">
       <div class="field">
         <label>Tipo de aula</label>
-        <input id="reservaTipo" type="text" placeholder="Ex.: WOD, Open Box, Técnica..." />
+        <select id="reservaTipo">
+          <option value="">Selecionar</option>
+          <option value="WOD">WOD</option>
+          <option value="Open Box">Open Box</option>
+          <option value="Halterofilismo">Halterofilismo</option>
+          <option value="Mobilidade">Mobilidade</option>
+          <option value="Competição">Competição</option>
+        </select>
       </div>
       <div class="field">
-        <label>Capacidade (lugares)</label>
-        <input id="reservaCapacidade" type="number" min="0" />
+        <label>Nota (opcional)</label>
+        <input id="reservaNota" type="text" placeholder="Ex.: parceiro, foco, objetivo do dia..." />
       </div>
     </div>
 
     <button class="btn-primary" id="reservaAddBtn">Guardar reserva</button>
-    <div class="helper-text">
-      Cada reserva fica guardada localmente com um identificador único (reservaId). As presenças serão associadas a estas reservas numa fase seguinte.
+
+    <div class="helper-text" style="margin-top:6px;">
+      Estas reservas e presenças são pessoais e ficam apenas guardadas neste dispositivo.
     </div>
 
-    <div class="helper-text" id="rankingsResumo" style="margin-top:8px;"></div>
-
-    <div class="scroll" style="margin-top:8px;">
+    <div class="scroll" style="margin-top:10px;">
       <table>
         <thead>
           <tr>
             <th>Data</th>
             <th>Hora</th>
             <th>Aula</th>
-            <th>Inscritos / Cap.</th>
+            <th>Nota</th>
+            <th>Presença</th>
             <th></th>
           </tr>
         </thead>
         <tbody id="reservasBody"></tbody>
       </table>
     </div>
+
+    <div class="helper-text" id="reservasResumo" style="margin-top:6px;"></div>
   </section>
 
   <!-- TABS PRINCIPAIS -->
@@ -886,7 +896,7 @@ const STORAGE_RM_HISTORY = "crossfit_1rm_history";
 const STORAGE_TREINO = "crossfit_treinos";
 const STORAGE_BACKUP_META = "crossfit_backup_meta";
 
-/* NOVAS CHAVES – RESERVAS / PRESENÇAS / RANKINGS MENSAIS */
+/* NOVOS ARMAZENAMENTOS */
 const STORAGE_RESERVAS = "crossfit_reservas";
 const STORAGE_PRESENCAS = "crossfit_presencas";
 const STORAGE_RANKINGS = "crossfit_rankings";
@@ -938,7 +948,7 @@ if (saveProfileBtn) {
       sexo: sexoEl.value || "",
       idade: idadeEl.value ? parseInt(idadeEl.value, 10) : "",
       altura: alturaEl.value ? parseInt(alturaEl.value, 10) : "",
-      peso: alturaEl.value ? parseFloat(pesoEl.value) : ""
+      peso: pesoEl.value ? parseFloat(pesoEl.value) : ""
     };
     localStorage.setItem(STORAGE_PROFILE, JSON.stringify(profile));
     updateProfileInfo();
@@ -1162,20 +1172,6 @@ const toggleDailyHistoryBtn = document.getElementById("toggleDailyHistory");
 const dailyHistorySection = document.getElementById("dailyHistorySection");
 const dailyHistoryBody = document.getElementById("dailyHistoryBody");
 
-/* RESERVAS / PRESENÇAS / RANKINGS (FASE 1) */
-let reservas = JSON.parse(localStorage.getItem(STORAGE_RESERVAS) || "[]");
-let presencas = JSON.parse(localStorage.getItem(STORAGE_PRESENCAS) || "[]");
-
-const reservasBtn = document.getElementById("reservasBtn");
-const reservasSection = document.getElementById("sec-reservas");
-const reservaDataEl = document.getElementById("reservaData");
-const reservaHoraEl = document.getElementById("reservaHora");
-const reservaTipoEl = document.getElementById("reservaTipo");
-const reservaCapEl = document.getElementById("reservaCapacidade");
-const reservaAddBtn = document.getElementById("reservaAddBtn");
-const reservasBody = document.getElementById("reservasBody");
-const rankingsResumoEl = document.getElementById("rankingsResumo");
-
 /* OBJETIVO */
 const calcExEl = document.getElementById("calcExercicio");
 const calcRepsEl = document.getElementById("calcReps");
@@ -1204,6 +1200,21 @@ const exportBackupBtn = document.getElementById("exportBackupBtn");
 const importBackupBtn = document.getElementById("importBackupBtn");
 const backupFileInput = document.getElementById("backupFileInput");
 const backupInfoEl = document.getElementById("backupInfo");
+
+/* Reservas & presenças */
+const reservasBtn = document.getElementById("reservasBtn");
+const reservasSection = document.getElementById("sec-reservas");
+const reservaDataEl = document.getElementById("reservaData");
+const reservaHoraEl = document.getElementById("reservaHora");
+const reservaTipoEl = document.getElementById("reservaTipo");
+const reservaNotaEl = document.getElementById("reservaNota");
+const reservaAddBtn = document.getElementById("reservaAddBtn");
+const reservasBody = document.getElementById("reservasBody");
+const reservasResumoEl = document.getElementById("reservasResumo");
+
+let reservas = JSON.parse(localStorage.getItem(STORAGE_RESERVAS) || "[]");
+let presencas = JSON.parse(localStorage.getItem(STORAGE_PRESENCAS) || "[]");
+let rankingsMensais = JSON.parse(localStorage.getItem(STORAGE_RANKINGS) || "[]");
 
 function formatKg(v) {
   return v.toFixed(1).replace(".", ",") + " kg";
@@ -1655,155 +1666,6 @@ function deleteTreinoEntry(index) {
   renderTreinos();
 }
 
-/* ===== RESERVAS / PRESENÇAS / RANKINGS – FUNÇÕES FASE 1 ===== */
-function saveReservas() {
-  localStorage.setItem(STORAGE_RESERVAS, JSON.stringify(reservas));
-}
-
-function savePresencas() {
-  localStorage.setItem(STORAGE_PRESENCAS, JSON.stringify(presencas));
-}
-
-function addReserva() {
-  if (!reservaDataEl || !reservaHoraEl || !reservaTipoEl || !reservaCapEl) return;
-
-  const data = reservaDataEl.value || new Date().toISOString().slice(0,10);
-  const hora = reservaHoraEl.value || "";
-  const tipo = (reservaTipoEl.value || "").trim() || "Aula";
-  const capacidade = parseInt(reservaCapEl.value || "0", 10);
-
-  if (!data) return;
-
-  const id = Date.now().toString();
-
-  const reserva = {
-    id,
-    data,
-    hora,
-    tipo,
-    capacidade: isNaN(capacidade) ? 0 : capacidade,
-    inscritos: []  // futuros atletas inscritos
-  };
-
-  reservas.push(reserva);
-  saveReservas();
-  renderReservas();
-}
-
-function deleteReserva(id) {
-  if (!confirm("Apagar esta reserva?")) return;
-  reservas = reservas.filter(r => r.id !== id);
-  presencas = presencas.filter(p => p.reservaId !== id);
-  saveReservas();
-  savePresencas();
-  renderReservas();
-}
-
-function renderReservas() {
-  if (!reservasBody) return;
-  reservasBody.innerHTML = "";
-
-  if (!reservas.length) {
-    const tr = document.createElement("tr");
-    const td = document.createElement("td");
-    td.colSpan = 5;
-    td.textContent = "Ainda não existem reservas registadas.";
-    tr.appendChild(td);
-    reservasBody.appendChild(tr);
-  } else {
-    const sorted = reservas.slice().sort((a, b) => {
-      const ad = (a.data || "") + " " + (a.hora || "");
-      const bd = (b.data || "") + " " + (b.hora || "");
-      return ad.localeCompare(bd);
-    });
-
-    sorted.forEach(r => {
-      const tr = document.createElement("tr");
-
-      const tdData = document.createElement("td");
-      tdData.textContent = r.data || "";
-      tr.appendChild(tdData);
-
-      const tdHora = document.createElement("td");
-      tdHora.textContent = r.hora || "";
-      tr.appendChild(tdHora);
-
-      const tdTipo = document.createElement("td");
-      tdTipo.textContent = r.tipo || "";
-      tr.appendChild(tdTipo);
-
-      const tdVagas = document.createElement("td");
-      const numInscritos = (r.inscritos || []).length;
-      const cap = r.capacidade || 0;
-      tdVagas.textContent = cap ? `${numInscritos}/${cap}` : `${numInscritos}`;
-      tr.appendChild(tdVagas);
-
-      const tdDel = document.createElement("td");
-      const btn = document.createElement("button");
-      btn.textContent = "🗑";
-      btn.className = "btn-delete";
-      btn.addEventListener("click", () => deleteReserva(r.id));
-      tdDel.appendChild(btn);
-      tr.appendChild(tdDel);
-
-      reservasBody.appendChild(tr);
-    });
-  }
-
-  calcularRankingsMensais();
-}
-
-function calcularRankingsMensais() {
-  if (!rankingsResumoEl) return;
-
-  if (!treinos.length) {
-    rankingsResumoEl.textContent = "Ainda não há dados de WOD suficientes para rankings mensais.";
-    return;
-  }
-
-  const porMes = {};
-  treinos.forEach(t => {
-    if (!t.date) return;
-    const mes = t.date.slice(0, 7); // AAAA-MM
-    if (!porMes[mes]) porMes[mes] = { carga: 0, dist: 0, treinos: 0 };
-    porMes[mes].carga += t.carga || 0;
-    porMes[mes].dist += t.distanciaKm || 0;
-    porMes[mes].treinos += 1;
-  });
-
-  const meses = Object.keys(porMes).sort().reverse();
-  const linhas = meses.slice(0, 3).map(m => {
-    const d = porMes[m];
-    const labelCarga = formatKg(d.carga);
-    const labelDist = d.dist > 0 ? " · " + formatKm(d.dist) : "";
-    return `${m}: ${labelCarga}${labelDist} em ${d.treinos} treinos`;
-  });
-
-  rankingsResumoEl.textContent =
-    "Resumo mensal (dados locais deste atleta): " + linhas.join(" | ");
-
-  const rankingsObj = meses.map(m => ({
-    mes: m,
-    cargaTotal: porMes[m].carga,
-    distTotalKm: porMes[m].dist,
-    numTreinos: porMes[m].treinos
-  }));
-  localStorage.setItem(STORAGE_RANKINGS, JSON.stringify(rankingsObj));
-}
-
-/* CLICK NO BOTÃO 📅 RESERVAS */
-if (reservasBtn && reservasSection) {
-  reservasBtn.addEventListener("click", () => {
-    const visible = reservasSection.style.display === "block";
-    reservasSection.style.display = visible ? "none" : "block";
-  });
-}
-
-if (reservaAddBtn) {
-  reservaAddBtn.addEventListener("click", addReserva);
-}
-
-/* ===== HISTÓRICO (WOD) ===== */
 function renderDailyHistory() {
   if (!dailyHistoryBody) return;
   dailyHistoryBody.innerHTML = "";
@@ -2009,7 +1871,7 @@ function renderTreinos() {
     renderWeeklyHistory();
     renderDailyHistory();
     renderPerformance();
-    calcularRankingsMensais();
+    atualizarRankingsMensais();
     return;
   }
 
@@ -2118,7 +1980,7 @@ function renderTreinos() {
   renderWeeklyHistory();
   renderDailyHistory();
   renderPerformance();
-  calcularRankingsMensais();
+  atualizarRankingsMensais();
 }
 
 if (treinoAddBtn) {
@@ -2180,7 +2042,8 @@ function buildBackupObject() {
     rmHistory: rmHistory || {},
     treinos: treinos || [],
     reservas: reservas || [],
-    presencas: presencas || []
+    presencas: presencas || [],
+    rankingsMensais: rankingsMensais || []
   };
 }
 
@@ -2246,6 +2109,7 @@ if (importBackupBtn && backupFileInput) {
         treinos = data.treinos || [];
         reservas = data.reservas || [];
         presencas = data.presencas || [];
+        rankingsMensais = data.rankingsMensais || [];
 
         localStorage.setItem(STORAGE_PROFILE, JSON.stringify(profile));
         localStorage.setItem(STORAGE_RM, JSON.stringify(dataRm));
@@ -2253,6 +2117,7 @@ if (importBackupBtn && backupFileInput) {
         localStorage.setItem(STORAGE_TREINO, JSON.stringify(treinos));
         localStorage.setItem(STORAGE_RESERVAS, JSON.stringify(reservas));
         localStorage.setItem(STORAGE_PRESENCAS, JSON.stringify(presencas));
+        localStorage.setItem(STORAGE_RANKINGS, JSON.stringify(rankingsMensais));
 
         registerBackupMeta("Backup importado");
 
@@ -2539,6 +2404,211 @@ function renderPerformance() {
   }
 }
 
+/* ===== RESERVAS & PRESENÇAS (ALUNO) ===== */
+
+function saveReservas() {
+  localStorage.setItem(STORAGE_RESERVAS, JSON.stringify(reservas));
+}
+
+function savePresencas() {
+  localStorage.setItem(STORAGE_PRESENCAS, JSON.stringify(presencas));
+}
+
+function saveRankings() {
+  localStorage.setItem(STORAGE_RANKINGS, JSON.stringify(rankingsMensais));
+}
+
+function gerarIdReserva() {
+  return "res_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+function marcarPresenca(reservaId) {
+  const existe = presencas.some(p => p.reservaId === reservaId);
+  if (existe) return;
+  const now = new Date();
+  presencas.push({
+    reservaId,
+    data: now.toISOString().slice(0, 10),
+    hora: now.toTimeString().slice(0,5)
+  });
+  savePresencas();
+  renderReservas();
+  atualizarRankingsMensais();
+}
+
+function apagarReserva(id) {
+  if (!confirm("Apagar esta reserva?")) return;
+  reservas = reservas.filter(r => r.id !== id);
+  presencas = presencas.filter(p => p.reservaId !== id);
+  saveReservas();
+  savePresencas();
+  renderReservas();
+  atualizarRankingsMensais();
+}
+
+function adicionarReserva() {
+  const data = reservaDataEl.value || new Date().toISOString().slice(0,10);
+  const hora = reservaHoraEl.value || "";
+  const tipo = reservaTipoEl.value || "";
+  const nota = reservaNotaEl.value.trim();
+
+  if (!data || !hora || !tipo) {
+    alert("Preenche pelo menos data, hora e tipo de aula.");
+    return;
+  }
+
+  const novaReserva = {
+    id: gerarIdReserva(),
+    data,
+    hora,
+    tipo,
+    nota,
+    inscritos: profile && profile.nome ? [profile.nome] : []
+  };
+
+  reservas.unshift(novaReserva);
+  saveReservas();
+  reservaNotaEl.value = "";
+  registerBackupMeta("Reserva registada");
+  renderReservas();
+  atualizarRankingsMensais();
+}
+
+function mesmoMesAno(dataISO, ano, mes) {
+  const d = new Date(dataISO);
+  if (isNaN(d.getTime())) return false;
+  return d.getFullYear() === ano && (d.getMonth() + 1) === mes;
+}
+
+function atualizarRankingsMensais() {
+  if (!treinos || !treinos.length) {
+    rankingsMensais = [];
+    saveRankings();
+    renderReservasResumo();
+    return;
+  }
+
+  const agora = new Date();
+  const ano = agora.getFullYear();
+  const mes = agora.getMonth() + 1;
+  const chave = `${ano}-${String(mes).padStart(2,"0")}`;
+
+  let cargaTotal = 0;
+  let distTotal = 0;
+  let nTreinos = 0;
+
+  treinos.forEach(t => {
+    if (!t.date) return;
+    if (!mesmoMesAno(t.date, ano, mes)) return;
+    nTreinos++;
+    cargaTotal += t.carga || 0;
+    distTotal += t.distanciaKm || 0;
+  });
+
+  const outras = rankingsMensais.filter(r => r.mes !== chave);
+  const atual = {
+    mes: chave,
+    ano,
+    mesNumero: mes,
+    nTreinos,
+    cargaTotal,
+    distTotal
+  };
+
+  rankingsMensais = [...outras, atual];
+  saveRankings();
+  renderReservasResumo();
+}
+
+function renderReservasResumo() {
+  if (!reservasResumoEl) return;
+  const agora = new Date();
+  const ano = agora.getFullYear();
+  const mes = agora.getMonth() + 1;
+
+  const nReservasMes = reservas.filter(r => mesmoMesAno(r.data, ano, mes)).length;
+  const nPresencasMes = presencas.filter(p => mesmoMesAno(p.data, ano, mes)).length;
+
+  const chave = `${ano}-${String(mes).padStart(2,"0")}`;
+  const rank = rankingsMensais.find(r => r.mes === chave);
+
+  let texto = `Este mês: ${nReservasMes} reservas e ${nPresencasMes} presenças registadas.`;
+
+  if (rank && rank.nTreinos > 0) {
+    texto += ` Treinos registados em WOD: ${rank.nTreinos} · Carga total = ${formatKg(rank.cargaTotal)}.`;
+    if (rank.distTotal > 0) {
+      texto += ` Distância total = ${formatKm(rank.distTotal)}.`;
+    }
+  } else {
+    texto += " Ainda não há dados suficientes de WOD para resumo mensal.";
+  }
+
+  reservasResumoEl.textContent = texto;
+}
+
+function renderReservas() {
+  if (!reservasBody) return;
+  reservasBody.innerHTML = "";
+
+  if (!reservas.length) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 6;
+    td.textContent = "Sem reservas registadas.";
+    tr.appendChild(td);
+    reservasBody.appendChild(tr);
+    renderReservasResumo();
+    return;
+  }
+
+  reservas.forEach(r => {
+    const tr = document.createElement("tr");
+
+    const tdData = document.createElement("td");
+    tdData.textContent = r.data || "";
+    tr.appendChild(tdData);
+
+    const tdHora = document.createElement("td");
+    tdHora.textContent = r.hora || "";
+    tr.appendChild(tdHora);
+
+    const tdTipo = document.createElement("td");
+    tdTipo.textContent = r.tipo || "";
+    tr.appendChild(tdTipo);
+
+    const tdNota = document.createElement("td");
+    tdNota.textContent = r.nota || "";
+    tr.appendChild(tdNota);
+
+    const tdPres = document.createElement("td");
+    const temPresenca = presencas.some(p => p.reservaId === r.id);
+    if (temPresenca) {
+      tdPres.textContent = "Presente ✅";
+    } else {
+      const btnPres = document.createElement("button");
+      btnPres.className = "btn-secondary";
+      btnPres.style.padding = "4px 8px";
+      btnPres.style.fontSize = "0.7rem";
+      btnPres.textContent = "Marcar presença";
+      btnPres.addEventListener("click", () => marcarPresenca(r.id));
+      tdPres.appendChild(btnPres);
+    }
+    tr.appendChild(tdPres);
+
+    const tdDel = document.createElement("td");
+    const btnDel = document.createElement("button");
+    btnDel.className = "btn-delete";
+    btnDel.textContent = "🗑";
+    btnDel.addEventListener("click", () => apagarReserva(r.id));
+    tdDel.appendChild(btnDel);
+    tr.appendChild(tdDel);
+
+    reservasBody.appendChild(tr);
+  });
+
+  renderReservasResumo();
+}
+
 /* TABS PRINCIPAIS */
 document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -2561,6 +2631,14 @@ document.querySelectorAll(".opt-btn").forEach(btn => {
   });
 });
 
+/* BOTÃO RESERVAS – abre/fecha card de reservas no ecrã principal */
+if (reservasBtn && reservasSection) {
+  reservasBtn.addEventListener("click", () => {
+    const visivel = reservasSection.style.display === "block";
+    reservasSection.style.display = visivel ? "none" : "block";
+  });
+}
+
 /* INIT */
 initSelects();
 loadProfile();
@@ -2576,6 +2654,7 @@ updateBackupInfo();
 renderGuiaExercicios();
 renderPerformance();
 renderReservas();
+atualizarRankingsMensais();
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
