@@ -407,6 +407,7 @@
   <header>
     <img id="appLogo" src="imagens/crossbox_logo.png" alt="Cross Moita Logo">
     <div class="subtitle" id="appSubtitle">Registo de treinos</div>
+    <button id="reservasBtn" class="btn-secondary">Reservas</button>
   </header>
 
   <!-- PERFIL -->
@@ -595,11 +596,7 @@
         <button class="btn-secondary opt-btn" data-target="opt-guia">
           <span class="opt-emoji">📚</span>
           <span>Exercícios</span>
-        </button>  <button class="btn-secondary opt-btn" data-target="opt-reservas">
-    <span class="opt-emoji">📆</span>
-    <span>Reservas</span>
-  </button>
-</div>
+        </button>
         <button class="btn-secondary opt-btn" data-target="opt-backup">
           <span class="opt-emoji">💾</span>
           <span>Backup</span>
@@ -1253,67 +1250,7 @@ if (treinoExSearchEl) {
   });
 }
 
-<!-- RESERVAS & PRESENÇAS (ALUNO) DENTRO DO WOD & TOOLS -->
-<section id="opt-reservas" class="option-section">
-  <div class="card" style="margin-bottom:10px;">
-    <h3 style="margin-top:0; margin-bottom:8px;">📆 Reservas & Presenças</h3>
-
-    <div class="form-row">
-      <div class="field">
-        <label>Data da aula</label>
-        <input id="reservaData" type="date" />
-      </div>
-      <div class="field">
-        <label>Hora</label>
-        <input id="reservaHora" type="time" />
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="field">
-        <label>Tipo de aula</label>
-        <select id="reservaTipo">
-          <option value="">Selecionar</option>
-          <option value="WOD">WOD</option>
-          <option value="Open Box">Open Box</option>
-          <option value="Halterofilismo">Halterofilismo</option>
-          <option value="Mobilidade">Mobilidade</option>
-          <option value="Competição">Competição</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Nota (opcional)</label>
-        <input id="reservaNota" type="text" placeholder="Ex.: parceiro, foco, objetivo do dia..." />
-      </div>
-    </div>
-
-    <button class="btn-primary" id="reservaAddBtn">Guardar reserva</button>
-
-    <div class="helper-text" style="margin-top:6px;">
-      Estas reservas e presenças são pessoais e ficam apenas guardadas neste dispositivo.
-    </div>
-
-    <div class="scroll" style="margin-top:10px;">
-      <table>
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Hora</th>
-            <th>Aula</th>
-            <th>Nota</th>
-            <th>Presença</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="reservasBody"></tbody>
-      </table>
-    </div>
-
-    <div class="helper-text" id="reservasResumo" style="margin-top:6px;"></div>
-  </div>
-</section>
-
-  /* OBJETIVO – lista completa de exercícios; cálculo só funciona se tiver 1RM */
+/* OBJETIVO – lista completa de exercícios; cálculo só funciona se tiver 1RM */
 function refreshCalcExOptions() {
   if (!calcExEl) return;
   calcExEl.innerHTML = "";
@@ -2718,4 +2655,3 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
-
