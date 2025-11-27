@@ -2473,6 +2473,10 @@ function adicionarReserva() {
   renderReservas();
   atualizarRankingsMensais();
 }
+  
+  if (reservaAddBtn) {
+  reservaAddBtn.addEventListener("click", adicionarReserva);
+}
 
 function mesmoMesAno(dataISO, ano, mes) {
   const d = new Date(dataISO);
@@ -2663,3 +2667,4 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
