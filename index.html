@@ -458,64 +458,6 @@
     </div>
   </section>
 
-  <!-- RESERVAS & PRESENÇAS (ALUNO) -->
-  <section class="card" id="sec-reservas" style="display:none; margin-bottom:10px;">
-    <h3 style="margin-top:0; margin-bottom:8px;">📆 Reservas & Presenças</h3>
-
-    <div class="form-row">
-      <div class="field">
-        <label>Data da aula</label>
-        <input id="reservaData" type="date" />
-      </div>
-      <div class="field">
-        <label>Hora</label>
-        <input id="reservaHora" type="time" />
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="field">
-        <label>Tipo de aula</label>
-        <select id="reservaTipo">
-          <option value="">Selecionar</option>
-          <option value="WOD">WOD</option>
-          <option value="Open Box">Open Box</option>
-          <option value="Halterofilismo">Halterofilismo</option>
-          <option value="Mobilidade">Mobilidade</option>
-          <option value="Competição">Competição</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Nota (opcional)</label>
-        <input id="reservaNota" type="text" placeholder="Ex.: parceiro, foco, objetivo do dia..." />
-      </div>
-    </div>
-
-    <button class="btn-primary" id="reservaAddBtn">Guardar reserva</button>
-
-    <div class="helper-text" style="margin-top:6px;">
-      Estas reservas e presenças são pessoais e ficam apenas guardadas neste dispositivo.
-    </div>
-
-    <div class="scroll" style="margin-top:10px;">
-      <table>
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Hora</th>
-            <th>Aula</th>
-            <th>Nota</th>
-            <th>Presença</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="reservasBody"></tbody>
-      </table>
-    </div>
-
-    <div class="helper-text" id="reservasResumo" style="margin-top:6px;"></div>
-  </section>
-
   <!-- TABS PRINCIPAIS -->
   <div class="tabs">
     <button class="tab-btn active" data-target="sec-1rm">1RM</button>
@@ -576,44 +518,44 @@
 
     <div class="card">
       <div class="options-grid">
-  <button class="btn-secondary opt-btn" data-target="opt-wod">
-    <span class="opt-emoji">🟩</span>
-    <span>WOD</span>
-  </button>
+        <button class="btn-secondary opt-btn" data-target="opt-wod">
+          <span class="opt-emoji">🟩</span>
+          <span>WOD</span>
+        </button>
 
-  <button class="btn-secondary opt-btn" data-target="opt-calc">
-    <span class="opt-emoji">🧮</span>
-    <span>Objetivo</span>
-  </button>
+        <button class="btn-secondary opt-btn" data-target="opt-calc">
+          <span class="opt-emoji">🧮</span>
+          <span>Objetivo</span>
+        </button>
 
-  <button class="btn-secondary opt-btn" data-target="opt-graficos">
-    <span class="opt-emoji">📈</span>
-    <span>Gráfico</span>
-  </button>
+        <button class="btn-secondary opt-btn" data-target="opt-graficos">
+          <span class="opt-emoji">📈</span>
+          <span>Gráfico</span>
+        </button>
 
-  <button class="btn-secondary opt-btn" data-target="opt-performance">
-    <span class="opt-emoji">🏅</span>
-    <span>Desempenho</span>
-  </button>
+        <button class="btn-secondary opt-btn" data-target="opt-performance">
+          <span class="opt-emoji">🏅</span>
+          <span>Desempenho</span>
+        </button>
 
-  <button class="btn-secondary opt-btn" data-target="opt-guia">
-    <span class="opt-emoji">📚</span>
-    <span>Exercícios</span>
-  </button>
+        <button class="btn-secondary opt-btn" data-target="opt-guia">
+          <span class="opt-emoji">📚</span>
+          <span>Exercícios</span>
+        </button>
 
-  <button class="btn-secondary opt-btn" data-target="opt-backup">
-    <span class="opt-emoji">💾</span>
-    <span>Backup</span>
-  </button>
+        <button class="btn-secondary opt-btn" data-target="opt-backup">
+          <span class="opt-emoji">💾</span>
+          <span>Backup</span>
+        </button>
 
-  <!-- NOVO BOTÃO RESERVAS DENTRO DO WOD & TOOLS -->
-  <button class="btn-secondary opt-btn" data-target="sec-reservas">
-    <span class="opt-emoji">📆</span>
-    <span>Reservas</span>
-  </button>
-</div>
+        <!-- BOTÃO RESERVAS DENTRO DO WOD & TOOLS -->
+        <button class="btn-secondary opt-btn" data-target="sec-reservas">
+          <span class="opt-emoji">📆</span>
+          <span>Reservas</span>
+        </button>
+      </div>
 
-        <div class="helper-text" style="margin-top:8px;">
+      <div class="helper-text" style="margin-top:8px;">
       </div>
     </div>
 
@@ -885,6 +827,64 @@
         </div>
         <div id="backupInfo"></div>
       </div>
+    </section>
+
+    <!-- RESERVAS & PRESENÇAS (ALUNO) – AGORA COMO OPTION-SECTION DO WOD & TOOLS -->
+    <section class="card option-section" id="sec-reservas">
+      <h3 style="margin-top:0; margin-bottom:8px;">📆 Reservas & Presenças</h3>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Data da aula</label>
+          <input id="reservaData" type="date" />
+        </div>
+        <div class="field">
+          <label>Hora</label>
+          <input id="reservaHora" type="time" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Tipo de aula</label>
+          <select id="reservaTipo">
+            <option value="">Selecionar</option>
+            <option value="WOD">WOD</option>
+            <option value="Open Box">Open Box</option>
+            <option value="Halterofilismo">Halterofilismo</option>
+            <option value="Mobilidade">Mobilidade</option>
+            <option value="Competição">Competição</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Nota (opcional)</label>
+          <input id="reservaNota" type="text" placeholder="Ex.: parceiro, foco, objetivo do dia..." />
+        </div>
+      </div>
+
+      <button class="btn-primary" id="reservaAddBtn">Guardar reserva</button>
+
+      <div class="helper-text" style="margin-top:6px;">
+        Estas reservas e presenças são pessoais e ficam apenas guardadas neste dispositivo.
+      </div>
+
+      <div class="scroll" style="margin-top:10px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Hora</th>
+              <th>Aula</th>
+              <th>Nota</th>
+              <th>Presença</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="reservasBody"></tbody>
+        </table>
+      </div>
+
+      <div class="helper-text" id="reservasResumo" style="margin-top:6px;"></div>
     </section>
 
   </section>
@@ -1203,7 +1203,6 @@ const backupFileInput = document.getElementById("backupFileInput");
 const backupInfoEl = document.getElementById("backupInfo");
 
 /* Reservas & presenças */
-const reservasBtn = document.getElementById("reservasBtn");
 const reservasSection = document.getElementById("sec-reservas");
 const reservaDataEl = document.getElementById("reservaData");
 const reservaHoraEl = document.getElementById("reservaHora");
@@ -2630,26 +2629,13 @@ document.querySelectorAll(".opt-btn").forEach(btn => {
     // esconder sub-secções do WOD & Tools
     document.querySelectorAll(".option-section").forEach(s => s.classList.remove("active"));
 
-    // ativar a opção normal, se existir (WOD, Objetivo, Gráficos, etc.)
+    // ativar a opção normal, se existir (WOD, Objetivo, Gráficos, Reservas, etc.)
     const sec = document.getElementById(target);
     if (sec && sec.classList.contains("option-section")) {
       sec.classList.add("active");
     }
-
-    // caso especial: botão "Reservas" dentro do WOD & Tools
-    if (target === "sec-reservas" && typeof reservasSection !== "undefined" && reservasSection) {
-      reservasSection.style.display = "block";
-    }
   });
 });
-
-/* BOTÃO RESERVAS – abre/fecha card de reservas no ecrã principal */
-if (reservasBtn && reservasSection) {
-  reservasBtn.addEventListener("click", () => {
-    const visivel = reservasSection.style.display === "block";
-    reservasSection.style.display = visivel ? "none" : "block";
-  });
-}
 
 /* INIT */
 initSelects();
@@ -2677,4 +2663,3 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
-
