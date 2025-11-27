@@ -2474,10 +2474,6 @@ function adicionarReserva() {
   atualizarRankingsMensais();
 }
   
-  if (reservaAddBtn) {
-  reservaAddBtn.addEventListener("click", adicionarReserva);
-}
-
 function mesmoMesAno(dataISO, ano, mes) {
   const d = new Date(dataISO);
   if (isNaN(d.getTime())) return false;
@@ -2612,7 +2608,10 @@ function renderReservas() {
 
   renderReservasResumo();
 }
-
+// 👉 LIGAR O BOTÃO AQUI
+if (reservaAddBtn) {
+  reservaAddBtn.addEventListener("click", adicionarReserva);
+}
 /* TABS PRINCIPAIS */
 document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -2667,4 +2666,5 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
