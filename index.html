@@ -105,7 +105,7 @@
       border: none;
       box-shadow: none;
       padding: 0;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
     #perfilForm {
@@ -405,9 +405,8 @@
 <div class="app">
 
   <header>
-    <img id="appLogo" src="imagens/crossbox_logo.png" alt="Cross Moita Logo">
+    <img id="appLogo" src="imagens/crossbox_logo.png">
     <div class="subtitle" id="appSubtitle">Registo de treinos</div>
-    <button id="reservasBtn" class="btn-secondary">Reservas</button>
   </header>
 
   <!-- PERFIL -->
@@ -601,8 +600,11 @@
           <span class="opt-emoji">💾</span>
           <span>Backup</span>
         </button>
-      </div>
-      <div class="helper-text" style="margin-top:8px;">
+        <button class="btn-secondary opt-btn" data-target="sec-reservas">
+          <span class="opt-emoji">📆</span>
+      </button>
+
+        <div class="helper-text" style="margin-top:8px;">
       </div>
     </div>
 
@@ -2655,3 +2657,4 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
