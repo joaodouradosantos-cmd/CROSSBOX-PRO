@@ -51,17 +51,20 @@
     }
 
     header {
-      text-align: center;
-      margin-bottom: 6px;
-      position: relative;
-    }
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.40);
+  backdrop-filter: blur(4px);
+  padding: 6px 0;
+  margin-bottom: 8px;
+}
 
-    #appLogo {
-      max-width: 340px;
-      height: auto;
-      display: block;
-      margin: 0 auto 0px auto;
-    }
+#appLogo {
+  max-width: 140px; /* antes tinhas ~340px */
+  height: auto;
+  margin: 0 auto;
+}
 
     .subtitle {
       font-size: 0.90rem;
@@ -2710,3 +2713,4 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
