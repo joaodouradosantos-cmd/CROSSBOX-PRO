@@ -12,6 +12,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
+  <!-- Fonte militar -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Stardos+Stencil:wght@400;700&display=swap" rel="stylesheet">
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -50,44 +55,60 @@
       box-sizing: border-box;
     }
 
+    /* HEADER SEM CAIXA PRETA */
     header {
-  position: sticky;
-  top: 0;
-  z-index: 999;
-  background: rgba(0, 0, 0, 0.40);
-  backdrop-filter: blur(4px);
-  padding: 6px 0;
-  margin-bottom: 8px;
-}
-
-/* linha com os dois logos */
-.header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* um em cada lado */
-  gap: 8px;
-}
-
-#appLogo {
-  max-width: 120px;
-  height: auto;
-  margin: 20;
-}
-
-    .subtitle {
-      font-size: 0.90rem;
-      margin-top: -10px;
-      color: #e0e5d8;
-      cursor: pointer;
-      text-decoration: none;
-      text-shadow: 0 2px 3px rgba(0, 0, 0, 0.6);
-      letter-spacing: 0.03em;
-      transition: text-decoration 0.15s ease, transform 0.1s ease;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: transparent;
+      padding: 10px 4px 4px;
+      margin-bottom: 8px;
     }
 
-    .subtitle:hover {
-      text-decoration: underline;
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+    }
+
+    #appLogo {
+      max-width: 120px;
+      height: auto;
+      margin: 0;
+      display: block;
+    }
+
+    /* BLOCO DO TÍTULO EM 2 LINHAS */
+    .subtitle-block {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      cursor: pointer;
+      font-family: "Stardos Stencil", system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      text-shadow: 0 2px 3px rgba(0, 0, 0, 0.7);
+      transform-origin: left center;
+      transition: transform 0.1s ease;
+    }
+
+    .subtitle-block:hover {
       transform: translateY(-1px);
+    }
+
+    .subtitle-line-1 {
+      font-size: 0.85rem;
+      color: #e0e5d8;
+    }
+
+    .subtitle-line-2 {
+      font-size: 1.1rem;
+      color: #fefce8;
+      margin-top: 2px;
+      border-bottom: 2px solid rgba(254, 252, 232, 0.85);
+      align-self: flex-start;
+      padding-bottom: 1px;
     }
 
     .card {
@@ -409,21 +430,22 @@
       background-image: none !important;
       background-color: #e1e1e1 !important;
     }
-    
   </style>
 </head>
 <body>
 <div class="app">
 
-<header>
-  <div class="header-row">
-    <img id="appLogo" src="imagens/crossbox_logo.png">
-    <div class="subtitle" id="appSubtitle">Registo de treinos</div>
-  </div>
-</header>
+  <header>
+    <div class="header-row">
+      <img id="appLogo" src="imagens/crossbox_logo.png" alt="CrossBox logo">
+      <div class="subtitle-block" id="appSubtitle">
+        <span class="subtitle-line-1" id="appSubtitleLine1">Registo de treinos</span>
+        <span class="subtitle-line-2" id="appSubtitleLine2">Toca para configurar o teu perfil</span>
+      </div>
+    </div>
+  </header>
 
-
-   <!-- PERFIL -->
+  <!-- PERFIL -->
   <section class="card" id="perfil">
     <div id="perfilForm">
       <div class="form-row">
@@ -526,6 +548,7 @@
     </div>
 
   </section>
+
   <!-- SECÇÃO 2: OPÇÕES -->
   <section id="sec-opcoes" class="section">
 
@@ -906,6 +929,7 @@
   </section>
 
 </div>
+
 <script>
 /* ===== CHAVES DE ARMAZENAMENTO ===== */
 const STORAGE_PROFILE = "crossfit_profile";
@@ -930,18 +954,22 @@ const alturaEl = document.getElementById("altura");
 const pesoEl = document.getElementById("peso");
 const perfilForm = document.getElementById("perfilForm");
 const subtitleEl = document.getElementById("appSubtitle");
+const subtitleLine1El = document.getElementById("appSubtitleLine1");
+const subtitleLine2El = document.getElementById("appSubtitleLine2");
 
 function updateProfileInfo() {
   if (perfilForm) perfilForm.style.display = "none";
 }
 
 function updateSubtitle() {
-  const sub = document.getElementById("appSubtitle");
-  if (!sub) return;
+  if (!subtitleLine1El || !subtitleLine2El) return;
+
   if (profile && profile.nome && profile.nome.trim() !== "") {
-    sub.textContent = `Registo de treinos do ${profile.nome}`;
+    subtitleLine1El.textContent = "Registo de treinos de";
+    subtitleLine2El.textContent = profile.nome.trim();
   } else {
-    sub.textContent = "Toca aqui para configurar o teu perfil";
+    subtitleLine1El.textContent = "Registo de treinos";
+    subtitleLine2El.textContent = "Toca para configurar o teu perfil";
   }
 }
 
@@ -977,7 +1005,7 @@ if (saveProfileBtn) {
   });
 }
 
-/* clicar no subtítulo abre/fecha o formulário de perfil */
+/* clicar no título abre/fecha o formulário de perfil */
 if (subtitleEl && perfilForm) {
   subtitleEl.addEventListener("click", () => {
     const visible = perfilForm.style.display === "block";
@@ -2503,7 +2531,6 @@ function adicionarReserva() {
       inscritos: profile && profile.nome ? [profile.nome] : []
     };
 
-    // Garantir outra vez que é array antes de usar unshift
     if (!Array.isArray(reservas)) reservas = [];
     reservas.unshift(novaReserva);
 
@@ -2661,7 +2688,6 @@ if (reservaAddBtn) {
 }
 
 /* TABS PRINCIPAIS */
-
 document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
@@ -2672,17 +2698,16 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
     document.getElementById(target).classList.add("active");
   });
 });
+
 /* OPÇÕES (sub-seções) */
 document.querySelectorAll(".opt-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     const target = btn.dataset.target;
 
-    // esconder todas as sub-secções do WOD & Tools
     document.querySelectorAll(".option-section").forEach(s => {
       s.classList.remove("active");
     });
 
-    // ativar a opção correspondente (WOD, Objetivo, Gráficos, Desempenho, Guia, Backup, Reservas)
     const sec = document.getElementById(target);
     if (sec && sec.classList.contains("option-section")) {
       sec.classList.add("active");
@@ -2724,12 +2749,3 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
