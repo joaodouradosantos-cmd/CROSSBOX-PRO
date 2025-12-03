@@ -966,6 +966,10 @@ function updateProfileInfo() {
 function updateSubtitle() {
   if (!subtitleLine1El || !subtitleLine2El) return;
 
+  if (profile && profile.nome && profile.nome.trim() !== "") {
+    subtitleLine1El.textContent = "Registo de treinos de";
+    subtitleLine2El.textContent = profile.nome.trim();
+  } else {
   const nome = profile && profile.nome ? profile.nome.trim() : "";
   const sexo = profile && profile.sexo ? profile.sexo : "";
 
@@ -2756,6 +2760,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
