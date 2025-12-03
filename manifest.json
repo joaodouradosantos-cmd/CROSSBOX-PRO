@@ -7,11 +7,12 @@
   "theme_color": "#f2f2f2",
   "icons": [
     {
-      "src": "imagens/crossbox_logo..png",
+      "src": "imagens/crossbox_logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     }
   ]
 }
+
 
