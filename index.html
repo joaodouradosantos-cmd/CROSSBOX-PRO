@@ -976,14 +976,6 @@ function updateSubtitle() {
     return;
   }
 
-  // Escolha da preposição
-  let prep = "de";
-  if (sexo === "homem") {
-    prep = "do";
-  } else if (sexo === "mulher") {
-    prep = "da";
-  }
-
   subtitleLine1El.textContent = "Registo de treinos";
   subtitleLine2El.textContent = `${prep} ${nome}`;
 }
@@ -2764,5 +2756,6 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
