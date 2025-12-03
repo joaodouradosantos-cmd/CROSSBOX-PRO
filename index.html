@@ -966,13 +966,26 @@ function updateProfileInfo() {
 function updateSubtitle() {
   if (!subtitleLine1El || !subtitleLine2El) return;
 
-  if (profile && profile.nome && profile.nome.trim() !== "") {
-    subtitleLine1El.textContent = "Registo de treinos de";
-    subtitleLine2El.textContent = profile.nome.trim();
-  } else {
+  const nome = profile && profile.nome ? profile.nome.trim() : "";
+  const sexo = profile && profile.sexo ? profile.sexo : "";
+
+  // Sem nome → texto padrão
+  if (!nome) {
     subtitleLine1El.textContent = "Registo de treinos";
     subtitleLine2El.textContent = "Toca para configurar o teu perfil";
+    return;
   }
+
+  // Escolha da preposição
+  let prep = "de";
+  if (sexo === "homem") {
+    prep = "do";
+  } else if (sexo === "mulher") {
+    prep = "da";
+  }
+
+  subtitleLine1El.textContent = "Registo de treinos";
+  subtitleLine2El.textContent = `${prep} ${nome}`;
 }
 
 function loadProfile() {
@@ -2751,4 +2764,5 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
