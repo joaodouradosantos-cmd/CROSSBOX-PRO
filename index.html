@@ -558,11 +558,10 @@
   <!-- SECÇÃO 1: 1RM -->
 <section id="sec-1rm" class="section active">
 
-  <!-- CARD 1: REGISTO DE 1RM + FERRAMENTA RÁPIDA -->
+  <!-- CARD 1: REGISTO / ATUALIZAÇÃO DO 1RM -->
   <div class="card">
-    <h3 style="margin-top:0; margin-bottom:8px;">1RM e cálculo rápido</h3>
+    <h3 style="margin-top:0; margin-bottom:8px;">1RM – Registo</h3>
 
-    <!-- REGISTO / ATUALIZAÇÃO DO 1RM (como já tinhas) -->
     <div class="form-row">
       <div class="field">
         <label>Exercício</label>
@@ -577,37 +576,12 @@
 
     <button class="btn-primary" id="addBtn">Guardar / Atualizar</button>
 
-    <!-- FERRAMENTA RÁPIDA -->
-    <div class="helper-text" style="margin-top:10px; margin-bottom:4px;">
-      Ferramenta rápida para o quadro da box: escolhe o exercício, escreve a percentagem do 1RM e vê logo o peso em kg.
-      Em alternativa, podes meter o peso e ver a percentagem do 1RM.
-    </div>
-
-    <div class="form-row">
-      <div class="field">
-        <label>Exercício (com 1RM registado)</label>
-        <select id="quickExercise"></select>
-      </div>
-      <div class="field">
-        <label>Percentagem do 1RM (%)</label>
-        <input id="quickPercent" type="number" min="10" max="130" step="1" />
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="field">
-        <label>Peso calculado (kg)</label>
-        <input id="quickPeso" type="text" readonly />
-      </div>
-      <div class="field">
-        <label>Ou introduz o peso (kg)</label>
-        <input id="quickPesoInput" type="number" step="0.5" min="0" />
-        <div class="helper-text" id="quickPercResult"></div>
-      </div>
+    <div class="helper-text" style="margin-top:6px;">
+      Aqui registas apenas o teu 1RM por exercício. As percentagens e cálculos rápidos passam a ser usados diretamente no WOD.
     </div>
   </div>
 
-  <!-- CARD 2: TABELA COMPLETA 1RM (como já tinhas) -->
+  <!-- CARD 2: TABELA COMPLETA DO 1RM -->
   <div class="card">
     <div class="scroll">
       <table>
@@ -728,7 +702,20 @@
             <input id="treinoPeso" type="number" step="0.5" min="0" />
           </div>
         </div>
-
+        <!-- NOVO BLOCO: CÁLCULO % 1RM → KG DENTRO DO WOD -->
+          <div class="form-row">
+          <div class="field">
+            <label>Percentagem do 1RM (%) (opcional)</label>
+            <input id="treinoPercent" type="number" min="10" max="130" step="1" />
+         </div>
+          <div class="field">
+            <label>Sugestão de peso (kg)</label>
+            <input id="treinoPesoSugestao" type="text" readonly />
+         </div>
+        </div>
+           <div class="helper-text" id="treinoPercentInfo" style="margin-top:-4px; margin-bottom:4px;">
+         </div>
+        <!-- FIM DO BLOCO NOVO -->
         <div class="form-row">
           <div class="field">
             <label>Tempo (opcional)</label>
@@ -1417,6 +1404,9 @@ const treinoRepsEl = document.getElementById("treinoReps");
 const treinoPesoEl = document.getElementById("treinoPeso");
 const treinoTempoEl = document.getElementById("treinoTempo");
 const treinoDistEl = document.getElementById("treinoDist");
+const treinoPercentEl = document.getElementById("treinoPercent");
+const treinoPesoSugEl = document.getElementById("treinoPesoSugestao");
+const treinoPercentInfoEl = document.getElementById("treinoPercentInfo");
 const treinoAddBtn = document.getElementById("treinoAdd");
 const treinoBody = document.getElementById("treinoBody");
 const treinoResumoEl = document.getElementById("treinoResumo");
@@ -2416,6 +2406,85 @@ function renderWeeklyHistory() {
     "Histórico das últimas semanas (carga total e distância):<br>" +
     lines.join("<br>");
 }
+/* ===== CÁLCULO RÁPIDO NO WOD: % 1RM ↔ PESO ===== */
+
+function updateWodPesoFromPercent() {
+  if (!treinoPercentEl || !treinoPesoSugEl || !treinoExEl) return;
+
+  const ex = treinoExEl.value;
+  const perc = parseFloat(treinoPercentEl.value || "0");
+
+  // limpar mensagens se não houver dados
+  if (treinoPercentInfoEl) treinoPercentInfoEl.textContent = "";
+
+  if (!ex || !dataRm[ex] || !perc || perc <= 0) {
+    if (treinoPesoSugEl) treinoPesoSugEl.value = "";
+    if (!ex || !dataRm[ex]) {
+      if (treinoPercentInfoEl && ex) {
+        treinoPercentInfoEl.textContent =
+          "Para usar a percentagem neste exercício, regista primeiro o 1RM na aba 1RM.";
+      }
+    }
+    return;
+  }
+
+  const base = dataRm[ex]; // 1RM
+  const peso = base * (perc / 100);
+
+  // mostra sugestão no campo readonly (com vírgula)…
+  treinoPesoSugEl.value = peso.toFixed(1).replace(".", ",");
+
+  // …e preenche automaticamente o campo de peso real do WOD (em formato numérico)
+  if (treinoPesoEl) {
+    treinoPesoEl.value = peso.toFixed(1);
+  }
+
+  if (treinoPercentInfoEl) {
+    treinoPercentInfoEl.textContent =
+      `Sugestão: ${peso.toFixed(1).replace(".", ",")} kg (${perc.toFixed(0)}% do teu 1RM nesse exercício).`;
+  }
+}
+
+function updateWodPercentFromPeso() {
+  if (!treinoPesoEl || !treinoExEl || !treinoPercentInfoEl) return;
+
+  const ex = treinoExEl.value;
+  const peso = parseFloat(treinoPesoEl.value || "0");
+
+  // limpa quando não há nada
+  if (!ex || !dataRm[ex] || !peso || peso <= 0) {
+    treinoPercentInfoEl.textContent = "";
+    return;
+  }
+
+  const base = dataRm[ex]; // 1RM
+  const perc = (peso / base) * 100;
+
+  // se o campo de percentagem estiver vazio, podemos sugerir
+  if (treinoPercentEl && (!treinoPercentEl.value || parseFloat(treinoPercentEl.value) <= 0)) {
+    treinoPercentEl.value = perc.toFixed(0);
+  }
+
+  treinoPercentInfoEl.textContent =
+    `Este peso corresponde a cerca de ${perc.toFixed(0)}% do teu 1RM nesse exercício.`;
+}
+
+/* Ligações de eventos no WOD */
+if (treinoPercentEl) {
+  treinoPercentEl.addEventListener("input", updateWodPesoFromPercent);
+}
+
+if (treinoPesoEl) {
+  treinoPesoEl.addEventListener("input", updateWodPercentFromPeso);
+}
+
+if (treinoExEl) {
+  treinoExEl.addEventListener("change", () => {
+    // quando mudas de exercício, recalcula tudo
+    updateWodPesoFromPercent();
+    updateWodPercentFromPeso();
+  });
+}
 
 function renderTreinos() {
   if (!treinoBody) return;
@@ -3323,6 +3392,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
