@@ -681,10 +681,9 @@
       <table>
         <thead>
   <tr>
-    <th>Exercício</th>
-    <th>1RM (kg)</th>
-    <th>x Peso corporal</th>
-    <th></th>
+    <th style="width:55%; text-align:left;">Exercício</th>
+    <th style="width:40%; text-align:left;">1RM &amp; histórico</th>
+    <th style="width:5%;"></th>
   </tr>
 </thead>
         <tbody id="tableBody"></tbody>
@@ -2215,6 +2214,25 @@ function printTreinosPdf() {
       font-size: 10px;
       color: #444;
     }
+    /* Ajuste fino da tabela 1RM (tab 1RM) */
+#sec-1rm .card:nth-of-type(2) table {
+  table-layout: fixed;           /* garante colunas mais "apertadas" */
+}
+
+#sec-1rm .card:nth-of-type(2) th,
+#sec-1rm .card:nth-of-type(2) td {
+  white-space: normal;           /* permite quebrar linha */
+  text-align: left;              /* mais legível para texto longo */
+}
+
+#sec-1rm .card:nth-of-type(2) td:first-child {
+  font-weight: 600;              /* destaque no nome do exercício */
+}
+
+#sec-1rm .card:nth-of-type(2) td:last-child {
+  text-align: center;            /* ícone 🗑 centrado na coluna pequena */
+  width: 40px;
+}
   </style>
 </head>
 <body>
@@ -3468,6 +3486,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
