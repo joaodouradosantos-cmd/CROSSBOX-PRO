@@ -743,7 +743,7 @@
 
         <!-- WOD do dia – compacto e fácil de ler -->
         <h4 style="margin-top:10px; margin-bottom:4px;">WOD do dia</h4>
-        <div class="scroll">
+        <div class="scroll"> id="treinoScroll">
           <table>
             <thead>
               <tr>
@@ -778,7 +778,7 @@
         <!-- Histórico diário completo (todas as datas) -->
         <div id="dailyHistorySection" style="display:none; margin-top:8px;">
           <h4 style="margin-top:0; margin-bottom:4px;">Histórico detalhado (todos os dias)</h4>
-          <div class="scroll">
+          <div class="scroll"> id="dailyHistoryScroll">
             <table>
               <thead>
                 <tr>
@@ -2469,7 +2469,6 @@ function renderTreinos() {
   renderPerformance();
   atualizarRankingsMensais();
 }
-}
 
 if (treinoAddBtn) {
   treinoAddBtn.addEventListener("click", addTreinoEntry);
@@ -3194,6 +3193,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
