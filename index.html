@@ -549,6 +549,18 @@
   font-size: 0.8rem;
   margin-top: 4px;
 }
+
+/* Alinhamento à esquerda total na tabela 1RM */
+#sec-1rm .card:nth-of-type(2) th,
+#sec-1rm .card:nth-of-type(2) td {
+  text-align: left !important;
+}
+
+/* Botão 🗑 continua centrado na própria célula */
+#sec-1rm .card:nth-of-type(2) td:last-child {
+  text-align: center !important;
+}
+
 </style>
 </head>
 <body>
@@ -3486,6 +3498,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
