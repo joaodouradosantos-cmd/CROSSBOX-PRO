@@ -2107,22 +2107,19 @@ function addTreinoEntry() {
   renderTreinos();
 
   // 2) MODO ASSISTIDO DE 1RM – só corre se fizer sentido
-  //    (há 1RM registado, peso > 0, reps moderadas, esforço relevante)
   const current1rm = dataRm[ex];
   if (!current1rm || current1rm <= 0) return;
   if (!peso || peso <= 0) return;
-  if (reps < 1 || reps > 10) return; // só séries "de força" contam
+  if (reps < 1 || reps > 10) return; // apenas séries "de força"
 
-  // se a percentagem aproximada for muito baixa, ignora (séries muito leves)
   const approxPerc = peso / current1rm;
-  if (approxPerc < 0.6) return;
+  if (approxPerc < 0.6) return; // séries muito leves não contam
 
   // estimativa simples de 1RM (Epley)
   const est1rm = peso * (1 + reps / 30);
 
   // arredondar para 0.5 kg
   const new1rmVal = Math.round(est1rm * 2) / 2;
-
   const diff = new1rmVal - current1rm;
 
   // só sugerir se for uma subida "real" (>= 1 kg e pelo menos +2%)
@@ -2149,13 +2146,21 @@ function addTreinoEntry() {
     value: current1rm
   });
 
+  // atualizar 1RM
   dataRm[ex] = new1rmVal;
-
   localStorage.setItem(STORAGE_RM, JSON.stringify(dataRm));
   localStorage.setItem(STORAGE_RM_HISTORY, JSON.stringify(rmHistory));
 
+  // *** RECALCULAR % 1RM DESSE WOD COM O NOVO 1RM ***
+  const idx = treinos.indexOf(entry);
+  if (idx !== -1) {
+    treinos[idx].perc1rm = peso > 0 ? (peso / new1rmVal) : null;
+    saveTreinos();
+  }
+
   registerBackupMeta("1RM atualizado (modo assistido)");
   renderRm();
+  renderTreinos();
 
   alert(
     `Novo 1RM registado para ${label}: ${formatKg(new1rmVal)} (estimado a partir do WOD).`
@@ -3561,6 +3566,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
