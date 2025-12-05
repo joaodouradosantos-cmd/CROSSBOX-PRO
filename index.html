@@ -743,7 +743,8 @@
 
         <!-- WOD do dia – compacto e fácil de ler -->
         <h4 style="margin-top:10px; margin-bottom:4px;">WOD do dia</h4>
-        <div class="scroll"> id="treinoScroll">
+<div class="scroll" id="treinoScroll">
+  <table>
           <table>
             <thead>
               <tr>
@@ -778,8 +779,8 @@
         <!-- Histórico diário completo (todas as datas) -->
         <div id="dailyHistorySection" style="display:none; margin-top:8px;">
           <h4 style="margin-top:0; margin-bottom:4px;">Histórico detalhado (todos os dias)</h4>
-          <div class="scroll"> id="dailyHistoryScroll">
-            <table>
+          <div class="scroll" id="dailyHistoryScroll">
+           <table>
               <thead>
                 <tr>
                   <th>Data</th>
@@ -1384,6 +1385,7 @@ const weeklyHistoryEl = document.getElementById("weeklyHistory");
 const toggleDailyHistoryBtn = document.getElementById("toggleDailyHistory");
 const dailyHistorySection = document.getElementById("dailyHistorySection");
 const printHistoryBtn = document.getElementById("printHistoryBtn");
+const treinoScrollEl = document.getElementById("treinoScroll");
 const dailyHistoryBody = document.getElementById("dailyHistoryBody");
   
   /* Chips de resumo do dia */
@@ -3206,4 +3208,5 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
