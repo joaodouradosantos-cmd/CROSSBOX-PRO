@@ -1424,7 +1424,8 @@ const EXER_INFO = [
   { en: "Shrug", pt: "Encolhimento de ombros", descricao: "Elevar os ombros em direção às orelhas segurando barra ou halteres, focando trapézios." }
 ];
 
- const TECHNICAL_MOVES = [
+ /* Movimentos considerados técnicos (para % e tipo no WOD/Objetivo) */
+const TECHNICAL_MOVES = [
   // Halterofilismo / variações muito técnicas
   "Snatch Deadlift",
   "Power Snatch",
@@ -1436,7 +1437,25 @@ const EXER_INFO = [
   "Hang Clean",
   "Squat Clean",
   "Clean & Jerk",
-   const METCON_MOVES = [
+
+  // Complexos e movimentos combinados
+  "Thruster",
+  "Bear Complex",
+
+  // Ginástica técnica
+  "Handstand Push-Up (HSPU)",
+  "Strict Handstand Push-Up",
+  "Muscle-Up",
+  "Bar Muscle-Up",
+  "Ring Muscle-Up",
+  "Toes-to-Bar (T2B)",
+
+  // Mobilidade / técnica de PVC
+  "PVC Overhead Squat"
+];
+
+/* Movimentos de metcon / condicionamento */
+const METCON_MOVES = [
   "Burpee",
   "Burpee Box Jump-Over",
   "Box Jump",
@@ -1458,6 +1477,8 @@ const EXER_INFO = [
   "Devil Press",
   "Man Maker"
 ];
+
+/* Inferir tipo automaticamente para o WOD */
 function inferTipo(ex) {
   if (!ex) return "";
 
@@ -1469,7 +1490,7 @@ function inferTipo(ex) {
     return "metcon";
   }
 
-  // Por defeito, tratamos o resto como força
+  // resto tratado como força
   return "força";
 }
 
@@ -3596,6 +3617,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
