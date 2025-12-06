@@ -1,4 +1,4 @@
-const CACHE_NAME = "CrossBox-cache-v7";
+const CACHE_NAME = "CrossBox-cache-v8";
 
 const URLS_TO_CACHE = [
   "./",
@@ -76,4 +76,5 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
 
