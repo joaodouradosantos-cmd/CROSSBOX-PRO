@@ -3166,13 +3166,15 @@ function renderPerformance() {
         map[t.date].numEx += 1;
 
         if (t.tipo === "metcon" && t.tempo) {
-          const sec = parseTimeToSeconds(t.tempo);
-          if (sec != null) {
-            if (map[t.date].melhorTempoMetconSeg == null || sec < map[t.date].melhorTempoMetconSeg) {
-              map[t.date].melhorTempoMetconSeg = sec;
-            }
-          }
-        }
+          if (t.tempo) {
+       const sec = parseTimeToSeconds(t.tempo);
+       if (sec != null) {
+         if (map[t.date].melhorTempoMetconSeg == null || sec < map[t.date].melhorTempoMetconSeg) {
+           map[t.date].melhorTempoMetconSeg = sec;
+         }
+       }
+     }
+
       });
 
       const rows = Object.keys(map).map(date => ({
@@ -3268,28 +3270,29 @@ function renderPerformance() {
     }
   }
 
-  /* Metcon – melhores tempos (tipo = 'metcon') */
-  if (perfMetconBody) {
-    perfMetconBody.innerHTML = "";
-    const metconMap = {};
+  /* Metcon – melhores tempos (qualquer exercício com tempo válido) */
+if (perfMetconBody) {
+  perfMetconBody.innerHTML = "";
+  const metconMap = {};
 
-    treinos.forEach(t => {
-      if (t.tipo !== "metcon" || !t.tempo) return;
-      const sec = parseTimeToSeconds(t.tempo);
-      if (sec == null) return;
-      const key = t.ex || "Metcon";
-      const existing = metconMap[key];
-      if (!existing || sec < existing.tempoSeg) {
-        metconMap[key] = {
-          exercicio: key,
-          tempoSeg: sec,
-          tempoStr: t.tempo,
-          date: t.date || "",
-          carga: t.carga || 0,
-          distanciaKm: t.distanciaKm || 0
-        };
-      }
-    });
+  treinos.forEach(t => {
+    if (!t.tempo) return;
+    const sec = parseTimeToSeconds(t.tempo);
+    if (sec == null) return;
+
+    const key = t.ex || "Metcon";
+    const existing = metconMap[key];
+    if (!existing || sec < existing.tempoSeg) {
+      metconMap[key] = {
+        exercicio: key,
+        tempoSeg: sec,
+        tempoStr: t.tempo,
+        date: t.date || "",
+        carga: t.carga || 0,
+        distanciaKm: t.distanciaKm || 0
+      };
+    }
+  });
 
     const rows = Object.keys(metconMap).map(k => metconMap[k]).sort((a, b) => a.tempoSeg - b.tempoSeg);
 
@@ -3634,6 +3637,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
