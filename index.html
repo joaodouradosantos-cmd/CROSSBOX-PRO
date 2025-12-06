@@ -2114,7 +2114,8 @@ function calcCarga(entry) {
 }
 
 function addTreinoEntry() {
-  const date = treinoDataEl.value || new Date().toISOString().slice(0,10);
+  const hoje = new Date().toISOString().slice(0, 10);
+  const date = (treinoDataEl && treinoDataEl.value) ? treinoDataEl.value : hoje;
   const ex = treinoExEl.value;
   const tipo = inferTipo(ex);
   const rondas = parseInt(treinoRondasEl.value || "1", 10);
@@ -2294,7 +2295,8 @@ function renderDailyHistory() {
 }
 function printTreinosPdf() {
   try {
-    const dia = treinoDataEl.value || new Date().toISOString().slice(0, 10);
+    const hoje = new Date().toISOString().slice(0, 10);
+    const dia = (treinoDataEl && treinoDataEl.value) ? treinoDataEl.value : hoje;
 
     // WOD do dia
     const listaDia = treinos.filter(t => t.date === dia);
@@ -2709,8 +2711,9 @@ function renderTreinos() {
   if (!treinoBody) return;
   treinoBody.innerHTML = "";
 
-  const dia = treinoDataEl.value || new Date().toISOString().slice(0,10);
-  const lista = treinos.filter(t => t.date === dia);
+  const hoje = new Date().toISOString().slice(0,10);
+  const dia = (treinoDataEl && treinoDataEl.value) ? treinoDataEl.value : hoje;
+
 
   // Se não houver WOD nesse dia
   if (!lista.length) {
@@ -2830,42 +2833,15 @@ function renderTreinos() {
     // NOVOS ACUMULADORES PARA OS CHIPS
     totalVolumeReps += (e.reps || 0) * (e.rondas || 0);
 
-    function parseTimeToSeconds(str) {
-  if (!str) return null;
-  const clean = String(str).trim().toLowerCase();
-  if (!clean) return null;
+    // Melhor tempo do dia (em segundos) para mostrar no chip “Melhor tempo”
+    if (e.tipo === "metcon" && e.tempo) {
+      const sec = parseTimeToSeconds(e.tempo);
+      if (sec != null && (melhorTempoSeg == null || sec < melhorTempoSeg)) {
+        melhorTempoSeg = sec;
+      }
+    }
+  });
 
-  // 1) hh:mm:ss ou mm:ss em qualquer parte do texto
-  const colonMatch = clean.match(/(\d{1,2}):(\d{2})(?::(\d{2}))?/);
-  if (colonMatch) {
-    const h = colonMatch[3] ? parseInt(colonMatch[1], 10) : 0;
-    const m = colonMatch[3] ? parseInt(colonMatch[2], 10) : parseInt(colonMatch[1], 10);
-    const s = colonMatch[3] ? parseInt(colonMatch[3], 10) : parseInt(colonMatch[2], 10);
-
-    if ([h, m, s].some(n => isNaN(n))) return null;
-    if (m < 0 || m >= 60 || s < 0 || s >= 60) return null;
-
-    return h * 3600 + m * 60 + s;
-  }
-
-  // 2) Só número → minutos
-  if (/^\d+(\.\d+)?$/.test(clean)) {
-    const val = parseFloat(clean);
-    return isNaN(val) ? null : Math.round(val * 60);
-  }
-
-  // 3) Formatos tipo “20'”, “20 min”, “2h”
-  const unitMatch = clean.match(/(\d+)\s*(h|hr|hrs|hora|horas|m|min|mins|minuto|minutos|')/);
-  if (unitMatch) {
-    const valor = parseInt(unitMatch[1], 10);
-    const unidade = unitMatch[2];
-
-    if (["h", "hr", "hrs", "hora", "horas"].includes(unidade)) return valor * 3600;
-    return valor * 60;
-  }
-
-  return null;
-}
 
   // RESUMO EM TEXTO
   if (treinoResumoEl) {
@@ -3109,25 +3085,40 @@ if (guiaSearch) {
 /* ===== PERFORMANCE (WOD / 1RM / METCON) ===== */
 function parseTimeToSeconds(str) {
   if (!str) return null;
-  const clean = String(str).trim();
-  const parts = clean.split(":");
-  if (parts.length < 2 || parts.length > 3) return null;
+  const clean = String(str).trim().toLowerCase();
+  if (!clean) return null;
 
-  const nums = parts.map(p => parseInt(p, 10));
-  if (nums.some(n => isNaN(n))) return null;
+  // 1) hh:mm:ss ou mm:ss em qualquer parte do texto
+  const colonMatch = clean.match(/(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+  if (colonMatch) {
+    const hasHours = !!colonMatch[3];
+    const h = hasHours ? parseInt(colonMatch[1], 10) : 0;
+    const m = hasHours ? parseInt(colonMatch[2], 10) : parseInt(colonMatch[1], 10);
+    const s = hasHours ? parseInt(colonMatch[3], 10) : parseInt(colonMatch[2], 10);
 
-  let h = 0, m = 0, s = 0;
-  if (nums.length === 2) {
-    m = nums[0];
-    s = nums[1];
-  } else {
-    h = nums[0];
-    m = nums[1];
-    s = nums[2];
+    if ([h, m, s].some(n => isNaN(n))) return null;
+    if (m < 0 || m >= 60 || s < 0 || s >= 60) return null;
+
+    return h * 3600 + m * 60 + s;
   }
 
-  if (m < 0 || s < 0 || s >= 60) return null;
-  return h * 3600 + m * 60 + s;
+  // 2) Só número → minutos (ex.: "20" = 20 minutos)
+  if (/^\d+(\.\d+)?$/.test(clean)) {
+    const val = parseFloat(clean);
+    return isNaN(val) ? null : Math.round(val * 60);
+  }
+
+  // 3) Formatos tipo “20'”, “20 min”, “2h”
+  const unitMatch = clean.match(/(\d+)\s*(h|hr|hrs|hora|horas|m|min|mins|minuto|minutos|')/);
+  if (unitMatch) {
+    const valor = parseInt(unitMatch[1], 10);
+    const unidade = unitMatch[2];
+
+    if (["h", "hr", "hrs", "hora", "horas"].includes(unidade)) return valor * 3600;
+    return valor * 60;
+  }
+
+  return null;
 }
 
 function formatSecondsToTime(totalSeconds) {
@@ -3640,6 +3631,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
