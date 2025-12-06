@@ -3134,7 +3134,22 @@ function parseTimeToSeconds(str) {
       if (m < 0 || s < 0 || s >= 60) return null;
       return h * 3600 + m * 60 + s;
     }
+    function formatSecondsToTime(totalSec) {
+  if (totalSec == null || isNaN(totalSec)) return "-";
+
+  const s = Math.max(0, Math.round(totalSec));
+  const h = Math.floor(s / 3600);
+  const rest = s % 3600;
+  const m = Math.floor(rest / 60);
+  const sec = rest % 60;
+
+  if (h > 0) {
+    return `${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
   }
+  return `${m}:${String(sec).padStart(2, "0")}`;
+}
+
+   }
 
   // 2) Formatos tipo "20'", "20 min", "20min", "amrap 10'", "for time 15min"
   //    → vamos procurar "número + unidade de tempo"
@@ -3156,9 +3171,11 @@ function parseTimeToSeconds(str) {
 }
 
 function renderPerformance() {
+  function renderPerformance() {
   /* WOD – dias com mais carga */
   if (perfWodBody) {
     perfWodBody.innerHTML = "";
+
     if (!treinos.length) {
       const tr = document.createElement("tr");
       const td = document.createElement("td");
@@ -3168,8 +3185,10 @@ function renderPerformance() {
       perfWodBody.appendChild(tr);
     } else {
       const map = {};
+
       treinos.forEach(t => {
         if (!t.date) return;
+
         if (!map[t.date]) {
           map[t.date] = {
             cargaTotal: 0,
@@ -3178,20 +3197,23 @@ function renderPerformance() {
             melhorTempoMetconSeg: null
           };
         }
+
         map[t.date].cargaTotal += t.carga || 0;
         map[t.date].distTotalKm += t.distanciaKm || 0;
         map[t.date].numEx += 1;
 
+        // melhor tempo de metcon nesse dia
         if (t.tipo === "metcon" && t.tempo) {
-          if (t.tempo) {
-       const sec = parseTimeToSeconds(t.tempo);
-       if (sec != null) {
-         if (map[t.date].melhorTempoMetconSeg == null || sec < map[t.date].melhorTempoMetconSeg) {
-           map[t.date].melhorTempoMetconSeg = sec;
-         }
-       }
-     }
-
+          const sec = parseTimeToSeconds(t.tempo);
+          if (sec != null) {
+            if (
+              map[t.date].melhorTempoMetconSeg == null ||
+              sec < map[t.date].melhorTempoMetconSeg
+            ) {
+              map[t.date].melhorTempoMetconSeg = sec;
+            }
+          }
+        }
       });
 
       const rows = Object.keys(map).map(date => ({
@@ -3224,9 +3246,10 @@ function renderPerformance() {
         tr.appendChild(tdNum);
 
         const tdTempo = document.createElement("td");
-        tdTempo.textContent = r.melhorTempoMetconSeg != null
-          ? formatSecondsToTime(r.melhorTempoMetconSeg)
-          : "-";
+        tdTempo.textContent =
+          r.melhorTempoMetconSeg != null
+            ? formatSecondsToTime(r.melhorTempoMetconSeg)
+            : "-";
         tr.appendChild(tdTempo);
 
         perfWodBody.appendChild(tr);
@@ -3256,16 +3279,17 @@ function renderPerformance() {
       perf1rmBody.appendChild(tr);
     } else {
       const pesoCorporal = profile && profile.peso ? profile.peso : null;
-      const rows = nomes.map(name => ({
-        name,
-        value: dataRm[name]
-      })).sort((a, b) => (b.value || 0) - (a.value || 0));
+      const rows = nomes
+        .map(name => ({ name, value: dataRm[name] }))
+        .sort((a, b) => (b.value || 0) - (a.value || 0));
 
       rows.slice(0, 10).forEach(r => {
         const tr = document.createElement("tr");
 
         const tdName = document.createElement("td");
-        const label = MOVES_PT[r.name] ? `${r.name} – ${MOVES_PT[r.name]}` : r.name;
+        const label = MOVES_PT[r.name]
+          ? `${r.name} – ${MOVES_PT[r.name]}`
+          : r.name;
         tdName.textContent = label;
         tr.appendChild(tdName);
 
@@ -3287,37 +3311,40 @@ function renderPerformance() {
     }
   }
 
-  /* Metcon – melhores tempos (qualquer exercício com tempo válido) */
-if (perfMetconBody) {
-  perfMetconBody.innerHTML = "";
-  const metconMap = {};
+  /* Metcon – melhores tempos */
+  if (perfMetconBody) {
+    perfMetconBody.innerHTML = "";
+    const metconMap = {};
 
-  treinos.forEach(t => {
-    if (!t.tempo) return;
-    const sec = parseTimeToSeconds(t.tempo);
-    if (sec == null) return;
+    treinos.forEach(t => {
+      if (!t.tempo) return;
+      const sec = parseTimeToSeconds(t.tempo);
+      if (sec == null) return;
 
-    const key = t.ex || "Metcon";
-    const existing = metconMap[key];
-    if (!existing || sec < existing.tempoSeg) {
-      metconMap[key] = {
-        exercicio: key,
-        tempoSeg: sec,
-        tempoStr: t.tempo,
-        date: t.date || "",
-        carga: t.carga || 0,
-        distanciaKm: t.distanciaKm || 0
-      };
-    }
-  });
+      const key = t.ex || "Metcon";
+      const existing = metconMap[key];
+      if (!existing || sec < existing.tempoSeg) {
+        metconMap[key] = {
+          exercicio: key,
+          tempoSeg: sec,
+          tempoStr: t.tempo,
+          date: t.date || "",
+          carga: t.carga || 0,
+          distanciaKm: t.distanciaKm || 0
+        };
+      }
+    });
 
-    const rows = Object.keys(metconMap).map(k => metconMap[k]).sort((a, b) => a.tempoSeg - b.tempoSeg);
+    const rows = Object.keys(metconMap)
+      .map(k => metconMap[k])
+      .sort((a, b) => a.tempoSeg - b.tempoSeg);
 
     if (!rows.length) {
       const tr = document.createElement("tr");
       const td = document.createElement("td");
       td.colSpan = 4;
-      td.textContent = "Ainda não registaste metcons com tempo em formato mm:ss.";
+      td.textContent =
+        "Ainda não registaste metcons com tempo em formato reconhecido (ex.: 12:35 ou 20').";
       tr.appendChild(td);
       perfMetconBody.appendChild(tr);
     } else {
@@ -3325,7 +3352,9 @@ if (perfMetconBody) {
         const tr = document.createElement("tr");
 
         const tdEx = document.createElement("td");
-        const label = MOVES_PT[r.exercicio] ? `${r.exercicio} – ${MOVES_PT[r.exercicio]}` : r.exercicio;
+        const label = MOVES_PT[r.exercicio]
+          ? `${r.exercicio} – ${MOVES_PT[r.exercicio]}`
+          : r.exercicio;
         tdEx.textContent = label;
         tr.appendChild(tdEx);
 
@@ -3654,6 +3683,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
