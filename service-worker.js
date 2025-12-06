@@ -1,11 +1,10 @@
-const CACHE_NAME = "CrossBox-cache-v8";
+const CACHE_NAME = "CrossBox-cache-v7";
 
 const URLS_TO_CACHE = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./imagens/crossbox_logo.png",
-  "./js/chart.umd.min.js"
+  "./imagens/crossbox_logo.png"
 ];
 
 // INSTALAÇÃO — pré-cache básico e entra logo em ação
@@ -77,3 +76,4 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
