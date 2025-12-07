@@ -637,18 +637,7 @@
         </div>
       </div>
 
-            <div class="form-row">
-        <div class="field">
-          <label>Altura (cm)</label>
-          <input id="altura" type="number" min="100" max="230" />
-        </div>
-        <div class="field">
-          <label>Peso (kg)</label>
-          <input id="peso" type="number" step="0.1" min="30" max="250" />
-        </div>
-      </div>
-
-            <div class="form-row">
+        <div class="form-row">
         <div class="field">
           <label>Altura (cm)</label>
           <input id="altura" type="number" min="100" max="230" />
@@ -2778,7 +2767,7 @@ function renderTreinos() {
 
   const hoje = new Date().toISOString().slice(0,10);
   const dia = (treinoDataEl && treinoDataEl.value) ? treinoDataEl.value : hoje;
-
+  const lista = treinos.filter(t => t.date === dia);
 
   // Se não houver WOD nesse dia
   if (!lista.length) {
@@ -3696,6 +3685,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
