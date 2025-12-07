@@ -891,7 +891,7 @@
             <span>Exercícios</span>
             <span id="statExercicios">0</span>
           </div>
-          <div class="stat-chip">
+          <div class="stat-chip" id="statTempoChip">
             <span>Melhor tempo</span>
             <span id="statTempo">–</span>
           </div>
@@ -1606,7 +1606,7 @@ const statCargaEl = document.getElementById("statCarga");
 const statExerciciosEl = document.getElementById("statExercicios");
 const statTempoEl = document.getElementById("statTempo");
 const statVolumeEl = document.getElementById("statVolume");
-
+const statTempoChipEl = document.getElementById("statTempoChip");
 
 /* OBJETIVO */
 const calcExEl = document.getElementById("calcExercicio");
@@ -2928,12 +2928,15 @@ function renderTreinos() {
       statExerciciosEl.textContent = String(lista.length);
     }
 
-    if (statTempoEl) {
-      statTempoEl.textContent = (melhorTempoSeg != null)
-        ? formatSecondsToTime(melhorTempoSeg)
-        : "–";
+     if (statTempoEl && statTempoChipEl) {
+     if (melhorTempoSeg != null) {
+       statTempoEl.textContent = formatSecondsToTime(melhorTempoSeg);
+       statTempoChipEl.style.display = "flex";   // mostra o chip
+     } else {
+       statTempoChipEl.style.display = "none";   // esconde o chip
+      }
     }
-
+  
     if (statVolumeEl) {
       statVolumeEl.textContent = `${totalVolumeReps} reps`;
     }
@@ -3683,6 +3686,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
