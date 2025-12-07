@@ -3,8 +3,8 @@
   "short_name": "CrossBox",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#141710"
-  "theme_color": "#262f1c"
+  "background_color": "#141710",
+  "theme_color": "#262f1c",
   "icons": [
     {
       "src": "imagens/crossbox_logo.png",
@@ -14,5 +14,6 @@
     }
   ]
 }
+
 
 
