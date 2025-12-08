@@ -694,94 +694,10 @@
     }
 </style>
 </head>
+  
 <body>
-  <!-- *** A.NAV+PAGES: START *** -->
-<header class="nav">
-  <div class="container">
-    <div class="row" style="align-items:center;justify-content:space-between">
-      <div style="display:flex;align-items:center;gap:10px">
-        <img src="imagens/crossbox_logo-192.png" alt="logo" width="28" height="28" style="border-radius:8px">
-        <strong id="brandTitle">CrossBox PRO</strong>
-      </div>
-      <small class="muted" id="brandSub"></small>
-    </div>
-  </div>
-  <nav class="nav__row container" id="mainTabs">
-    <button class="tab tab--active" data-page="wod">WOD</button>
-    <button class="tab" data-page="rm">1RM</button>
-    <button class="tab" data-page="perf">Performance</button>
-    <button class="tab" data-page="reservas">Reservas</button>
-    <button class="tab" data-page="bib">Biblioteca</button>
-    <button class="tab" data-page="perfil">Perfil</button>
-  </nav>
-</header>
-
-<main class="container" id="pages">
-  <!-- WOD -->
-  <section id="page-wod">
-    <div class="card">
-      <h3>WOD por Blocos</h3>
-      <div class="row">
-        <div class="col">
-          <label>Data</label>
-          <input type="date" id="wodDate">
-        </div>
-        <div class="col">
-          <label>Título (opcional)</label>
-          <input type="text" id="wodTitle" placeholder="Semana 3 de 8 – Ciclo de Skills">
-        </div>
-      </div>
-
-      <div id="wodBlocks"></div>
-
-      <div class="row" style="margin-top:10px">
-        <button class="btn" id="btnAddBlock">➕ Adicionar bloco</button>
-        <button class="btn btn--ok" id="btnSaveWod">💾 Guardar WOD</button>
-        <span class="muted" id="wodHint"></span>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>Histórico</h3>
-      <div id="wodList" class="grid"></div>
-    </div>
-  </section>
-
-  <!-- 1RM -->
-  <section id="page-rm" class="hide">
-    <div class="card"><h3>1RM</h3><p class="muted">Em breve: ligar ao teu módulo atual de 1RM.</p></div>
-  </section>
-
-  <!-- Performance -->
-  <section id="page-perf" class="hide">
-    <div class="card"><h3>Performance</h3><p class="muted">Em breve: gráficos e progresso.</p></div>
-  </section>
-
-  <!-- Reservas -->
-  <section id="page-reservas" class="hide">
-    <div class="card"><h3>Reservas</h3><p class="muted">Integração futura.</p></div>
-  </section>
-
-  <!-- Biblioteca -->
-  <section id="page-bib" class="hide">
-    <div class="card"><h3>Biblioteca de Exercícios</h3><p class="muted">Pesquisa e favoritos (a ligar ao teu dataset).</p></div>
-  </section>
-
-  <!-- Perfil -->
-  <section id="page-perfil" class="hide">
-    <div class="card"><h3>Perfil</h3>
-      <div class="row">
-        <div class="col"><label>Nome</label><input id="pName" placeholder="Atleta"></div>
-        <div class="col"><label>Box</label><input id="pBox" placeholder="CrossFit XPTO"></div>
-      </div>
-      <div style="margin-top:10px"><button class="btn" id="btnSavePerfil">Guardar</button></div>
-    </div>
-  </section>
-</main>
-<!-- *** A.NAV+PAGES: END **** -->
-
 <div class="app">
-
+  
   <header>
     <div class="header-row">
       <img id="appLogo" src="imagens/crossbox_logo.png" alt="CrossBox logo">
@@ -4173,6 +4089,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
