@@ -2234,10 +2234,9 @@ function addTreinoEntry() {
   const hoje = new Date().toISOString().slice(0, 10);
   const date = (treinoDataEl && treinoDataEl.value) ? treinoDataEl.value : hoje;
 
-  // novos campos do WOD
+  // novos campos do WOD (já sem estrutura)
   const parte = treinoParteEl ? (treinoParteEl.value || "") : "";
   const formato = treinoFormatoEl ? (treinoFormatoEl.value || "") : "";
-  const estrutura = treinoEstruturaEl ? treinoEstruturaEl.value.trim() : "";
 
   const ex = treinoExEl.value;
   const tipo = inferTipo(ex);
@@ -2260,7 +2259,6 @@ function addTreinoEntry() {
     date,
     parte,
     formato,
-    estrutura,       // guardamos mesmo que ainda não use na tabela
     ex,
     tipo,
     rondas,
@@ -2311,19 +2309,16 @@ function addTreinoEntry() {
   const aceitar = confirm(msg);
   if (!aceitar) return;
 
-  // guardar histórico antes de atualizar (tal como no botão de 1RM)
   if (!rmHistory[ex]) rmHistory[ex] = [];
   rmHistory[ex].push({
     date: new Date().toISOString().slice(0, 10),
     value: current1rm
   });
 
-  // atualizar 1RM
   dataRm[ex] = new1rmVal;
   localStorage.setItem(STORAGE_RM, JSON.stringify(dataRm));
   localStorage.setItem(STORAGE_RM_HISTORY, JSON.stringify(rmHistory));
 
-  
   const idx = treinos.indexOf(entry);
   if (idx !== -1) {
     treinos[idx].perc1rm = peso > 0 ? (peso / new1rmVal) : null;
@@ -2338,6 +2333,7 @@ function addTreinoEntry() {
     `Novo 1RM registado para ${label}: ${formatKg(new1rmVal)} (estimado a partir do WOD).`
   );
 }
+
 
   function deleteTreinoEntry(index) {
   if (index < 0 || index >= treinos.length) return;
@@ -3798,6 +3794,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
