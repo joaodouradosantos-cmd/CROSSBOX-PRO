@@ -845,8 +845,7 @@
       <div class="card">
         <h3 style="margin-top:0; margin-bottom:8px;">🟩 WOD</h3>
 
-        ***HTML_WOD_FORM_INICIO***
-        <!-- LINHA 1: data / procura / exercício -->
+              <!-- LINHA 1: data / procura / exercício -->
         <div class="form-row">
           <div class="field">
             <label>Data</label>
@@ -973,8 +972,7 @@
           </div>
         </div>
 
-        <!-- WOD do dia – compacto e fácil de ler -->
-        ***HTML_WOD_TABLES_INICIO***
+            
         <!-- WOD do dia – compacto e fácil de ler -->
         <h4 style="margin-top:10px; margin-bottom:4px;">WOD do dia</h4>
         <div class="scroll" id="treinoScroll">
@@ -1036,7 +1034,7 @@
             </table>
           </div>
         </div>
-***HTML_WOD_TABLES_FIM***
+
     </section>
 
     <!-- OBJETIVO -->
@@ -2337,7 +2335,7 @@ function addTreinoEntry() {
   localStorage.setItem(STORAGE_RM, JSON.stringify(dataRm));
   localStorage.setItem(STORAGE_RM_HISTORY, JSON.stringify(rmHistory));
 
-  // *** RECALCULAR % 1RM DESSE WOD COM O NOVO 1RM ***
+  
   const idx = treinos.indexOf(entry);
   if (idx !== -1) {
     treinos[idx].perc1rm = peso > 0 ? (peso / new1rmVal) : null;
@@ -3812,6 +3810,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
