@@ -2359,6 +2359,7 @@ function renderDailyHistory() {
 
     dailyHistoryBody.appendChild(tr);
   });
+  
 }
 function printTreinosPdf() {
   try {
@@ -2367,7 +2368,7 @@ function printTreinosPdf() {
 
     // WOD do dia
     const listaDia = treinos.filter(t => t.date === dia);
-    // Histórico completo (tudo ordenado da data mais recente para a mais antiga)
+    // Histórico completo (todos os dias)
     const listaFull = treinos.slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
 
     let html = `
@@ -2382,13 +2383,14 @@ function printTreinosPdf() {
       font-size: 12px;
       color: #111;
       margin: 16px;
+      background: #ffffff;
     }
-    h1, h2, h3 {
+    h1, h2 {
       margin: 0 0 6px 0;
     }
     h1 { font-size: 18px; }
     h2 { font-size: 14px; margin-top: 14px; }
-    p { margin: 4px 0; }
+    p  { margin: 4px 0; }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -2408,25 +2410,6 @@ function printTreinosPdf() {
       font-size: 10px;
       color: #444;
     }
-    /* Ajuste fino da tabela 1RM (tab 1RM) */
-#sec-1rm .card:nth-of-type(2) table {
-  table-layout: fixed;           /* garante colunas mais "apertadas" */
-}
-
-#sec-1rm .card:nth-of-type(2) th,
-#sec-1rm .card:nth-of-type(2) td {
-  white-space: normal;           /* permite quebrar linha */
-  text-align: left;              /* mais legível para texto longo */
-}
-
-#sec-1rm .card:nth-of-type(2) td:first-child {
-  font-weight: 600;              /* destaque no nome do exercício */
-}
-
-#sec-1rm .card:nth-of-type(2) td:last-child {
-  text-align: center;            /* ícone 🗑 centrado na coluna pequena */
-  width: 40px;
-}
   </style>
 </head>
 <body>
@@ -2439,432 +2422,81 @@ function printTreinosPdf() {
 
     html += `<p class="small">Gerado em: ${new Date().toLocaleString()}</p>`;
 
-    // Resumo do dia + sugestão + histórico semanal
+    // Resumo do dia
     html += `<h2>Resumo do dia ${dia}</h2>`;
-    if (treinoResumoEl && treinoResumoEl.textContent) {
-      html += `<p><strong>Resumo:</strong> ${treinoResumoEl.textContent}</p>`;
-    }
+    const resumoTxt = treinoResumoEl ? (treinoResumoEl.textContent || "–") : "–";
+    html += `<p><strong>Resumo:</strong> ${resumoTxt}</p>`;
+
     if (treinoSugestaoEl && treinoSugestaoEl.textContent) {
       html += `<p><strong>Sugestão:</strong> ${treinoSugestaoEl.textContent}</p>`;
     }
+
     if (weeklyHistoryEl && weeklyHistoryEl.innerHTML) {
       html += `<h2>Histórico semanal</h2>`;
       html += `<div class="small">${weeklyHistoryEl.innerHTML}</div>`;
     }
 
+    // Função auxiliar para gerar tabela
+    function addTabela(titulo, lista) {
+      html += `<h2>${titulo}</h2>`;
+      if (!lista.length) {
+        html += `<p>Sem registos.</p>`;
+        return;
+      }
+      html += `
+<table>
+  <thead>
+    <tr>
+      <th>Data</th>
+      <th>Exercício</th>
+      <th>Tipo</th>
+      <th>Rondas</th>
+      <th>Reps</th>
+      <th>Peso</th>
+      <th>% 1RM</th>
+      <th>Tempo</th>
+      <th>Distância (km)</th>
+      <th>Carga (kg)</th>
+    </tr>
+  </thead>
+  <tbody>
+`;
+      lista.forEach(t => {
+        const label = MOVES_PT[t.ex] ? `${t.ex} – ${MOVES_PT[t.ex]}` : (t.ex || "");
+        const pesoTxt  = t.peso        ? formatKg(t.peso)        : "";
+        const percTxt  = t.perc1rm     ? (t.perc1rm * 100).toFixed(0) + "%" : "";
+        const distTxt  = t.distanciaKm ? formatKm(t.distanciaKm) : "";
+        const cargaTxt = t.carga       ? formatKg(t.carga)       : "";
+
+        html += `
+    <tr>
+      <td>${t.date || ""}</td>
+      <td>${label}</td>
+      <td>${t.tipo || ""}</td>
+      <td>${t.rondas || ""}</td>
+      <td>${t.reps || ""}</td>
+      <td>${pesoTxt}</td>
+      <td>${percTxt}</td>
+      <td>${t.tempo || ""}</td>
+      <td>${distTxt}</td>
+      <td>${cargaTxt}</td>
+    </tr>`;
+      });
+
+      html += `
+  </tbody>
+</table>
+`;
+    }
+
     // Tabela do WOD do dia
-    html += `<h2>WOD do dia (${dia})</h2>`;
-
-    if (!listaDia.length) {
-      html += `<p>Sem WOD registado para este dia.</p>`;
-    } else {
-      html += `
-      <table>
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Exercício</th>
-            <th>Tipo</th>
-            <th>Rondas</th>
-            <th>Reps</th>
-            <th>Peso</th>
-            <th>% 1RM</th>
-            <th>Tempo</th>
-            <th>Distância (km)</th>
-            <th>Carga (kg)</th>
-          </tr>
-        </thead>
-        <tbody>
-      `;
-      listaDia.forEach(t => {
-        const label = MOVES_PT[t.ex] ? `${t.ex} – ${MOVES_PT[t.ex]}` : (t.ex || "");
-        const pesoTxt = t.peso ? formatKg(t.peso) : "";
-        const percTxt = t.perc1rm ? (t.perc1rm * 100).toFixed(0) + "%" : "";
-        const distTxt = t.distanciaKm ? formatKm(t.distanciaKm) : "";
-        const cargaTxt = t.carga ? formatKg(t.carga) : "";
-
-        html += `
-          <tr>
-            <td>${t.date || ""}</td>
-            <td>${label}</td>
-            <td>${t.tipo || ""}</td>
-            <td>${t.rondas || ""}</td>
-            <td>${t.reps || ""}</td>
-            <td>${pesoTxt}</td>
-            <td>${percTxt}</td>
-            <td>${t.tempo || ""}</td>
-            <td>${distTxt}</td>
-            <td>${cargaTxt}</td>
-          </tr>
-        `;
-      });
-      html += `
-        </tbody>
-      </table>
-      `;
-    }
-
-    // Histórico diário completo
-    html += `<h2>Histórico diário completo</h2>`;
-
-    if (!listaFull.length) {
-      html += `<p>Sem registos de WOD.</p>`;
-    } else {
-      html += `
-      <table>
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Exercício</th>
-            <th>Tipo</th>
-            <th>Rondas</th>
-            <th>Reps</th>
-            <th>Peso</th>
-            <th>% 1RM</th>
-            <th>Tempo</th>
-            <th>Distância (km)</th>
-            <th>Carga (kg)</th>
-          </tr>
-        </thead>
-        <tbody>
-      `;
-      listaFull.forEach(t => {
-        const label = MOVES_PT[t.ex] ? `${t.ex} – ${MOVES_PT[t.ex]}` : (t.ex || "");
-        const pesoTxt = t.peso ? formatKg(t.peso) : "";
-        const percTxt = t.perc1rm ? (t.perc1rm * 100).toFixed(0) + "%" : "";
-        const distTxt = t.distanciaKm ? formatKm(t.distanciaKm) : "";
-        const cargaTxt = t.carga ? formatKg(t.carga) : "";
-
-        html += `
-          <tr>
-            <td>${t.date || ""}</td>
-            <td>${label}</td>
-            <td>${t.tipo || ""}</td>
-            <td>${t.rondas || ""}</td>
-            <td>${t.reps || ""}</td>
-            <td>${pesoTxt}</td>
-            <td>${percTxt}</td>
-            <td>${t.tempo || ""}</td>
-            <td>${distTxt}</td>
-            <td>${cargaTxt}</td>
-          </tr>
-        `;
-      });
-      html += `
-        </tbody>
-      </table>
-      `;
-    }
+    addTabela(`WOD do dia (${dia})`, listaDia);
+    // Histórico completo
+    addTabela("Histórico diário completo", listaFull);
 
     html += `
-    <!-- *** D.CONFIG: START *** -->
-<script>
-  window.CROSSBOX_CONFIG = {
-    name: "CrossBox PRO",
-    subtitle: "Ciclo de Skills",
-    storageKey: "crossbox_pro_wods",
-    brand: {
-      colorMain: "#1d2d1d",
-      colorAccent: "#7bd389",
-      logo: "imagens/crossbox_logo-192.png"
-    }
-  };
-  // Aplicar branding leve
-  document.addEventListener("DOMContentLoaded", () => {
-    const c = window.CROSSBOX_CONFIG;
-    document.getElementById("brandTitle").textContent = c.name || "CrossBox";
-    document.getElementById("brandSub").textContent = c.subtitle || "";
-    const root = document.documentElement;
-    root.style.setProperty('--brand', c.brand?.colorMain || '#1d2d1d');
-    root.style.setProperty('--accent', c.brand?.colorAccent || '#7bd389');
-  });
-</script>
-<!-- *** D.CONFIG: END **** -->
-
-<!-- *** C+B.MODULES: START *** -->
-<script>
-  // ===== Core util =====
-  const CrossBox = (() => {
-    const SKEY = window.CROSSBOX_CONFIG?.storageKey || "crossbox_wods";
-    const save = (arr) => localStorage.setItem(SKEY, JSON.stringify(arr));
-    const load = () => {
-      try { return JSON.parse(localStorage.getItem(SKEY) || "[]"); }
-      catch { return []; }
-    };
-    const uid = () => Math.random().toString(36).slice(2,10);
-    return { save, load, uid, SKEY };
-  })();
-
-  // ===== UI: navegação simples =====
-  (function UI(){
-    const tabs = document.getElementById("mainTabs");
-    const pages = document.getElementById("pages").children;
-    tabs.addEventListener("click", (e)=>{
-      const btn = e.target.closest(".tab"); if(!btn) return;
-      const page = btn.dataset.page;
-      [...tabs.children].forEach(b=>b.classList.toggle("tab--active", b===btn));
-      [...pages].forEach(sec=>sec.classList.toggle("hide", sec.id !== `page-${page}`));
-    });
-  })();
-
-  // ===== B) WOD por BLOCO dinâmico =====
-  const WOD = (() => {
-    const $blocks = document.getElementById("wodBlocks");
-    const $date = document.getElementById("wodDate");
-    const $title = document.getElementById("wodTitle");
-    const $list  = document.getElementById("wodList");
-    const $hint  = document.getElementById("wodHint");
-
-    // Estado temporário do formulário atual
-    let blocks = [];
-
-    const TYPES = [
-      {id:"rounds", label:"Rondas"},
-      {id:"amrap", label:"AMRAP"},
-      {id:"emom", label:"Cada X'"},
-      {id:"timecap", label:"For Time (TC)"},
-      {id:"skill", label:"Skill/Técnica"},
-      {id:"load", label:"For Load"}
-    ];
-    const EXAMPLE_RUNS = ["200 m", "300 m", "400 m", "800 m", "1 km"];
-
-    const nextLetter = () => String.fromCharCode(65 + blocks.length); // 65 = 'A'
-
-    function addBlock(){
-      const letra = nextLetter();
-      const id = CrossBox.uid();
-      const block = { id, letra, tipo:"rounds", meta:{rondas:3, duracao:7, intervalo:2}, exercicios:[] };
-      blocks.push(block);
-      renderBlocks();
-    }
-
-    function removeBlock(id){
-      blocks = blocks.filter(b=>b.id!==id);
-      // reatribuir letras (A..)
-      blocks.forEach((b,i)=> b.letra = String.fromCharCode(65+i));
-      renderBlocks();
-    }
-
-    function addExercise(blockId){
-      const b = blocks.find(x=>x.id===blockId);
-      b.exercicios.push({nome:"Run", reps:0, tempoSeg:0, distancia:400, unidade:"m", carga:0, unidadeCarga:"kg"});
-      renderBlocks();
-    }
-
-    function renderBlocks(){
-      $blocks.innerHTML = "";
-      blocks.forEach((b) => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <div class="row" style="align-items:center;justify-content:space-between">
-            <h3>Bloco ${b.letra}</h3>
-            <div>
-              <span class="pill">${b.exercicios.length} exercícios</span>
-              <button class="btn btn--ghost btn--danger" data-del="${b.id}">Remover</button>
-            </div>
-          </div>
-
-          <div class="grid grid-3">
-            <div>
-              <label>Tipo</label>
-              <select data-field="tipo" data-id="${b.id}">
-                ${TYPES.map(t=>`<option value="${t.id}" ${t.id===b.tipo?'selected':''}>${t.label}</option>`).join("")}
-              </select>
-            </div>
-
-            <div>
-              <label>Rondas / Duração</label>
-              <input data-field="meta" data-id="${b.id}" placeholder="Ex.: 4 (rondas) ou 7' (AMRAP/TC)" value="${b.tipo==='rounds'?b.meta.rondas:(b.meta.duracao||7)}">
-            </div>
-
-            <div>
-              <label>Intervalo (para “Cada X’”)</label>
-              <input data-field="intervalo" data-id="${b.id}" placeholder="Ex.: 2’" value="${b.meta.intervalo||''}">
-            </div>
-          </div>
-
-          <div style="margin-top:10px">
-            <button class="btn" data-addex="${b.id}">+ Exercício</button>
-          </div>
-
-          <div class="grid" style="margin-top:10px">
-            ${b.exercicios.map((ex,i)=>`
-              <div class="card" style="background:#0b120b;border-style:dashed">
-                <div class="row">
-                  <div class="col">
-                    <label>Exercício</label>
-                    <input data-ex="${b.id}:${i}:nome" value="${ex.nome}">
-                    <small class="muted">Sugestões: ${EXAMPLE_RUNS.join(" · ")}</small>
-                  </div>
-                  <div class="col">
-                    <label>Reps / Tempo ” / Distância</label>
-                    <input data-ex="${b.id}:${i}:quant" value="${ex.distancia?ex.distancia + (ex.unidade||'') : (ex.reps||0)}">
-                  </div>
-                  <div class="col">
-                    <label>Carga (kg) (opcional)</label>
-                    <input data-ex="${b.id}:${i}:carga" value="${ex.carga||0}">
-                  </div>
-                </div>
-                <div style="margin-top:8px">
-                  <button class="btn btn--ghost btn--danger" data-del-ex="${b.id}:${i}">Remover exercício</button>
-                </div>
-              </div>
-            `).join("")}
-          </div>
-        `;
-        $blocks.appendChild(card);
-      });
-    }
-
-    function parseQuant(txt){
-      // aceita “15”, “20"”, “400m”, “1 km”
-      const t = String(txt).trim().toLowerCase();
-      if(/km|m/.test(t)){
-        const v = parseFloat(t);
-        const u = t.includes("km") ? "km" : "m";
-        return {tipo:"dist", valor:v, unidade:u};
-      }
-      if(t.endsWith('"') || t.endsWith("''") || t.includes("sec")){
-        const v = parseFloat(t);
-        return {tipo:"tempo", valor:v};
-      }
-      const v = parseFloat(t)||0;
-      return {tipo:"reps", valor:v};
-    }
-
-    // Guardar WOD -> um único registo completo com blocos
-    function saveCurrent(){
-      if(!blocks.length){ $hint.textContent = "Adiciona pelo menos um bloco."; return; }
-      const date = $date.value || new Date().toISOString().slice(0,10);
-      const wod = {
-        id: CrossBox.uid(),
-        data: date,
-        titulo: $title.value || "",
-        blocos: blocks.map(b => ({
-          letra: b.letra,
-          tipo: b.tipo,
-          meta: b.tipo==='rounds' ? {rondas: Number(b.meta.rondas||0)} :
-                b.tipo==='emom'   ? {intervalo: b.meta.intervalo||"2’", duracao:b.meta.duracao||0} :
-                                    {duracao: Number(b.meta.duracao||0)},
-          exercicios: b.exercicios.map(ex => {
-            const q = parseQuant(ex.quant || ex.distancia || ex.reps || 0);
-            return {
-              nome: ex.nome,
-              medida: q.tipo,
-              valor: q.valor,
-              unidade: q.unidade || (q.tipo==='dist'?'m':''),
-              carga: Number(ex.carga||0)
-            }
-          })
-        }))
-      };
-      const all = CrossBox.load();
-      all.unshift(wod);
-      CrossBox.save(all);
-      $hint.textContent = "WOD guardada ✔";
-      // reset
-      blocks = [];
-      renderBlocks();
-      renderList();
-    }
-
-    function renderList(){
-      const all = CrossBox.load();
-      $list.innerHTML = all.map(w => `
-        <div class="card">
-          <div class="row" style="align-items:center;justify-content:space-between">
-            <div>
-              <strong>${w.data}</strong> — ${w.titulo || 'WOD'}
-              <div class="muted">${w.blocos.length} bloco(s)</div>
-            </div>
-            <div>
-              ${w.blocos.map(b=>`<span class="pill">${b.letra}</span>`).join("")}
-              <button class="btn btn--ghost btn--danger" data-del-wod="${w.id}">Apagar</button>
-            </div>
-          </div>
-          ${w.blocos.map(b=>`
-            <div class="card" style="margin-top:10px">
-              <strong>Bloco ${b.letra}</strong> — <span class="muted">${b.tipo}</span>
-              <div class="grid" style="margin-top:6px">
-                ${b.exercicios.map(ex=>`
-                  <div class="row" style="justify-content:space-between">
-                    <div>${ex.nome}</div>
-                    <div class="muted">
-                      ${ex.medida==='dist' ? `${ex.valor}${ex.unidade}` :
-                         ex.medida==='tempo' ? `${ex.valor}"` : `${ex.valor} reps`}
-                      ${ex.carga ? ` · ${ex.carga}kg` : ""}
-                    </div>
-                  </div>
-                `).join("")}
-              </div>
-            </div>
-          `).join("")}
-        </div>
-      `).join("");
-    }
-
-    // Eventos
-    document.getElementById("btnAddBlock").addEventListener("click", addBlock);
-    document.getElementById("btnSaveWod").addEventListener("click", saveCurrent);
-    $blocks.addEventListener("click",(e)=>{
-      const del = e.target.getAttribute("data-del");
-      const addex = e.target.getAttribute("data-addex");
-      const delEx = e.target.getAttribute("data-del-ex");
-      if(del){ removeBlock(del); }
-      if(addex){ addExercise(addex); }
-      if(delEx){
-        const [bid, idx] = delEx.split(":");
-        const b = blocks.find(x=>x.id===bid);
-        b.exercicios.splice(Number(idx),1);
-        renderBlocks();
-      }
-    });
-    $blocks.addEventListener("input",(e)=>{
-      const el = e.target;
-      if(el.dataset.field){
-        const b = blocks.find(x=>x.id===el.dataset.id);
-        if(el.dataset.field==="tipo"){ b.tipo = el.value; }
-        else if(el.dataset.field==="meta"){ 
-          if(b.tipo==="rounds") b.meta.rondas = Number(el.value||0);
-          else b.meta.duracao = String(el.value||"");
-        } else if(el.dataset.field==="intervalo"){
-          b.meta.intervalo = el.value;
-        }
-      }
-      if(el.dataset.ex){
-        const [bid, i, prop] = el.dataset.ex.split(":");
-        const b = blocks.find(x=>x.id===bid);
-        if(!b) return;
-        if(prop==="nome") b.exercicios[i].nome = el.value;
-        if(prop==="quant") b.exercicios[i].quant = el.value;
-        if(prop==="carga") b.exercicios[i].carga = Number(el.value||0);
-      }
-    });
-
-    document.getElementById("wodList").addEventListener("click",(e)=>{
-      const id = e.target.getAttribute("data-del-wod");
-      if(!id) return;
-      const all = CrossBox.load().filter(w=>w.id!==id);
-      CrossBox.save(all);
-      renderList();
-    });
-
-    // Init
-    (function init(){
-      document.getElementById("wodDate").value = new Date().toISOString().slice(0,10);
-      renderBlocks();
-      renderList();
-    })();
-
-    return { addBlock, saveCurrent };
-  })();
-</script>
-<!-- *** C+B.MODULES: END **** -->
-
 </body>
-</html>
-`;
+</html>`;
 
     const win = window.open("", "_blank");
     if (!win) {
@@ -2881,6 +2513,7 @@ function printTreinosPdf() {
     alert("Ocorreu um erro ao gerar o PDF do histórico.");
   }
 }
+
 
 function buildSugestao(lista, totalCarga, totalSeries, blocosForca, blocosHipertrofia, blocosLeve, dia) {
   // Caso de treino muito leve ou sem dados suficientes
@@ -4007,6 +3640,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
