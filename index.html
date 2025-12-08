@@ -934,36 +934,8 @@
             <input id="treinoDist" type="number" step="0.01" min="0" />
           </div>
         </div>
-***HTML_WOD_FORM_FIM***
 
-
-  <div class="field">
-    <label>Repetições</label>
-    <input id="treinoReps" type="number" min="1" />
-  </div>
-
-  <div class="field">
-    <label>Peso kg</label>
-    <input id="treinoPeso" type="number" step="0.5" min="0" />
-  </div>
-
-  <div class="field">
-    <label>%1RM</label>
-    <input id="treinoPercent" type="number" min="10" max="130" step="1" />
-  </div>
-
-  <div class="field">
-    <label>Tempo</label>
-    <input id="treinoTempo" type="text" placeholder="Ex.: 12:35, 20', AMRAP 10'..." />
-  </div>
-
-  <div class="field">
-    <label>Distância (km)</label>
-    <input id="treinoDist" type="number" step="0.01" min="0" />
-  </div>
-</div>
-
-        <div class="helper-text" id="treinoPercentInfo" style="margin-top:-4px; margin-bottom:4px;">
+          <div class="helper-text" id="treinoPercentInfo" style="margin-top:-4px; margin-bottom:4px;">
         </div>
 
         <button class="btn-primary" id="treinoAdd">Adicionar ao WOD</button>
@@ -1680,7 +1652,6 @@ const quickPesoEl = document.getElementById("quickPeso");
 const quickPesoInputEl = document.getElementById("quickPesoInput");
 const quickPercResultEl = document.getElementById("quickPercResult");
 
-***JS_WOD_CONSTS_INICIO***
 /* WOD */
 let treinos = JSON.parse(localStorage.getItem(STORAGE_TREINO) || "[]");
 
@@ -1716,8 +1687,6 @@ const statExerciciosEl = document.getElementById("statExercicios");
 const statTempoEl = document.getElementById("statTempo");
 const statVolumeEl = document.getElementById("statVolume");
 const statTempoChipEl = document.getElementById("statTempoChip");
-***JS_WOD_CONSTS_FIM***
-
 
 /* OBJETIVO */
 const calcExEl = document.getElementById("calcExercicio");
@@ -3843,6 +3812,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
