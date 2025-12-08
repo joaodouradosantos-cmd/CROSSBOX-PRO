@@ -22,38 +22,35 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-  :root {
-    /* variáveis de cor da versão antiga */
-    --brand:#1d2d1d;        /* cor principal */
-    --brand-2:#2c3b2c;      /* cor secundária */
-    --ink:#e6f0e6;          /* texto claro */
-    --muted:#a9b6a9;        /* texto secundário */
-    --card:#0f150f;         /* fundo de cartões */
-    --bg:#0b100b;           /* fundo geral */
-    --accent:#7bd389;       /* realces/ok */
-    --danger:#ff6b6b;       /* erros */
-    --warn:#f1c40f;         /* avisos */
+    :root {
+      font-family: system-ui, sans-serif;
+      color-scheme: light;
+    }
 
-    /* da segunda folha */
-    font-family: system-ui, sans-serif;
-    color-scheme: light;
-  }
+    body {
+      background:
+        /* RISCOS ESCUROS TIPO ARRANHÕES */
+        repeating-linear-gradient(
+          145deg,
+          rgba(18, 22, 15, 0.95) 0px,
+          rgba(18, 22, 15, 0.95) 120px,
+          rgba(12, 13, 10, 1) 121px,
+          rgba(12, 13, 10, 1) 132px
+        ),
+        /* MANCHAS OLIVA / LAMA */
+        radial-gradient(circle at 12% 0%, rgba(116, 128, 76, 0.55) 0, transparent 55%),
+        radial-gradient(circle at 85% 100%, rgba(140, 110, 60, 0.45) 0, transparent 60%),
+        /* FUNDO PRINCIPAL VERDE TROPA ESCURO */
+        linear-gradient(to bottom, #4f5b32 0%, #262f1c 40%, #141710 100%);
 
-  /* ==================================================
-     ESTILO DA APP NOVA (era o teu 2.º <style>)
-     ================================================== */
+      color: #111;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      background-attachment: fixed;
+    }
 
-  body {
-  margin: 0;
-  padding: 0;
-  background: #f3f3f3;  /* fundo claro */
-  color: #111;
-  display: flex;
-  justify-content: center;
-  min-height: 100vh;
-}
-
-     .app {
+    .app {
       width: 100%;
       max-width: 900px;
       padding: 8px;
@@ -84,38 +81,40 @@
       display: block;
     }
 
-    /* BLOCO DO TÍTULO EM 2 LINHAS */
-    .subtitle-block {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      cursor: pointer;
-      font-family: "Stardos Stencil", system-ui, sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      text-shadow: 0 2px 3px rgba(0, 0, 0, 0.7);
-      transform-origin: center center;
-      transition: transform 0.1s ease;
-    }
+/* BLOCO DO TÍTULO EM 2 LINHAS */
+.subtitle-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;   /* CENTRA as duas linhas */
+  text-align: center;    /* texto centrado */
+  cursor: pointer;
+  font-family: "Stardos Stencil", system-ui, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.7);
+  transform-origin: center center;
+  transition: transform 0.1s ease;
+}
 
-    .subtitle-block:hover {
-      transform: translateY(-1px);
-    }
+.subtitle-block:hover {
+  transform: translateY(-1px);
+}
 
-    .subtitle-line-1 {
-      font-size: 0.85rem;
-      color: #e0e5d8;
-    }
+.subtitle-line-1 {
+  font-size: 0.85rem;
+  color: #e0e5d8;
+}
 
-    .subtitle-line-2 {
-      font-size: 1.1rem;
-      color: #fefce8;
-      margin-top: -1px;
-      border-bottom: 2px solid rgba(254, 252, 232, 0.85);
-      padding-bottom: 0px;
-    }
+.subtitle-line-2 {
+  font-size: 1.1rem;
+  color: #fefce8;
+  margin-top: -1px;
+  border-bottom: 2px solid rgba(254, 252, 232, 0.85);
+  padding-bottom: 0px;
+  /* removido o align-self para não empurrar a 2.ª linha para a esquerda */
+}
+
 
     .card {
       background: #e1e1e1;
@@ -300,38 +299,37 @@
       font-size: 0.8rem;
       color: #222;
     }
-
     /* Resumo rápido do WOD (chips) */
-    .stats-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin: 6px 0 4px;
-    }
+.stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0 4px;
+}
 
-    .stat-chip {
-      flex: 1 1 calc(50% - 6px);
-      min-width: 140px;
-      padding: 6px 8px;
-      border-radius: 999px;
-      background: #d7d7d7;
-      border: 1px solid #b5b5b5;
-      font-size: 0.75rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-sizing: border-box;
-    }
+.stat-chip {
+  flex: 1 1 calc(50% - 6px);
+  min-width: 140px;
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: #d7d7d7;
+  border: 1px solid #b5b5b5;
+  font-size: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+}
 
-    .stat-chip span:first-child {
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
+.stat-chip span:first-child {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
 
-    .stat-chip span:last-child {
-      font-weight: 500;
-    }
+.stat-chip span:last-child {
+  font-weight: 500;
+}
 
     .tabs {
       display: flex;
@@ -468,154 +466,171 @@
       background-image: none !important;
       background-color: #e1e1e1 !important;
     }
+    /* ============================
+   MELHORIA DO ECRÃ DO GUIA DE EXERCÍCIOS
+   (só mexe no aspecto dentro do #opt-guia)
+   ============================ */
 
-    /* GUIA – tabela mais legível */
-    #opt-guia .scroll {
-      max-height: calc(100vh - 220px);
-    }
-    #opt-guia table {
-      font-size: 0.85rem;
-    }
-    #opt-guia th,
-    #opt-guia td {
-      text-align: left;
-      white-space: normal;
-      vertical-align: top;
-    }
+/* Aumentar a altura útil do guia – usa quase o ecrã todo */
+#opt-guia .scroll {
+  max-height: calc(100vh - 220px);  /* se ainda parecer pequeno, podemos ajustar este valor */
+}
 
-    /* FERRAMENTA RÁPIDA 1RM – VISUAL PRO */
-    .quick-1rm-card {
-      background: #dadada;
-      padding-top: 10px;
-    }
+/* Texto mais legível na tabela do guia */
+#opt-guia table {
+  font-size: 0.85rem;
+}
 
-    .quick-1rm-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 4px;
-    }
+#opt-guia th,
+#opt-guia td {
+  text-align: left;      /* deixa de estar tudo centrado */
+  white-space: normal;   /* permite que o texto parta linha */
+  vertical-align: top;
+}
+    
+ /* ============================
+   FERRAMENTA RÁPIDA 1RM – VISUAL PRO
+   ============================ */
 
-    .quick-1rm-header h3 {
-      margin: 0;
-      font-size: 0.95rem;
-    }
+.quick-1rm-card {
+  background: #dadada;
+  padding-top: 10px;
+}
 
-    .quick-1rm-tag {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid #166534;
-      background: linear-gradient(145deg, #16a34a, #166534);
-      color: #f9fafb;
-      white-space: nowrap;
-    }
+.quick-1rm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
 
-    .quick-1rm-text {
-      margin-top: 2px;
-      margin-bottom: 8px;
-      font-size: 0.8rem;
-    }
+.quick-1rm-header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
 
-    .quick-1rm-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+.quick-1rm-tag {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid #166534;
+  background: linear-gradient(145deg, #16a34a, #166534);
+  color: #f9fafb;
+  white-space: nowrap;
+}
 
-    .quick-1rm-col {
-      flex: 1 1 220px;
-    }
+.quick-1rm-text {
+  margin-top: 2px;
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+}
 
-    .quick-1rm-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 8px;
-    }
+.quick-1rm-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
 
-    .quick-1rm-row .field-mini {
-      flex: 1 1 0;
-      min-width: 90px;
-    }
+.quick-1rm-col {
+  flex: 1 1 220px;
+}
+    /* Linha com 3 colunas no cálculo rápido 1RM */
+.quick-1rm-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
 
-    @media (max-width: 600px) {
-      .quick-1rm-row .field-mini label {
-        font-size: 0.75rem;
-      }
+.quick-1rm-row .field-mini {
+  flex: 1 1 0;
+  min-width: 90px;
+}
 
-      .quick-1rm-row .field-mini input {
-        padding: 6px 8px;
-      }
-    }
+/* Fica mais compacto no telemóvel */
+@media (max-width: 600px) {
+  .quick-1rm-row .field-mini label {
+    font-size: 0.75rem;
+  }
 
-    .quick-1rm-output {
-      font-size: 1.4rem;
-      font-weight: 700;
-      text-align: center;
-      background: #fefce8;
-      border: 1px solid #a3a3a3;
-    }
+  .quick-1rm-row .field-mini input {
+    padding: 6px 8px;
+  }
+}
 
-    #quickPercResult {
-      font-size: 0.8rem;
-      margin-top: 4px;
-    }
 
-    #sec-1rm .card:nth-of-type(3) th,
-    #sec-1rm .card:nth-of-type(3) td {
-      text-align: left !important;
-    }
+/* Peso sugerido em destaque */
+.quick-1rm-output {
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+  background: #fefce8;
+  border: 1px solid #a3a3a3;
+}
 
-    #sec-1rm .card:nth-of-type(3) td:last-child {
-      text-align: center !important;
-      width: 40px;
-    }
+/* Texto da percentagem inversa mais discreto */
+#quickPercResult {
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
 
-    #sec-1rm .card:nth-of-type(2) td:last-child {
-      text-align: center !important;
-    }
+/* Alinhamento à esquerda total na tabela 1RM */
+#sec-1rm .card:nth-of-type(3) th,
+#sec-1rm .card:nth-of-type(3) td {
+  text-align: left !important;
+}
 
-    /* Campos do WOD mais compactos no telemóvel */
-    #opt-wod .field label {
-      font-size: 0.7rem;
-      line-height: 1.1;
-    }
+/* Botão 🗑 centrado na sua coluna */
+#sec-1rm .card:nth-of-type(3) td:last-child {
+  text-align: center !important;
+  width: 40px;
+}
 
-    /* GRELLA 3x2 PARA O WOD */
-    #opt-wod .wod-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px 10px;
-      margin-top: 8px;
-    }
+/* Botão 🗑 continua centrado na própria célula */
+#sec-1rm .card:nth-of-type(2) td:last-child {
+  text-align: center !important;
+}
+/* Campos do WOD mais compactos no telemóvel */
+#opt-wod .field label {
+  font-size: 0.7rem;
+  line-height: 1.1;
+}
+/* ===== GRELLA 3x2 PARA O WOD ===== */
+#opt-wod .wod-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px 10px;
+  margin-top: 8px;
+}
 
-    #opt-wod .wod-grid .field {
-      min-width: 0;
-    }
+#opt-wod .wod-grid .field {
+  min-width: 0;
+}
 
-    #opt-wod .field input {
-      padding: 6px 8px;
-    }
+#opt-wod .field input {
+  padding: 6px 8px;      /* em vez de 10px – ficam mais baixinhos */
+}
 
-    #opt-wod .field input::placeholder {
-      font-size: 0.75rem;
-    }
+/* Placeholder um pouco mais pequeno */
+#opt-wod .field input::placeholder {
+  font-size: 0.75rem;
+}
 
-    @media (max-width: 600px) {
-      #opt-wod .field {
-        min-width: 110px;
-      }
-    }
+/* Em ecrãs pequenos, garantir que as colunas não ficam gigantes */
+@media (max-width: 600px) {
+  #opt-wod .field {
+    min-width: 110px;
+  }
+}
+
 </style>
 </head>
-  
 <body>
 <div class="app">
-  
+
   <header>
     <div class="header-row">
       <img id="appLogo" src="imagens/crossbox_logo.png" alt="CrossBox logo">
@@ -2359,7 +2374,6 @@ function renderDailyHistory() {
 
     dailyHistoryBody.appendChild(tr);
   });
-  
 }
 function printTreinosPdf() {
   try {
@@ -2368,7 +2382,7 @@ function printTreinosPdf() {
 
     // WOD do dia
     const listaDia = treinos.filter(t => t.date === dia);
-    // Histórico completo (todos os dias)
+    // Histórico completo (tudo ordenado da data mais recente para a mais antiga)
     const listaFull = treinos.slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
 
     let html = `
@@ -2383,14 +2397,13 @@ function printTreinosPdf() {
       font-size: 12px;
       color: #111;
       margin: 16px;
-      background: #ffffff;
     }
-    h1, h2 {
+    h1, h2, h3 {
       margin: 0 0 6px 0;
     }
     h1 { font-size: 18px; }
     h2 { font-size: 14px; margin-top: 14px; }
-    p  { margin: 4px 0; }
+    p { margin: 4px 0; }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -2410,6 +2423,25 @@ function printTreinosPdf() {
       font-size: 10px;
       color: #444;
     }
+    /* Ajuste fino da tabela 1RM (tab 1RM) */
+#sec-1rm .card:nth-of-type(2) table {
+  table-layout: fixed;           /* garante colunas mais "apertadas" */
+}
+
+#sec-1rm .card:nth-of-type(2) th,
+#sec-1rm .card:nth-of-type(2) td {
+  white-space: normal;           /* permite quebrar linha */
+  text-align: left;              /* mais legível para texto longo */
+}
+
+#sec-1rm .card:nth-of-type(2) td:first-child {
+  font-weight: 600;              /* destaque no nome do exercício */
+}
+
+#sec-1rm .card:nth-of-type(2) td:last-child {
+  text-align: center;            /* ícone 🗑 centrado na coluna pequena */
+  width: 40px;
+}
   </style>
 </head>
 <body>
@@ -2422,81 +2454,127 @@ function printTreinosPdf() {
 
     html += `<p class="small">Gerado em: ${new Date().toLocaleString()}</p>`;
 
-    // Resumo do dia
+    // Resumo do dia + sugestão + histórico semanal
     html += `<h2>Resumo do dia ${dia}</h2>`;
-    const resumoTxt = treinoResumoEl ? (treinoResumoEl.textContent || "–") : "–";
-    html += `<p><strong>Resumo:</strong> ${resumoTxt}</p>`;
-
+    if (treinoResumoEl && treinoResumoEl.textContent) {
+      html += `<p><strong>Resumo:</strong> ${treinoResumoEl.textContent}</p>`;
+    }
     if (treinoSugestaoEl && treinoSugestaoEl.textContent) {
       html += `<p><strong>Sugestão:</strong> ${treinoSugestaoEl.textContent}</p>`;
     }
-
     if (weeklyHistoryEl && weeklyHistoryEl.innerHTML) {
       html += `<h2>Histórico semanal</h2>`;
       html += `<div class="small">${weeklyHistoryEl.innerHTML}</div>`;
     }
 
-    // Função auxiliar para gerar tabela
-    function addTabela(titulo, lista) {
-      html += `<h2>${titulo}</h2>`;
-      if (!lista.length) {
-        html += `<p>Sem registos.</p>`;
-        return;
-      }
+    // Tabela do WOD do dia
+    html += `<h2>WOD do dia (${dia})</h2>`;
+
+    if (!listaDia.length) {
+      html += `<p>Sem WOD registado para este dia.</p>`;
+    } else {
       html += `
-<table>
-  <thead>
-    <tr>
-      <th>Data</th>
-      <th>Exercício</th>
-      <th>Tipo</th>
-      <th>Rondas</th>
-      <th>Reps</th>
-      <th>Peso</th>
-      <th>% 1RM</th>
-      <th>Tempo</th>
-      <th>Distância (km)</th>
-      <th>Carga (kg)</th>
-    </tr>
-  </thead>
-  <tbody>
-`;
-      lista.forEach(t => {
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Exercício</th>
+            <th>Tipo</th>
+            <th>Rondas</th>
+            <th>Reps</th>
+            <th>Peso</th>
+            <th>% 1RM</th>
+            <th>Tempo</th>
+            <th>Distância (km)</th>
+            <th>Carga (kg)</th>
+          </tr>
+        </thead>
+        <tbody>
+      `;
+      listaDia.forEach(t => {
         const label = MOVES_PT[t.ex] ? `${t.ex} – ${MOVES_PT[t.ex]}` : (t.ex || "");
-        const pesoTxt  = t.peso        ? formatKg(t.peso)        : "";
-        const percTxt  = t.perc1rm     ? (t.perc1rm * 100).toFixed(0) + "%" : "";
-        const distTxt  = t.distanciaKm ? formatKm(t.distanciaKm) : "";
-        const cargaTxt = t.carga       ? formatKg(t.carga)       : "";
+        const pesoTxt = t.peso ? formatKg(t.peso) : "";
+        const percTxt = t.perc1rm ? (t.perc1rm * 100).toFixed(0) + "%" : "";
+        const distTxt = t.distanciaKm ? formatKm(t.distanciaKm) : "";
+        const cargaTxt = t.carga ? formatKg(t.carga) : "";
 
         html += `
-    <tr>
-      <td>${t.date || ""}</td>
-      <td>${label}</td>
-      <td>${t.tipo || ""}</td>
-      <td>${t.rondas || ""}</td>
-      <td>${t.reps || ""}</td>
-      <td>${pesoTxt}</td>
-      <td>${percTxt}</td>
-      <td>${t.tempo || ""}</td>
-      <td>${distTxt}</td>
-      <td>${cargaTxt}</td>
-    </tr>`;
+          <tr>
+            <td>${t.date || ""}</td>
+            <td>${label}</td>
+            <td>${t.tipo || ""}</td>
+            <td>${t.rondas || ""}</td>
+            <td>${t.reps || ""}</td>
+            <td>${pesoTxt}</td>
+            <td>${percTxt}</td>
+            <td>${t.tempo || ""}</td>
+            <td>${distTxt}</td>
+            <td>${cargaTxt}</td>
+          </tr>
+        `;
       });
-
       html += `
-  </tbody>
-</table>
-`;
+        </tbody>
+      </table>
+      `;
     }
 
-    // Tabela do WOD do dia
-    addTabela(`WOD do dia (${dia})`, listaDia);
-    // Histórico completo
-    addTabela("Histórico diário completo", listaFull);
+    // Histórico diário completo
+    html += `<h2>Histórico diário completo</h2>`;
+
+    if (!listaFull.length) {
+      html += `<p>Sem registos de WOD.</p>`;
+    } else {
+      html += `
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Exercício</th>
+            <th>Tipo</th>
+            <th>Rondas</th>
+            <th>Reps</th>
+            <th>Peso</th>
+            <th>% 1RM</th>
+            <th>Tempo</th>
+            <th>Distância (km)</th>
+            <th>Carga (kg)</th>
+          </tr>
+        </thead>
+        <tbody>
+      `;
+      listaFull.forEach(t => {
+        const label = MOVES_PT[t.ex] ? `${t.ex} – ${MOVES_PT[t.ex]}` : (t.ex || "");
+        const pesoTxt = t.peso ? formatKg(t.peso) : "";
+        const percTxt = t.perc1rm ? (t.perc1rm * 100).toFixed(0) + "%" : "";
+        const distTxt = t.distanciaKm ? formatKm(t.distanciaKm) : "";
+        const cargaTxt = t.carga ? formatKg(t.carga) : "";
+
+        html += `
+          <tr>
+            <td>${t.date || ""}</td>
+            <td>${label}</td>
+            <td>${t.tipo || ""}</td>
+            <td>${t.rondas || ""}</td>
+            <td>${t.reps || ""}</td>
+            <td>${pesoTxt}</td>
+            <td>${percTxt}</td>
+            <td>${t.tempo || ""}</td>
+            <td>${distTxt}</td>
+            <td>${cargaTxt}</td>
+          </tr>
+        `;
+      });
+      html += `
+        </tbody>
+      </table>
+      `;
+    }
 
     html += `
 </body>
-</html>`;
+</html>
+`;
 
     const win = window.open("", "_blank");
     if (!win) {
@@ -2513,7 +2591,6 @@ function printTreinosPdf() {
     alert("Ocorreu um erro ao gerar o PDF do histórico.");
   }
 }
-
 
 function buildSugestao(lista, totalCarga, totalSeries, blocosForca, blocosHipertrofia, blocosLeve, dia) {
   // Caso de treino muito leve ou sem dados suficientes
@@ -3633,38 +3710,10 @@ atualizarRankingsMensais();
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
-    navigator.serviceWorker.register("service-worker-pro.js");
+    navigator.serviceWorker.register("service-worker.js");
   });
 }
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
