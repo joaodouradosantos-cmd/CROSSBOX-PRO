@@ -2390,6 +2390,7 @@ function renderDailyHistory() {
 
   if (!treinos.length) return;
 
+  // ordenar da data mais recente para a mais antiga
   const sorted = treinos.slice().sort((a, b) => {
     return (b.date || "").localeCompare(a.date || "");
   });
@@ -2397,64 +2398,74 @@ function renderDailyHistory() {
   sorted.forEach(t => {
     const tr = document.createElement("tr");
 
+    // 1) Data
     const tdDate = document.createElement("td");
     tdDate.textContent = t.date || "";
     tr.appendChild(tdDate);
 
+    // 2) Parte (A, B, Força, Metcon, etc.)
+    const tdParte = document.createElement("td");
+    tdParte.textContent = t.parte || "";
+    tr.appendChild(tdParte);
+
+    // 3) Formato (For Time, AMRAP, EMOM, …)
+    const tdFormato = document.createElement("td");
+    tdFormato.textContent = t.formato || "";
+    tr.appendChild(tdFormato);
+
+    // 4) Exercício (EN – PT)
     const tdEx = document.createElement("td");
     const label = MOVES_PT[t.ex] ? `${t.ex} – ${MOVES_PT[t.ex]}` : t.ex;
     tdEx.textContent = label || "";
     tr.appendChild(tdEx);
 
+    // 5) Tipo (força / técnica / metcon)
     const tdTipo = document.createElement("td");
     tdTipo.textContent = t.tipo || "";
     tr.appendChild(tdTipo);
 
+    // 6) Rondas
     const tdR = document.createElement("td");
     tdR.textContent = t.rondas || "";
     tr.appendChild(tdR);
 
+    // 7) Reps
     const tdReps = document.createElement("td");
     tdReps.textContent = t.reps || "";
     tr.appendChild(tdReps);
 
+    // 8) Peso
     const tdPeso = document.createElement("td");
     tdPeso.textContent = t.peso ? formatKg(t.peso) : "";
     tr.appendChild(tdPeso);
 
+    // 9) % 1RM
     const tdPerc = document.createElement("td");
-    if (t.perc1rm) {
-      tdPerc.textContent = (t.perc1rm * 100).toFixed(0) + "%";
-    } else {
-      tdPerc.textContent = "";
-    }
+    tdPerc.textContent = t.perc1rm
+      ? (t.perc1rm * 100).toFixed(0) + "%"
+      : "";
     tr.appendChild(tdPerc);
 
+    // 10) Tempo
     const tdTempo = document.createElement("td");
     tdTempo.textContent = t.tempo || "";
     tr.appendChild(tdTempo);
 
+    // 11) Distância (km)
     const tdDist = document.createElement("td");
     tdDist.textContent = t.distanciaKm ? formatKm(t.distanciaKm) : "";
     tr.appendChild(tdDist);
 
+    // 12) Carga (kg)
     const tdCarga = document.createElement("td");
     tdCarga.textContent = t.carga ? formatKg(t.carga) : "";
     tr.appendChild(tdCarga);
 
-    const tdDel = document.createElement("td");
-    const btn = document.createElement("button");
-    btn.textContent = "🗑";
-    btn.className = "btn-delete";
-    btn.addEventListener("click", () => {
-      deleteTreinoEntry(treinos.indexOf(t));
-    });
-    tdDel.appendChild(btn);
-    tr.appendChild(tdDel);
-
+    // sem coluna de apagar aqui – só leitura do histórico
     dailyHistoryBody.appendChild(tr);
   });
 }
+
 function printTreinosPdf() {
   try {
     const hoje = new Date().toISOString().slice(0, 10);
@@ -2914,38 +2925,55 @@ function renderTreinos() {
   let blocosHipertrofia = 0;
   let blocosLeve = 0;
 
-  // NOVOS CAMPOS PARA OS CHIPS
+  // Para os chips
   let totalVolumeReps = 0;      // reps × rondas
   let melhorTempoSeg = null;    // melhor tempo do dia em segundos
 
   lista.forEach(e => {
     const tr = document.createElement("tr");
 
+    // 1) Data
     const tdDate = document.createElement("td");
     tdDate.textContent = e.date || "";
     tr.appendChild(tdDate);
 
+    // 2) Parte
+    const tdParte = document.createElement("td");
+    tdParte.textContent = e.parte || "";
+    tr.appendChild(tdParte);
+
+    // 3) Formato
+    const tdFormato = document.createElement("td");
+    tdFormato.textContent = e.formato || "";
+    tr.appendChild(tdFormato);
+
+    // 4) Exercício (EN – PT)
     const tdEx = document.createElement("td");
     const label = MOVES_PT[e.ex] ? `${e.ex} – ${MOVES_PT[e.ex]}` : e.ex;
     tdEx.textContent = label || "";
     tr.appendChild(tdEx);
 
+    // 5) Tipo (força / técnica / metcon)
     const tdTipo = document.createElement("td");
     tdTipo.textContent = e.tipo || "";
     tr.appendChild(tdTipo);
 
+    // 6) Rondas
     const tdR = document.createElement("td");
     tdR.textContent = e.rondas || "";
     tr.appendChild(tdR);
 
+    // 7) Reps
     const tdReps = document.createElement("td");
     tdReps.textContent = e.reps || "";
     tr.appendChild(tdReps);
 
+    // 8) Peso
     const tdPeso = document.createElement("td");
     tdPeso.textContent = e.peso ? formatKg(e.peso) : "";
     tr.appendChild(tdPeso);
 
+    // 9) % 1RM
     const tdPerc = document.createElement("td");
     if (e.perc1rm) {
       tdPerc.textContent = (e.perc1rm * 100).toFixed(0) + "%";
@@ -2954,18 +2982,22 @@ function renderTreinos() {
     }
     tr.appendChild(tdPerc);
 
+    // 10) Tempo
     const tdTempo = document.createElement("td");
     tdTempo.textContent = e.tempo || "";
     tr.appendChild(tdTempo);
 
+    // 11) Distância
     const tdDist = document.createElement("td");
     tdDist.textContent = e.distanciaKm ? formatKm(e.distanciaKm) : "";
     tr.appendChild(tdDist);
 
+    // 12) Carga
     const tdCarga = document.createElement("td");
     tdCarga.textContent = e.carga ? formatKg(e.carga) : "";
     tr.appendChild(tdCarga);
 
+    // 13) Botão apagar
     const tdDel = document.createElement("td");
     const btn = document.createElement("button");
     btn.textContent = "🗑";
@@ -2976,7 +3008,7 @@ function renderTreinos() {
 
     treinoBody.appendChild(tr);
 
-    // ACUMULADORES EXISTENTES
+    // Acumuladores
     totalCarga += e.carga || 0;
     totalSeries += (e.rondas || 0);
     totalDistKm += e.distanciaKm || 0;
@@ -2993,10 +3025,8 @@ function renderTreinos() {
       }
     }
 
-    // NOVOS ACUMULADORES PARA OS CHIPS
     totalVolumeReps += (e.reps || 0) * (e.rondas || 0);
 
-    // Melhor tempo do dia (em segundos) para mostrar no chip “Melhor tempo”
     if (e.tipo === "metcon" && e.tempo) {
       const sec = parseTimeToSeconds(e.tempo);
       if (sec != null && (melhorTempoSeg == null || sec < melhorTempoSeg)) {
@@ -3005,8 +3035,7 @@ function renderTreinos() {
     }
   });
 
-
-  // RESUMO EM TEXTO
+  // Resumo em texto
   if (treinoResumoEl) {
     let resumo =
       "Resumo do dia " + dia + ": carga total do WOD = " + formatKg(totalCarga);
@@ -3027,7 +3056,7 @@ function renderTreinos() {
   );
   if (treinoSugestaoEl) treinoSugestaoEl.textContent = sugestao;
 
-  // ATUALIZAR OS CHIPS DE RESUMO
+  // Atualizar os chips
   if (treinoStatsRow) {
     treinoStatsRow.style.display = "flex";
 
@@ -3039,15 +3068,15 @@ function renderTreinos() {
       statExerciciosEl.textContent = String(lista.length);
     }
 
-     if (statTempoEl && statTempoChipEl) {
-     if (melhorTempoSeg != null) {
-       statTempoEl.textContent = formatSecondsToTime(melhorTempoSeg);
-       statTempoChipEl.style.display = "flex";   // mostra o chip
-     } else {
-       statTempoChipEl.style.display = "none";   // esconde o chip
+    if (statTempoEl && statTempoChipEl) {
+      if (melhorTempoSeg != null) {
+        statTempoEl.textContent = formatSecondsToTime(melhorTempoSeg);
+        statTempoChipEl.style.display = "flex";
+      } else {
+        statTempoChipEl.style.display = "none";
       }
     }
-  
+
     if (statVolumeEl) {
       statVolumeEl.textContent = `${totalVolumeReps} reps`;
     }
@@ -3797,4 +3826,5 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
