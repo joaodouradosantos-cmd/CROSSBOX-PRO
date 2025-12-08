@@ -44,12 +44,12 @@ self.addEventListener("fetch", (event) => {
         .then((response) => {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put("./index_pro.html", clone);
+            cache.put("./index.html", clone);
           });
           return response;
         })
         .catch(() =>
-          caches.match("./index_pro.html").then((res) => {
+          caches.match("./index.html").then((res) => {
             return res || Response.error();
           })
         )
