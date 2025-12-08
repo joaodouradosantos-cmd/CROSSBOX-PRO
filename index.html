@@ -21,9 +21,9 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-      <!-- *** A.STYLES: START *** -->
-<style>
-  :root{
+  <style>
+  :root {
+    /* variáveis de cor da versão antiga */
     --brand:#1d2d1d;        /* cor principal */
     --brand-2:#2c3b2c;      /* cor secundária */
     --ink:#e6f0e6;          /* texto claro */
@@ -33,40 +33,86 @@
     --accent:#7bd389;       /* realces/ok */
     --danger:#ff6b6b;       /* erros */
     --warn:#f1c40f;         /* avisos */
+
+    /* da segunda folha */
+    font-family: system-ui, sans-serif;
+    color-scheme: light;
   }
-  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial}
+
+  /* base antiga (nav/topo) */
+  html,body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial
+  }
+
   .container{max-width:980px;margin:auto;padding:14px}
-  /* NAV */
-  .nav{position:sticky;top:0;z-index:10;background:linear-gradient(180deg,var(--brand),var(--brand-2));border-bottom:1px solid #0006}
-  .nav__row{display:flex;gap:8px;overflow:auto;padding:8px}
-  .tab{flex:0 0 auto;padding:10px 14px;border-radius:12px;background:#0000;color:var(--ink);border:1px solid #ffffff22;cursor:pointer}
-  .tab--active{background:var(--card);border-color:#ffffff44;box-shadow:0 2px 10px #0008}
-  /* CARDS */
-  .card{background:var(--card);border:1px solid #ffffff14;border-radius:16px;padding:14px;margin:12px 0;box-shadow:0 6px 20px #0006}
+
+  /* NAV antiga */
+  .nav{
+    position:sticky;
+    top:0;
+    z-index:10;
+    background:linear-gradient(180deg,var(--brand),var(--brand-2));
+    border-bottom:1px solid #0006
+  }
+  .nav__row{
+    display:flex;
+    gap:8px;
+    overflow:auto;
+    padding:8px
+  }
+  .tab{
+    flex:0 0 auto;
+    padding:10px 14px;
+    border-radius:12px;
+    background:#0000;
+    color:var(--ink);
+    border:1px solid #ffffff22;
+    cursor:pointer
+  }
+  .tab--active{
+    background:var(--card);
+    border-color:#ffffff44;
+    box-shadow:0 2px 10px #0008
+  }
+
+  /* botões e helpers antigos que ainda usas */
   .card h3{margin:0 0 10px}
-  .btn{background:var(--brand-2);border:1px solid #ffffff22;color:var(--ink);padding:10px 12px;border-radius:10px;cursor:pointer}
+  .btn{
+    background:var(--brand-2);
+    border:1px solid #ffffff22;
+    color:var(--ink);
+    padding:10px 12px;
+    border-radius:10px;
+    cursor:pointer
+  }
   .btn--ghost{background:#0000;border-color:#ffffff22}
   .btn--danger{background:#2a1111;border-color:#ff6b6b;color:#ffaaaa}
   .btn--ok{background:#113018;border-color:#7bd389}
+
   .row{display:flex;gap:10px;flex-wrap:wrap}
   .col{flex:1 1 220px}
-  input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid #ffffff22;background:#101610;color:var(--ink)}
-  label{font-size:13px;color:var(--muted)}
-  .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#ffffff10;border:1px solid #ffffff20;margin-right:6px}
+  .pill{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:999px;
+    background:#ffffff10;
+    border:1px solid #ffffff20;
+    margin-right:6px
+  }
   .muted{color:var(--muted)}
   .grid{display:grid;gap:10px}
   .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
   .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
   .hide{display:none}
-</style>
-<!-- *** A.STYLES: END **** -->
-<style>
-    :root {
-      font-family: system-ui, sans-serif;
-      color-scheme: light;
-    }
 
-    body {
+  /* ==================================================
+     ESTILO DA APP NOVA (era o teu 2.º <style>)
+     ================================================== */
+
+  body {
       background:
         /* RISCOS ESCUROS TIPO ARRANHÕES */
         repeating-linear-gradient(
@@ -120,40 +166,38 @@
       display: block;
     }
 
-/* BLOCO DO TÍTULO EM 2 LINHAS */
-.subtitle-block {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;   /* CENTRA as duas linhas */
-  text-align: center;    /* texto centrado */
-  cursor: pointer;
-  font-family: "Stardos Stencil", system-ui, sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.7);
-  transform-origin: center center;
-  transition: transform 0.1s ease;
-}
+    /* BLOCO DO TÍTULO EM 2 LINHAS */
+    .subtitle-block {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      font-family: "Stardos Stencil", system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      text-shadow: 0 2px 3px rgba(0, 0, 0, 0.7);
+      transform-origin: center center;
+      transition: transform 0.1s ease;
+    }
 
-.subtitle-block:hover {
-  transform: translateY(-1px);
-}
+    .subtitle-block:hover {
+      transform: translateY(-1px);
+    }
 
-.subtitle-line-1 {
-  font-size: 0.85rem;
-  color: #e0e5d8;
-}
+    .subtitle-line-1 {
+      font-size: 0.85rem;
+      color: #e0e5d8;
+    }
 
-.subtitle-line-2 {
-  font-size: 1.1rem;
-  color: #fefce8;
-  margin-top: -1px;
-  border-bottom: 2px solid rgba(254, 252, 232, 0.85);
-  padding-bottom: 0px;
-  /* removido o align-self para não empurrar a 2.ª linha para a esquerda */
-}
-
+    .subtitle-line-2 {
+      font-size: 1.1rem;
+      color: #fefce8;
+      margin-top: -1px;
+      border-bottom: 2px solid rgba(254, 252, 232, 0.85);
+      padding-bottom: 0px;
+    }
 
     .card {
       background: #e1e1e1;
@@ -338,37 +382,38 @@
       font-size: 0.8rem;
       color: #222;
     }
+
     /* Resumo rápido do WOD (chips) */
-.stats-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 6px 0 4px;
-}
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 6px 0 4px;
+    }
 
-.stat-chip {
-  flex: 1 1 calc(50% - 6px);
-  min-width: 140px;
-  padding: 6px 8px;
-  border-radius: 999px;
-  background: #d7d7d7;
-  border: 1px solid #b5b5b5;
-  font-size: 0.75rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-sizing: border-box;
-}
+    .stat-chip {
+      flex: 1 1 calc(50% - 6px);
+      min-width: 140px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: #d7d7d7;
+      border: 1px solid #b5b5b5;
+      font-size: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box;
+    }
 
-.stat-chip span:first-child {
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
+    .stat-chip span:first-child {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
 
-.stat-chip span:last-child {
-  font-weight: 500;
-}
+    .stat-chip span:last-child {
+      font-weight: 500;
+    }
 
     .tabs {
       display: flex;
@@ -505,166 +550,148 @@
       background-image: none !important;
       background-color: #e1e1e1 !important;
     }
-    /* ============================
-   MELHORIA DO ECRÃ DO GUIA DE EXERCÍCIOS
-   (só mexe no aspecto dentro do #opt-guia)
-   ============================ */
 
-/* Aumentar a altura útil do guia – usa quase o ecrã todo */
-#opt-guia .scroll {
-  max-height: calc(100vh - 220px);  /* se ainda parecer pequeno, podemos ajustar este valor */
-}
+    /* GUIA – tabela mais legível */
+    #opt-guia .scroll {
+      max-height: calc(100vh - 220px);
+    }
+    #opt-guia table {
+      font-size: 0.85rem;
+    }
+    #opt-guia th,
+    #opt-guia td {
+      text-align: left;
+      white-space: normal;
+      vertical-align: top;
+    }
 
-/* Texto mais legível na tabela do guia */
-#opt-guia table {
-  font-size: 0.85rem;
-}
+    /* FERRAMENTA RÁPIDA 1RM – VISUAL PRO */
+    .quick-1rm-card {
+      background: #dadada;
+      padding-top: 10px;
+    }
 
-#opt-guia th,
-#opt-guia td {
-  text-align: left;      /* deixa de estar tudo centrado */
-  white-space: normal;   /* permite que o texto parta linha */
-  vertical-align: top;
-}
-    
- /* ============================
-   FERRAMENTA RÁPIDA 1RM – VISUAL PRO
-   ============================ */
+    .quick-1rm-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
 
-.quick-1rm-card {
-  background: #dadada;
-  padding-top: 10px;
-}
+    .quick-1rm-header h3 {
+      margin: 0;
+      font-size: 0.95rem;
+    }
 
-.quick-1rm-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 4px;
-}
+    .quick-1rm-tag {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid #166534;
+      background: linear-gradient(145deg, #16a34a, #166534);
+      color: #f9fafb;
+      white-space: nowrap;
+    }
 
-.quick-1rm-header h3 {
-  margin: 0;
-  font-size: 0.95rem;
-}
+    .quick-1rm-text {
+      margin-top: 2px;
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+    }
 
-.quick-1rm-tag {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 4px 8px;
-  border-radius: 999px;
-  border: 1px solid #166534;
-  background: linear-gradient(145deg, #16a34a, #166534);
-  color: #f9fafb;
-  white-space: nowrap;
-}
+    .quick-1rm-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
 
-.quick-1rm-text {
-  margin-top: 2px;
-  margin-bottom: 8px;
-  font-size: 0.8rem;
-}
+    .quick-1rm-col {
+      flex: 1 1 220px;
+    }
 
-.quick-1rm-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
+    .quick-1rm-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
 
-.quick-1rm-col {
-  flex: 1 1 220px;
-}
-    /* Linha com 3 colunas no cálculo rápido 1RM */
-.quick-1rm-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
-}
+    .quick-1rm-row .field-mini {
+      flex: 1 1 0;
+      min-width: 90px;
+    }
 
-.quick-1rm-row .field-mini {
-  flex: 1 1 0;
-  min-width: 90px;
-}
+    @media (max-width: 600px) {
+      .quick-1rm-row .field-mini label {
+        font-size: 0.75rem;
+      }
 
-/* Fica mais compacto no telemóvel */
-@media (max-width: 600px) {
-  .quick-1rm-row .field-mini label {
-    font-size: 0.75rem;
-  }
+      .quick-1rm-row .field-mini input {
+        padding: 6px 8px;
+      }
+    }
 
-  .quick-1rm-row .field-mini input {
-    padding: 6px 8px;
-  }
-}
+    .quick-1rm-output {
+      font-size: 1.4rem;
+      font-weight: 700;
+      text-align: center;
+      background: #fefce8;
+      border: 1px solid #a3a3a3;
+    }
 
+    #quickPercResult {
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
 
-/* Peso sugerido em destaque */
-.quick-1rm-output {
-  font-size: 1.4rem;
-  font-weight: 700;
-  text-align: center;
-  background: #fefce8;
-  border: 1px solid #a3a3a3;
-}
+    #sec-1rm .card:nth-of-type(3) th,
+    #sec-1rm .card:nth-of-type(3) td {
+      text-align: left !important;
+    }
 
-/* Texto da percentagem inversa mais discreto */
-#quickPercResult {
-  font-size: 0.8rem;
-  margin-top: 4px;
-}
+    #sec-1rm .card:nth-of-type(3) td:last-child {
+      text-align: center !important;
+      width: 40px;
+    }
 
-/* Alinhamento à esquerda total na tabela 1RM */
-#sec-1rm .card:nth-of-type(3) th,
-#sec-1rm .card:nth-of-type(3) td {
-  text-align: left !important;
-}
+    #sec-1rm .card:nth-of-type(2) td:last-child {
+      text-align: center !important;
+    }
 
-/* Botão 🗑 centrado na sua coluna */
-#sec-1rm .card:nth-of-type(3) td:last-child {
-  text-align: center !important;
-  width: 40px;
-}
+    /* Campos do WOD mais compactos no telemóvel */
+    #opt-wod .field label {
+      font-size: 0.7rem;
+      line-height: 1.1;
+    }
 
-/* Botão 🗑 continua centrado na própria célula */
-#sec-1rm .card:nth-of-type(2) td:last-child {
-  text-align: center !important;
-}
-/* Campos do WOD mais compactos no telemóvel */
-#opt-wod .field label {
-  font-size: 0.7rem;
-  line-height: 1.1;
-}
-/* ===== GRELLA 3x2 PARA O WOD ===== */
-#opt-wod .wod-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px 10px;
-  margin-top: 8px;
-}
+    /* GRELLA 3x2 PARA O WOD */
+    #opt-wod .wod-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px 10px;
+      margin-top: 8px;
+    }
 
-#opt-wod .wod-grid .field {
-  min-width: 0;
-}
+    #opt-wod .wod-grid .field {
+      min-width: 0;
+    }
 
-#opt-wod .field input {
-  padding: 6px 8px;      /* em vez de 10px – ficam mais baixinhos */
-}
+    #opt-wod .field input {
+      padding: 6px 8px;
+    }
 
-/* Placeholder um pouco mais pequeno */
-#opt-wod .field input::placeholder {
-  font-size: 0.75rem;
-}
+    #opt-wod .field input::placeholder {
+      font-size: 0.75rem;
+    }
 
-/* Em ecrãs pequenos, garantir que as colunas não ficam gigantes */
-@media (max-width: 600px) {
-  #opt-wod .field {
-    min-width: 110px;
-  }
-}
-
+    @media (max-width: 600px) {
+      #opt-wod .field {
+        min-width: 110px;
+      }
+    }
 </style>
 </head>
 <body>
@@ -4146,6 +4173,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
