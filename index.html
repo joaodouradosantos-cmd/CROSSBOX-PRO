@@ -2278,6 +2278,12 @@ function calcCarga(entry) {
 function addTreinoEntry() {
   const hoje = new Date().toISOString().slice(0, 10);
   const date = (treinoDataEl && treinoDataEl.value) ? treinoDataEl.value : hoje;
+
+  // novos campos do WOD
+  const parte = treinoParteEl ? (treinoParteEl.value || "") : "";
+  const formato = treinoFormatoEl ? (treinoFormatoEl.value || "") : "";
+  const estrutura = treinoEstruturaEl ? treinoEstruturaEl.value.trim() : "";
+
   const ex = treinoExEl.value;
   const tipo = inferTipo(ex);
   const rondas = parseInt(treinoRondasEl.value || "1", 10);
@@ -2297,6 +2303,9 @@ function addTreinoEntry() {
 
   const entry = {
     date,
+    parte,
+    formato,
+    estrutura,       // guardamos mesmo que ainda não use na tabela
     ex,
     tipo,
     rondas,
@@ -2375,7 +2384,7 @@ function addTreinoEntry() {
   );
 }
 
-function deleteTreinoEntry(index) {
+  function deleteTreinoEntry(index) {
   if (index < 0 || index >= treinos.length) return;
   if (!confirm("Apagar este registo de WOD?")) return;
   treinos.splice(index, 1);
@@ -2516,21 +2525,21 @@ function printTreinosPdf() {
     }
     /* Ajuste fino da tabela 1RM (tab 1RM) */
 #sec-1rm .card:nth-of-type(2) table {
-  table-layout: fixed;           /* garante colunas mais "apertadas" */
+  table-layout: fixed;
 }
 
 #sec-1rm .card:nth-of-type(2) th,
 #sec-1rm .card:nth-of-type(2) td {
-  white-space: normal;           /* permite quebrar linha */
-  text-align: left;              /* mais legível para texto longo */
+  white-space: normal;
+  text-align: left;
 }
 
 #sec-1rm .card:nth-of-type(2) td:first-child {
-  font-weight: 600;              /* destaque no nome do exercício */
+  font-weight: 600;
 }
 
 #sec-1rm .card:nth-of-type(2) td:last-child {
-  text-align: center;            /* ícone 🗑 centrado na coluna pequena */
+  text-align: center;
   width: 40px;
 }
   </style>
@@ -2569,6 +2578,8 @@ function printTreinosPdf() {
         <thead>
           <tr>
             <th>Data</th>
+            <th>Parte</th>
+            <th>Formato</th>
             <th>Exercício</th>
             <th>Tipo</th>
             <th>Rondas</th>
@@ -2592,6 +2603,8 @@ function printTreinosPdf() {
         html += `
           <tr>
             <td>${t.date || ""}</td>
+            <td>${t.parte || ""}</td>
+            <td>${t.formato || ""}</td>
             <td>${label}</td>
             <td>${t.tipo || ""}</td>
             <td>${t.rondas || ""}</td>
@@ -2621,6 +2634,8 @@ function printTreinosPdf() {
         <thead>
           <tr>
             <th>Data</th>
+            <th>Parte</th>
+            <th>Formato</th>
             <th>Exercício</th>
             <th>Tipo</th>
             <th>Rondas</th>
@@ -2644,6 +2659,8 @@ function printTreinosPdf() {
         html += `
           <tr>
             <td>${t.date || ""}</td>
+            <td>${t.parte || ""}</td>
+            <td>${t.formato || ""}</td>
             <td>${label}</td>
             <td>${t.tipo || ""}</td>
             <td>${t.rondas || ""}</td>
@@ -3826,5 +3843,6 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
