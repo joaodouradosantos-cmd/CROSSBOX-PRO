@@ -845,6 +845,7 @@
       <div class="card">
         <h3 style="margin-top:0; margin-bottom:8px;">🟩 WOD</h3>
 
+        ***HTML_WOD_FORM_INICIO***
         <!-- LINHA 1: data / procura / exercício -->
         <div class="form-row">
           <div class="field">
@@ -853,7 +854,7 @@
           </div>
           <div class="field">
             <label>Procurar exercício</label>
-            <input id="treinoExercicioSearch" type="text" placeholder="Nome EN/PT..." />
+            <input id="treinoExercicioSearch" type="text" placeholder="Nome EN/PT." />
           </div>
           <div class="field">
             <label>Exercício</label>
@@ -861,12 +862,80 @@
           </div>
         </div>
 
+        <!-- LINHA 2: parte / formato / estrutura do bloco -->
+        <div class="form-row">
+          <div class="field">
+            <label>Parte</label>
+            <select id="treinoParte">
+              <option value="">—</option>
+              <option value="Warm-up">Warm-up</option>
+              <option value="Skill">Skill</option>
+              <option value="Força">Força</option>
+              <option value="Metcon">Metcon</option>
+              <option value="A">Parte A</option>
+              <option value="B">Parte B</option>
+              <option value="C">Parte C</option>
+              <option value="D">Parte D</option>
+              <option value="E">Parte E</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Formato</label>
+            <select id="treinoFormato">
+              <option value="">—</option>
+              <option value="For Time">For Time</option>
+              <option value="AMRAP">AMRAP</option>
+              <option value="EMOM">EMOM</option>
+              <option value="A cada X′ × Y">A cada X′ × Y</option>
+              <option value="Intervalos 2′ on / 2′ off">2′ on / 2′ off</option>
+              <option value="Chipper">Chipper</option>
+              <option value="Carga total">Carga total</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Estrutura do bloco</label>
+            <input id="treinoEstrutura" type="text"
+                   placeholder="Ex.: A cada 2′×3: 400m corrida + 10 OHS…" />
+          </div>
+        </div>
+
         <!-- GRELLA 3x2 DO WOD -->
-<div class="wod-grid">
-  <div class="field">
-    <label>Séries</label>
-    <input id="treinoRondas" type="number" min="1" />
-  </div>
+        <div class="wod-grid">
+          <div class="field">
+            <label>Séries</label>
+            <input id="treinoRondas" type="number" min="1" />
+          </div>
+
+          <div class="field">
+            <label>Repetições</label>
+            <input id="treinoReps" type="number" min="1" />
+          </div>
+
+          <div class="field">
+            <label>Peso kg</label>
+            <input id="treinoPeso" type="number" step="0.5" min="0" />
+          </div>
+
+          <div class="field">
+            <label>%1RM</label>
+            <input id="treinoPercent" type="number" min="10" max="130" step="1" />
+          </div>
+
+          <div class="field">
+            <label>Tempo</label>
+            <input id="treinoTempo" type="text" placeholder="Ex.: 12:35, 20', AMRAP 10'..." />
+          </div>
+
+          <div class="field">
+            <label>Distância (km)</label>
+            <input id="treinoDist" type="number" step="0.01" min="0" />
+          </div>
+        </div>
+***HTML_WOD_FORM_FIM***
+
 
   <div class="field">
     <label>Repetições</label>
@@ -933,12 +1002,16 @@
         </div>
 
         <!-- WOD do dia – compacto e fácil de ler -->
+        ***HTML_WOD_TABLES_INICIO***
+        <!-- WOD do dia – compacto e fácil de ler -->
         <h4 style="margin-top:10px; margin-bottom:4px;">WOD do dia</h4>
         <div class="scroll" id="treinoScroll">
           <table>
             <thead>
               <tr>
                 <th>Data</th>
+                <th>Parte</th>
+                <th>Formato</th>
                 <th>Exercício</th>
                 <th>Tipo</th>
                 <th>Rondas</th>
@@ -974,6 +1047,8 @@
               <thead>
                 <tr>
                   <th>Data</th>
+                  <th>Parte</th>
+                  <th>Formato</th>
                   <th>Exercício</th>
                   <th>Tipo</th>
                   <th>Rondas</th>
@@ -983,14 +1058,13 @@
                   <th>Tempo</th>
                   <th>Distância (km)</th>
                   <th>Carga (kg)</th>
-                  <th></th>
                 </tr>
               </thead>
               <tbody id="dailyHistoryBody"></tbody>
             </table>
           </div>
         </div>
-      </div>
+***HTML_WOD_TABLES_FIM***
     </section>
 
     <!-- OBJETIVO -->
@@ -1606,12 +1680,16 @@ const quickPesoEl = document.getElementById("quickPeso");
 const quickPesoInputEl = document.getElementById("quickPesoInput");
 const quickPercResultEl = document.getElementById("quickPercResult");
 
+***JS_WOD_CONSTS_INICIO***
 /* WOD */
 let treinos = JSON.parse(localStorage.getItem(STORAGE_TREINO) || "[]");
 
 const treinoDataEl = document.getElementById("treinoData");
 const treinoExEl = document.getElementById("treinoExercicio");
 const treinoExSearchEl = document.getElementById("treinoExercicioSearch");
+const treinoParteEl = document.getElementById("treinoParte");
+const treinoFormatoEl = document.getElementById("treinoFormato");
+const treinoEstruturaEl = document.getElementById("treinoEstrutura");
 const treinoTipoEl = document.getElementById("treinoTipo");
 const treinoRondasEl = document.getElementById("treinoRondas");
 const treinoRepsEl = document.getElementById("treinoReps");
@@ -1630,14 +1708,16 @@ const dailyHistorySection = document.getElementById("dailyHistorySection");
 const printHistoryBtn = document.getElementById("printHistoryBtn");
 const dailyHistoryBody = document.getElementById("dailyHistoryBody");
 const treinoScrollEl = document.getElementById("treinoScroll");
-  
-  /* Chips de resumo do dia */
+
+/* Chips de resumo do dia */
 const treinoStatsRow = document.getElementById("treinoStats");
 const statCargaEl = document.getElementById("statCarga");
 const statExerciciosEl = document.getElementById("statExercicios");
 const statTempoEl = document.getElementById("statTempo");
 const statVolumeEl = document.getElementById("statVolume");
 const statTempoChipEl = document.getElementById("statTempoChip");
+***JS_WOD_CONSTS_FIM***
+
 
 /* OBJETIVO */
 const calcExEl = document.getElementById("calcExercicio");
@@ -3717,3 +3797,4 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
