@@ -805,24 +805,27 @@
   <section id="sec-opcoes" class="section">
 
     <div class="card">
-      <div class="options-grid">
+    <div class="options-grid">
 
   <button class="btn-secondary opt-btn" data-target="opt-wod">
     <span class="opt-emoji">🟩</span>
     <span>WOD</span>
   </button>
 
-  <button class="btn-secondary opt-btn" data-target="opt-objetivo">
+  <!-- OBJETIVO → opt-calc -->
+  <button class="btn-secondary opt-btn" data-target="opt-calc">
     <span class="opt-emoji">📊</span>
     <span>OBJETIVO</span>
   </button>
 
-  <button class="btn-secondary opt-btn" data-target="opt-grafico">
+  <!-- GRÁFICO → opt-graficos -->
+  <button class="btn-secondary opt-btn" data-target="opt-graficos">
     <span class="opt-emoji">📉</span>
     <span>GRÁFICO</span>
   </button>
 
-  <button class="btn-secondary opt-btn" data-target="opt-desempenho">
+  <!-- DESEMPENHO → opt-performance -->
+  <button class="btn-secondary opt-btn" data-target="opt-performance">
     <span class="opt-emoji">🥇</span>
     <span>DESEMPENHO</span>
   </button>
@@ -837,12 +840,12 @@
     <span>BACKUP</span>
   </button>
 
-  <button class="btn-secondary opt-btn" data-target="opt-reservas">
+  <!-- RESERVAS → sec-reservas -->
+  <button class="btn-secondary opt-btn" data-target="sec-reservas">
     <span class="opt-emoji">📅</span>
     <span>RESERVAS</span>
   </button>
 
-  <!-- Novo e no sítio correto -->
   <button class="btn-secondary opt-btn" data-target="opt-historico">
     <span class="opt-emoji">📜</span>
     <span>HISTÓRICO</span>
@@ -995,7 +998,7 @@
             <tbody id="treinoBody"></tbody>
           </table>
         </div>
-
+       </div>
       </section>
     <!-- HISTÓRICO WOD – NOVA SECÇÃO -->
 <section id="opt-historico" class="option-section">
@@ -3802,6 +3805,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
