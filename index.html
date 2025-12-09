@@ -3748,26 +3748,26 @@ document.querySelectorAll(".opt-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     const target = btn.dataset.target;
 
+    // esconde todas as sub-secções
     document.querySelectorAll(".option-section").forEach(s => {
       s.classList.remove("active");
     });
 
+    // mostra só a secção pedida
     const sec = document.getElementById(target);
     if (sec && sec.classList.contains("option-section")) {
       sec.classList.add("active");
     }
 
-    // quando entra no Histórico WOD, atualiza a tabela
-    if (target === "opt-historico") {
-      renderDailyHistory();
-    }
-    // opcional: quando volta ao WOD, atualiza o WOD do dia (caso tenhas apagado algo)
+    // actualizar ecrãs quando mudas
     if (target === "opt-wod") {
       renderTreinos();
     }
+    if (target === "opt-historico") {
+      renderDailyHistory();
+    }
   });
 });
-
 
 /* BOTÃO RESERVAS – (se existir no futuro no ecrã principal) */
 if (reservasBtn && reservasSection) {
@@ -3803,6 +3803,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
