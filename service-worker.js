@@ -1,4 +1,4 @@
-// service-worker-pro.js – CrossBox PRO
+// service-worker.js – CrossBox PRO
 
 // 🔁 sobe a versão sempre que alterares o SW
 const STATIC_CACHE = "crossbox-pro-static-v4";
@@ -128,3 +128,4 @@ async function staleWhileRevalidate(request) {
   const network = await networkPromise;
   return network || Response.error();
 }
+
