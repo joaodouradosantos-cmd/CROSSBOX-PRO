@@ -1594,57 +1594,163 @@ const EXER_INFO = [
 ];
 
  /* Movimentos considerados técnicos (para % e tipo no WOD/Objetivo) */
+/* Movimentos considerados técnicos (para % e para sugerir tipo "técnica/força") */
 const TECHNICAL_MOVES = [
-  // Halterofilismo / variações muito técnicas
-  "Snatch Deadlift",
-  "Power Snatch",
-  "Hang Power Snatch",
-  "Squat Snatch",
+  // Força / barra – básicos e de % 
+  "Back Squat",
+  "Front Squat",
   "Overhead Squat",
-  "Sots Press",
-  "Power Clean",
-  "Hang Clean",
-  "Squat Clean",
-  "Clean & Jerk",
-
-  // Complexos e movimentos combinados
+  "Deadlift",
+  "Sumo Deadlift",
+  "Romanian Deadlift (RDL)",
+  "Chest Press",
+  "Bench Press",
+  "Strict Press",
+  "Push Press",
+  "Push Jerk",
+  "Split Jerk",
   "Thruster",
-  "Bear Complex",
+  "Good Morning",
+  "Barbell Row",
+  "Bent Over Row",
+  "Hip Thrust com barra",
+  "Lunges com barra",
 
-  // Ginástica técnica
-  "Handstand Push-Up (HSPU)",
-  "Strict Handstand Push-Up",
-  "Muscle-Up",
+  // Levantamento olímpico
+  "Power Clean",
+  "Squat Clean",
+  "Hang Clean",
+  "Hang Power Clean",
+  "Clean & Jerk",
+  "Power Snatch",
+  "Squat Snatch",
+  "Snatch Deadlift",
+  "Hang Power Snatch",
+  "Sots Press",
+
+  // Halteres / KB com técnica
+  "Dumbbell Snatch",
+  "Dumbbell Clean",
+  "Dumbbell Clean & Jerk",
+  "Dumbbell Thruster",
+  "Dumbbell Bench Press",
+  "Dumbbell Press",
+  "Dumbbell Row",
+  "Dumbbell Lunges",
+  "Kettlebell Swing",
+  "Kettlebell Clean",
+  "Kettlebell Snatch",
+  "Goblet Squat",
+  "Kettlebell Lunges",
+  "KB Swing (Russian)",
+  "KB Swing (American)",
+
+  // Ginástica técnica / skills
+  "Pull-Up",
+  "Chin-Up",
+  "Strict Chin-Up",
+  "Scapular Pull-Up",
+  "Chest-to-Bar Pull-Up",
+  "Kipping Pull-Up",
   "Bar Muscle-Up",
   "Ring Muscle-Up",
+  "Muscle-Up",
+  "Ring Dip",
+  "Ring Support Hold",
+  "Ring Row",
   "Toes-to-Bar (T2B)",
+  "Knees-to-Elbows (K2E)",
+  "Hanging Knee Raise",
+  "Pistol Squat",
+  "L-Sit Hold",
 
-  // Mobilidade / técnica de PVC
-  "PVC Overhead Squat"
+  // Handstand / inversões
+  "Handstand Hold",
+  "Nose-to-Wall Handstand Hold",
+  "Handstand Walk",
+  "Handstand Shoulder Tap",
+  "Handstand Push-Up (HSPU)",
+  "Strict Handstand Push-Up",
+  "Wall Walk",
+  "Handstand Walk Practice",
+
+  // Core / shapes ginásticos
+  "Hollow Hold",
+  "Hollow Rock",
+  "Arch Hold",
+  "Arch Rock",
+  "Kip Swing",
+
+  // Técnicos de barra/argolas com banda
+  "Band Pull-Down",
+  "Band Transition",
+  "Pull-Over",
+
+  // PVC / mobilidade técnica
+  "PVC Overhead Squat",
+  "PVC Pass Through",
+  "Dynamic Squat Stretch"
 ];
 
 /* Movimentos de metcon / condicionamento */
+/* Movimentos de metcon / condicionamento (para sugerir tipo "metcon") */
 const METCON_MOVES = [
+  // Metcon clássicos de peso corporal
   "Burpee",
   "Burpee Box Jump-Over",
+  "Burpee Box Jump",
+  "Burpee Pull-Up",
+  "Air Squat",
+  "Jumping Jack",
+  "Sit-Up",
+  "Floor Leg Raise",
+  "V-Up",
+  "Plank",
+  "Plank Hold",
+  "Plank Pike",
+  "Plank Jump",
+  "Tuck Roll",
+  "Wall Sit",
+
+  // Caixa / wall ball
   "Box Jump",
   "Box Jump Over",
   "Wall Ball",
-  "Rowing",
-  "Ski Erg",
-  "Assault Bike",
+
+  // Halteres / KB em contexto de condicionamento
+  "Dumbbell Snatch",
+  "Dumbbell Thruster",
+  "Dumbbell Lunges",
+  "DB Devil Press",
+  "Devil Press",
+  "Man Maker",
+  "Kettlebell Swing",
+  "Kettlebell Lunges",
+  "KB Swing (Russian)",
+  "KB Swing (American)",
+  "Goblet Squat",
+
+  // Cardio máquinas e corrida
   "Running",
   "Sprint",
+  "Rowing",
+  "Row",
+  "Ski Erg",
+  "Assault Bike",
+
+  // Corda
   "Double Under",
   "Single Under",
-  "Sled Push",
-  "Sled Pull",
+
+  // Carries / trenó / strongman de condicionamento
   "Farmer Carry",
   "Sandbag Carry",
   "Yoke Carry",
-  "Rope Climb",
-  "Devil Press",
-  "Man Maker"
+  "Sled Push",
+  "Sled Pull",
+
+  // Subida à corda – em WOD é quase sempre metcon
+  "Rope Climb"
 ];
 
 /* Inferir tipo automaticamente para o WOD */
@@ -3893,6 +3999,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
