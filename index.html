@@ -1655,7 +1655,6 @@ const treinoExEl = document.getElementById("treinoExercicio");
 const treinoExSearchEl = document.getElementById("treinoExercicioSearch");
 const treinoParteEl = document.getElementById("treinoParte");
 const treinoFormatoEl = document.getElementById("treinoFormato");
-const treinoTipoEl = document.getElementById("treinoTipo");
 const treinoRondasEl = document.getElementById("treinoRondas");
 const treinoRepsEl = document.getElementById("treinoReps");
 const treinoPesoEl = document.getElementById("treinoPeso");
@@ -2138,6 +2137,12 @@ if (calcBtn) {
 function updateRmChart() {
   if (!rmChartCanvas || !graphExerciseEl) return;
 
+  // Se a biblioteca não carregou, não rebenta o resto da app
+  if (typeof Chart === "undefined") {
+    console.warn("Chart.js não está disponível. O gráfico de 1RM foi desativado.");
+    return;
+  }
+
   const ex = graphExerciseEl.value;
   let labels = [];
   let values = [];
@@ -2189,6 +2194,38 @@ function updateRmChart() {
     });
     return;
   }
+
+  const datasetLabel = MOVES_PT[ex]
+    ? `${ex} – ${MOVES_PT[ex]} – 1RM (kg)`
+    : ex + " – 1RM (kg)";
+
+  rmChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        label: datasetLabel,
+        data: values,
+        tension: 0.25
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: "Registos" }
+        },
+        y: {
+          title: { display: true, text: "Peso (kg)" },
+          beginAtZero: false
+        }
+      }
+    }
+  });
+}
 
   const datasetLabel = MOVES_PT[ex] ? `${ex} – ${MOVES_PT[ex]} – 1RM (kg)` : ex + " – 1RM (kg)";
 
@@ -3841,6 +3878,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
