@@ -1645,6 +1645,10 @@ const quickPercResultEl = document.getElementById("quickPercResult");
 
 /* WOD */
 let treinos = JSON.parse(localStorage.getItem(STORAGE_TREINO) || "[]");
+  if (!Array.isArray(treinos)) {
+  treinos = [];
+  localStorage.setItem(STORAGE_TREINO, JSON.stringify(treinos));
+}
 
 const treinoDataEl = document.getElementById("treinoData");
 const treinoExEl = document.getElementById("treinoExercicio");
@@ -3728,7 +3732,11 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
 
     const target = btn.dataset.target;
     document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
-    document.getElementById(target).classList.add("active");
+
+    const sec = document.getElementById(target);
+    if (sec && sec.classList.contains("section")) {
+      sec.classList.add("active");
+    }
   });
 });
 
@@ -3802,6 +3810,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
