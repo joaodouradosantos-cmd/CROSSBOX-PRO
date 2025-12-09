@@ -804,6 +804,8 @@
           <span>WOD</span>
         </button>
 
+        
+
         <button class="btn-secondary opt-btn" data-target="opt-calc">
           <span class="opt-emoji">🧮</span>
           <span>Objetivo</span>
@@ -835,6 +837,13 @@
           <span>Reservas</span>
         </button>
       </div>
+
+       <!-- NOVO: Histórico WOD -->
+         <button class="btn-secondary opt-btn" data-target="opt-historico">
+           <span class="opt-emoji">📜</span>
+           <span>Histórico WOD</span>
+         </button>
+        </div>
 
       <div class="helper-text" style="margin-top:8px;">
       </div>
@@ -986,45 +995,39 @@
           </table>
         </div>
 
-        <!-- Botões de histórico e exportação -->
-        <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;">
-          <button class="btn-secondary" id="toggleDailyHistory">
-            Histórico diário completo
-          </button>
+      </section>
+    <!-- HISTÓRICO WOD – NOVA SECÇÃO -->
+<section id="opt-historico" class="option-section">
+  <div class="card">
+    <h3 style="margin-top:0; margin-bottom:8px;">📜 Histórico WOD</h3>
+    <p class="helper-text">
+      Lista completa de todos os treinos registados, ordenados da data mais recente para a mais antiga.
+    </p>
 
-          <button class="btn-secondary" id="printHistoryBtn">
-            Exportar histórico (PDF)
-          </button>
-        </div>
-
-        <!-- Histórico diário completo (todas as datas) -->
-        <div id="dailyHistorySection" style="display:none; margin-top:8px;">
-          <h4 style="margin-top:0; margin-bottom:4px;">Histórico detalhado (todos os dias)</h4>
-          <div class="scroll" id="dailyHistoryScroll">
-            <table>
-              <thead>
-                <tr>
-                  <th>Data</th>
-                  <th>Parte</th>
-                  <th>Formato</th>
-                  <th>Exercício</th>
-                  <th>Tipo</th>
-                  <th>Rondas</th>
-                  <th>Reps</th>
-                  <th>Peso</th>
-                  <th>% 1RM</th>
-                  <th>Tempo</th>
-                  <th>Distância (km)</th>
-                  <th>Carga (kg)</th>
-                </tr>
-              </thead>
-              <tbody id="dailyHistoryBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-    </section>
+    <div class="scroll" id="dailyHistoryScroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Parte</th>
+            <th>Formato</th>
+            <th>Exercício</th>
+            <th>Tipo</th>
+            <th>Rondas</th>
+            <th>Reps</th>
+            <th>Peso</th>
+            <th>% 1RM</th>
+            <th>Tempo</th>
+            <th>Distância (km)</th>
+            <th>Carga (kg)</th>
+            <th></th> <!-- lixo -->
+          </tr>
+        </thead>
+        <tbody id="dailyHistoryBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
 
     <!-- OBJETIVO -->
     <section id="opt-calc" class="option-section">
@@ -3794,6 +3797,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
