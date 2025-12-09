@@ -1,19 +1,21 @@
 // service-worker.js – CrossBox PRO
 
-// 🔁 sobe a versão sempre que alterares o SW
-const STATIC_CACHE = "crossbox-pro-static-v4";
-const RUNTIME_CACHE = "crossbox-pro-runtime-v4";
+// Sobe a versão sempre que alterares o SW
+const STATIC_CACHE = "crossbox-pro-static-v5";
+const RUNTIME_CACHE = "crossbox-pro-runtime-v5";
 
-// Em GitHub Pages é mais seguro tratar o "shell" como ./ (raiz da app)
-const APP_SHELL_URL = new URL("./", self.location).toString();
+// App shell = index.html direto (evita problemas com redirects em "./")
+const APP_SHELL_URL = new URL("index.html", self.location).toString();
 
 const PRECACHE_URLS = [
-  "./", // raiz da app
+  "./index.html",
+  "./",
   "./manifest.json",
   "./imagens/crossbox_logo.png",
   "./imagens/crossbox_logo-192.png",
   "./imagens/crossbox_logo-512.png"
 ];
+
 
 // INSTALL – pré-cache do “app shell”
 self.addEventListener("install", (event) => {
@@ -128,4 +130,5 @@ async function staleWhileRevalidate(request) {
   const network = await networkPromise;
   return network || Response.error();
 }
+
 
