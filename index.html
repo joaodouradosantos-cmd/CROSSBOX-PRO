@@ -2427,12 +2427,7 @@ function renderDailyHistory() {
     dailyHistoryBody.appendChild(tr);
   });
 }
-
-    // sem coluna de apagar aqui – só leitura do histórico
-    dailyHistoryBody.appendChild(tr);
-  });
-}
-
+  
 function printTreinosPdf() {
   try {
     const hoje = new Date().toISOString().slice(0, 10);
@@ -3813,6 +3808,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
