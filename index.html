@@ -3756,8 +3756,18 @@ document.querySelectorAll(".opt-btn").forEach(btn => {
     if (sec && sec.classList.contains("option-section")) {
       sec.classList.add("active");
     }
+
+    // quando entra no Histórico WOD, atualiza a tabela
+    if (target === "opt-historico") {
+      renderDailyHistory();
+    }
+    // opcional: quando volta ao WOD, atualiza o WOD do dia (caso tenhas apagado algo)
+    if (target === "opt-wod") {
+      renderTreinos();
+    }
   });
 });
+
 
 /* BOTÃO RESERVAS – (se existir no futuro no ecrã principal) */
 if (reservasBtn && reservasSection) {
@@ -3793,6 +3803,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
