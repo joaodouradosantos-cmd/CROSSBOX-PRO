@@ -1,7 +1,7 @@
 // service-worker-pro.js – SW só para a versão PRO
 
-const CACHE_NAME = "crossbox-pro-static-v1";
-const RUNTIME_CACHE = "crossbox-pro-runtime-v1";
+const CACHE_NAME = "crossbox-pro-static-v2";
+const RUNTIME_CACHE = "crossbox-pro-runtime-v2";
 
 const URLS_TO_CACHE = [
   "./",
@@ -74,3 +74,4 @@ self.addEventListener("fetch", (event) => {
       )
   );
 });
+
