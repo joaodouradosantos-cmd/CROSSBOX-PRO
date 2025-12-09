@@ -472,9 +472,16 @@
    ============================ */
 
 /* Aumentar a altura útil do guia – usa quase o ecrã todo */
-#opt-guia .scroll {
-  max-height: calc(100vh - 220px);  /* se ainda parecer pequeno, podemos ajustar este valor */
+/* WOD do dia – mais alto */
+#opt-wod #treinoScroll {
+  max-height: calc(100vh - 260px);
 }
+
+/* Histórico WOD – aproveitar o ecrã quase todo */
+#opt-historico #dailyHistoryScroll {
+  max-height: calc(100vh - 220px);
+}
+
 
 /* Texto mais legível na tabela do guia */
 #opt-guia table {
@@ -3797,6 +3804,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
