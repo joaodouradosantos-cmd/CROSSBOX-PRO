@@ -3753,18 +3753,28 @@ document.querySelectorAll(".opt-btn").forEach(btn => {
       s.classList.remove("active");
     });
 
-    // mostra só a secção pedida
+    // mostra só a secção que corresponde ao botão
     const sec = document.getElementById(target);
     if (sec && sec.classList.contains("option-section")) {
       sec.classList.add("active");
     }
 
-    // actualizar ecrãs quando mudas
+    // quando entras no WOD, garantimos que o WOD do dia está atualizado
     if (target === "opt-wod") {
       renderTreinos();
     }
+
+    // se no futuro tiveres um ecrã dedicado ao histórico (opt-historico)
     if (target === "opt-historico") {
       renderDailyHistory();
+    }
+
+    // performance e guia também podem ser atualizados ao entrar
+    if (target === "opt-performance") {
+      renderPerformance();
+    }
+    if (target === "opt-guia") {
+      renderGuiaExercicios();
     }
   });
 });
@@ -3803,6 +3813,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
