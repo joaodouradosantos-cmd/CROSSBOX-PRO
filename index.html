@@ -2227,36 +2227,6 @@ function updateRmChart() {
   });
 }
 
-  const datasetLabel = MOVES_PT[ex] ? `${ex} – ${MOVES_PT[ex]} – 1RM (kg)` : ex + " – 1RM (kg)";
-
-  rmChart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels,
-      datasets: [{
-        label: datasetLabel,
-        data: values,
-        tension: 0.25
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: true }
-      },
-      scales: {
-        x: {
-          title: { display: true, text: "Registos" }
-        },
-        y: {
-          title: { display: true, text: "Peso (kg)" },
-          beginAtZero: false
-        }
-      }
-    }
-  });
-}
-
 if (graphExerciseEl) {
   graphExerciseEl.addEventListener("change", updateRmChart);
 }
@@ -3878,6 +3848,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
