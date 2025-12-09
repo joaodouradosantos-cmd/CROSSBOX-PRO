@@ -3724,15 +3724,22 @@ if (reservaAddBtn) {
   reservaAddBtn.addEventListener("click", adicionarReserva);
 }
 
-/* TABS PRINCIPAIS */
+/* ---------------------------------------------------
+   TABS PRINCIPAIS (1RM / WOD & Tools) - versão segura
+---------------------------------------------------- */
 document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.addEventListener("click", () => {
+
+    // remover active de todas as tabs
     document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
 
     const target = btn.dataset.target;
+
+    // esconder todas as sections principais
     document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
 
+    // ativar só se existir (evita página em branco)
     const sec = document.getElementById(target);
     if (sec && sec.classList.contains("section")) {
       sec.classList.add("active");
@@ -3740,43 +3747,46 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
   });
 });
 
-/* OPÇÕES (sub-seções) */
+
+/* ---------------------------------------------------
+   SUB-SECÇÕES (WOD, Objetivo, Gráficos, etc.)
+---------------------------------------------------- */
 document.querySelectorAll(".opt-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     const target = btn.dataset.target;
 
-    // esconde todas as sub-secções
-    document.querySelectorAll(".option-section").forEach(s => {
-      s.classList.remove("active");
-    });
+    // esconder todas as sub-secções
+    document.querySelectorAll(".option-section").forEach(s => s.classList.remove("active"));
 
-    // mostra só a secção que corresponde ao botão
+    // mostrar a secção pedida
     const sec = document.getElementById(target);
     if (sec && sec.classList.contains("option-section")) {
       sec.classList.add("active");
     }
 
-    // quando entras no WOD, garantimos que o WOD do dia está atualizado
+    // atualizar conteúdos específicos de cada secção
     if (target === "opt-wod") {
       renderTreinos();
     }
 
-    // se no futuro tiveres um ecrã dedicado ao histórico (opt-historico)
     if (target === "opt-historico") {
       renderDailyHistory();
     }
 
-    // performance e guia também podem ser atualizados ao entrar
     if (target === "opt-performance") {
       renderPerformance();
     }
+
     if (target === "opt-guia") {
       renderGuiaExercicios();
     }
   });
 });
 
-/* BOTÃO RESERVAS – (se existir no futuro no ecrã principal) */
+
+/* ---------------------------------------------------
+   BOTÃO DE RESERVAS (caso exista)
+---------------------------------------------------- */
 if (reservasBtn && reservasSection) {
   reservasBtn.addEventListener("click", () => {
     const visivel = reservasSection.style.display === "block";
@@ -3784,32 +3794,54 @@ if (reservasBtn && reservasSection) {
   });
 }
 
-/* INIT */
+
+/* ---------------------------------------------------
+   ARRANQUE DA APP (sequência segura)
+---------------------------------------------------- */
+
+// impedir crashes se o localStorage tiver dados corrompidos
+let treinosTmp = JSON.parse(localStorage.getItem(STORAGE_TREINO) || "[]");
+if (!Array.isArray(treinosTmp)) {
+  treinosTmp = [];
+  localStorage.setItem(STORAGE_TREINO, JSON.stringify(treinosTmp));
+}
+// NOTA: o teu código original usa "treinos" acima — preserva-o
+
+// iniciar selects e dados
 initSelects();
 loadProfile();
 renderRm();
+
 refreshCalcExOptions();
 refreshGraphExerciseOptions();
 
+// definir automaticamente a data do WOD se vazio
 if (treinoDataEl && !treinoDataEl.value) {
   treinoDataEl.value = new Date().toISOString().slice(0, 10);
 }
-renderTreinos();
-updateBackupInfo();
-renderGuiaExercicios();
-renderPerformance();
-renderReservas();
-atualizarRankingsMensais();
 
+renderTreinos();          // mostra WOD do dia
+updateBackupInfo();       // estado do backup
+renderGuiaExercicios();   // guia
+renderPerformance();       // desempenho
+renderReservas();          // reservas
+atualizarRankingsMensais();// rankings
+
+
+/* ---------------------------------------------------
+   SERVICE WORKER
+---------------------------------------------------- */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
     navigator.serviceWorker.register("service-worker.js");
   });
 }
+
 </script>
 
 </body>
 </html>
+
 
 
 
