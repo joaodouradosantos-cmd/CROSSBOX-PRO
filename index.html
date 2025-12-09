@@ -2104,7 +2104,7 @@ if (calcBtn) {
           incPerWeek <= 2 ? "progressão exigente" :
           "progressão muito agressiva";
 
-        const nivel = (profile?.nivel || "").toLowerCase();
+        const nivel = ((profile && profile.nivel) ? profile.nivel : "").toLowerCase();
         let freq = "2–3 sessões semanais";
         let seriesReps = "3–5 séries de 3–6 reps a 75–90%";
 
@@ -3848,6 +3848,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
