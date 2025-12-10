@@ -669,6 +669,15 @@
   opacity: 0.85;
   font-size: 1rem;
 }
+/* Dar mais espaço à última card do 1RM (lista de exercícios) */
+#sec-1rm .card:last-of-type {
+  min-height: 260px; /* se ainda ficar apertado, sobe para 280 */
+}
+
+/* Um pouco mais de espaço entre as cards do 1RM */
+#sec-1rm .card {
+  margin-bottom: 18px;
+}
 
 </style>
 </head>
@@ -4827,6 +4836,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
