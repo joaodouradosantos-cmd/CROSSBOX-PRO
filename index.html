@@ -20,6 +20,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Stardos+Stencil:wght@400;700&display=swap" rel="stylesheet">
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.0/dist/tesseract.min.js"></script>
 
   <style>
     :root {
@@ -1362,8 +1364,8 @@ const STORAGE_RESERVAS = "crossfit_reservas";
 const STORAGE_PRESENCAS = "crossfit_presencas";
 const STORAGE_RANKINGS = "crossfit_rankings";
 
-/* ENDPOINT DO BACKEND PARA OCR DO QUADRO */
-const OCR_ENDPOINT = "https://o-teu-backend.exemplo/ocr-wod"; // troca pela tua URL real
+/* OCR do quadro feito localmente no browser com Tesseract.js (sem backend externo) */
+const OCR_ENDPOINT = null; // já não é usado, mantido só para não rebentar nada antigo
 
 /* ===== PERFIL ===== */
 let profile = JSON.parse(localStorage.getItem(STORAGE_PROFILE) || "{}");
@@ -3594,35 +3596,40 @@ function updateResultadoUIForDate(dateStr) {
   treinoResultadoEl.value = val;
 }
 
-/* ===== FOTO DO QUADRO → OCR → TEXTO ===== */
+/* ===== FOTO DO QUADRO → OCR LOCAL (Tesseract) → TEXTO ===== */
 
 async function handleWodPhotoFile(file) {
-  if (!file || !OCR_ENDPOINT) return;
+  if (!file) return;
+
+  if (!window.Tesseract) {
+    console.error("Tesseract.js não está carregado.");
+    if (wodPhotoStatusEl) {
+      wodPhotoStatusEl.textContent =
+        "OCR indisponível. Verifica a ligação à internet na primeira utilização para carregar o motor de OCR.";
+    }
+    return;
+  }
 
   if (wodPhotoStatusEl) {
-    wodPhotoStatusEl.textContent = "A processar a foto do quadro, aguarda um momento...";
+    wodPhotoStatusEl.textContent =
+      "A processar a foto do quadro no dispositivo. Pode demorar alguns segundos…";
   }
 
   try {
-    const formData = new FormData();
-    formData.append("image", file);
+    // OCR local com suporte a PT + EN
+    const result = await Tesseract.recognize(file, "por+eng");
 
-    const resp = await fetch(OCR_ENDPOINT, {
-      method: "POST",
-      body: formData
-    });
-
-    if (!resp.ok) {
-      throw new Error("Resposta inválida do servidor de OCR.");
-    }
-
-    const data = await resp.json();
-    const rawText = data && data.text ? String(data.text) : "";
+    const rawText =
+      result &&
+      result.data &&
+      typeof result.data.text === "string"
+        ? result.data.text
+        : "";
 
     if (!rawText.trim()) {
       if (wodPhotoStatusEl) {
         wodPhotoStatusEl.textContent =
-          "Não foi possível ler texto útil do quadro. Tenta outra foto com melhor luz e contraste.";
+          "Não foi possível ler texto útil do quadro. Tira outra foto com melhor luz e foco.";
       }
       return;
     }
@@ -3632,13 +3639,13 @@ async function handleWodPhotoFile(file) {
     }
     if (wodPhotoStatusEl) {
       wodPhotoStatusEl.textContent =
-        "Texto do quadro reconhecido. Revê e corrige aqui em baixo antes de converter em registos no WOD.";
+        "Texto do quadro reconhecido localmente. Revê e corrige aqui em baixo antes de converter em registos no WOD.";
     }
   } catch (err) {
-    console.error("Erro no OCR do quadro:", err);
+    console.error("Erro no OCR local do quadro (Tesseract):", err);
     if (wodPhotoStatusEl) {
       wodPhotoStatusEl.textContent =
-        "Ocorreu um erro ao enviar a foto para o servidor de OCR. Verifica a ligação à internet e tenta de novo.";
+        "Não foi possível ler o texto da imagem. Garante boa luz e estabilidade da foto e tenta novamente.";
     }
   }
 }
@@ -4071,15 +4078,19 @@ if (wodPhotoBtn && wodPhotoCameraInput && wodPhotoGalleryInput) {
     }
   });
 
-  const onPhotoFileChange = (e) => {
+    const onPhotoFileChange = (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
+
+    // DEBUG: confirmar que o ficheiro vem da câmara/galeria
+    console.log("Ficheiro escolhido para OCR:", {
+      nome: file.name,
+      tamanho: file.size,
+      tipo: file.type
+    });
+
     handleWodPhotoFile(file);
   };
-
-  wodPhotoCameraInput.addEventListener("change", onPhotoFileChange);
-  wodPhotoGalleryInput.addEventListener("change", onPhotoFileChange);
-}
 
 if (wodOcrApplyBtn) {
   wodOcrApplyBtn.addEventListener("click", applyOcrToWod);
@@ -4863,6 +4874,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
