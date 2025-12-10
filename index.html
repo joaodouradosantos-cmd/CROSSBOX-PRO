@@ -1406,254 +1406,698 @@ const MOVES_PT = {};
 /* GUIA – LISTA TIPO JSON (inclui todos os exercícios disponíveis na app) */
 const EXER_INFO = [
   /* BARRA / HALTERES – FORÇA BASE */
-  { en: "Chest Press", pt: "Supino com barra", descricao: "Empurrar a barra para longe do peito, deitado no banco, controlando a descida e a subida." },
-  { en: "Back Squat", pt: "Agachamento com barra nas costas", descricao: "Agachamento com a barra apoiada nas costas, descendo até pelo menos à paralela com o tronco firme." },
-  { en: "Front Squat", pt: "Agachamento frontal", descricao: "Agachamento com a barra apoiada na parte da frente dos ombros, exigindo tronco mais vertical e core forte." },
-  { en: "Overhead Squat", pt: "Agachamento acima da cabeça", descricao: "Agachamento com a barra acima da cabeça, braços estendidos e muita estabilidade de ombros e core." },
-  { en: "Sots Press", pt: "Sots press", descricao: "Na posição de agachamento frontal, realizar um press acima da cabeça mantendo-se em baixo." },
-  { en: "Deadlift", pt: "Peso morto", descricao: "Levar a barra do chão até à anca com costas neutras e extensão completa." },
-  { en: "Sumo Deadlift", pt: "Peso morto sumo", descricao: "Variação com pés afastados e mãos dentro das pernas, reduzindo amplitude da anca." },
-  { en: "Romanian Deadlift (RDL)", pt: "Peso morto romeno", descricao: "Peso morto com pouca flexão de joelhos, focado nos posteriores e glúteos." },
+  {
+    en: "Chest Press",
+    pt: "Supino com barra",
+    descricao: "Empurrar a barra para longe do peito, deitado no banco, controlando a descida e a subida."
+  },
+  {
+    en: "Back Squat",
+    pt: "Agachamento com barra nas costas",
+    descricao: "Agachamento com a barra apoiada nas costas, descendo até pelo menos à paralela com o tronco firme."
+  },
+  {
+    en: "Front Squat",
+    pt: "Agachamento frontal",
+    descricao: "Agachamento com a barra apoiada na parte da frente dos ombros, exigindo tronco mais vertical e core forte."
+  },
+  {
+    en: "Overhead Squat",
+    pt: "Agachamento acima da cabeça",
+    descricao: "Agachamento com a barra acima da cabeça, braços estendidos e muita estabilidade de ombros e core."
+  },
+  {
+    en: "Sots Press",
+    pt: "Sots press",
+    descricao: "A partir da posição de agachamento frontal, com a barra em rack, realizar um press acima da cabeça mantendo-se em baixo, exigindo muita estabilidade de ombros e core."
+  },
+  {
+    en: "Deadlift",
+    pt: "Peso morto",
+    descricao: "Levar a barra do chão até à anca com costas neutras, empurrando o chão com as pernas e contraindo glúteos no topo."
+  },
+  {
+    en: "Sumo Deadlift",
+    pt: "Peso morto sumo",
+    descricao: "Variação com pés mais afastados e mãos a agarrar a barra entre as pernas, reduzindo a amplitude da anca."
+  },
+  {
+    en: "Romanian Deadlift (RDL)",
+    pt: "Peso morto romeno",
+    descricao: "Peso morto com menos flexão de joelhos, focado em posteriores da coxa e glúteos, mantendo a barra perto do corpo."
+  },
 
-  { en: "Power Clean", pt: "Power clean", descricao: "Levar a barra do chão até aos ombros de forma explosiva, recebendo acima da paralela." },
-  { en: "Hang Clean", pt: "Clean do hang", descricao: "Clean iniciado com a barra acima dos joelhos, usando extensão de anca explosiva." },
-  { en: "Squat Clean", pt: "Squat clean", descricao: "Clean com receção em agachamento completo antes de regressar à posição de pé." },
-  { en: "Clean & Jerk", pt: "Clean & jerk", descricao: "Clean até ao rack seguido de impulso até overhead (jerk)." },
+  {
+    en: "Power Clean",
+    pt: "Power clean",
+    descricao: "Levar a barra do chão até aos ombros de forma explosiva, recebendo-a acima da paralela."
+  },
+  {
+    en: "Squat Clean",
+    pt: "Squat clean",
+    descricao: "Clean com receção em agachamento completo antes de regressar à posição de pé."
+  },
+  {
+    en: "Clean & Jerk",
+    pt: "Clean & jerk",
+    descricao: "Levar a barra do chão aos ombros (clean) e dos ombros até acima da cabeça (jerk) em dois movimentos distintos."
+  },
 
-  { en: "Power Snatch", pt: "Power snatch", descricao: "Arranco do chão até overhead recebendo acima da paralela." },
-  { en: "Hang Power Snatch", pt: "Arranco power do hang", descricao: "Power snatch iniciado acima dos joelhos, focando potência." },
-  { en: "Squat Snatch", pt: "Squat snatch", descricao: "Arranco com receção em agachamento profundo." },
-  { en: "Snatch Deadlift", pt: "Peso morto snatch", descricao: "Peso morto com pega larga, replicando a primeira fase do arranco." },
+  {
+    en: "Power Snatch",
+    pt: "Power snatch",
+    descricao: "Arranco com receção acima da paralela, num único movimento do chão até overhead."
+  },
+  {
+    en: "Squat Snatch",
+    pt: "Squat snatch",
+    descricao: "Arranco com receção em agachamento profundo, seguido de extensão até ficar totalmente de pé."
+  },
+  {
+    en: "Snatch Deadlift",
+    pt: "Peso morto snatch",
+    descricao: "Peso morto com pega larga, replicando a primeira fase do arranco e mantendo a barra encostada ao corpo."
+  },
+  {
+    en: "Hang Power Snatch",
+    pt: "Arranco power do hang",
+    descricao: "Arranco iniciado a partir do hang, acima dos joelhos, recebendo a barra acima da paralela."
+  },
+  {
+    en: "Hang Clean",
+    pt: "Clean do hang",
+    descricao: "Clean iniciado com a barra acima dos joelhos, recebendo no rack frontal com extensão explosiva da anca."
+  },
 
-  { en: "Strict Press", pt: "Press militar estrito", descricao: "Press acima da cabeça sem impulso das pernas." },
-  { en: "Push Press", pt: "Push press", descricao: "Press acima da cabeça com ligeiro impulso de pernas." },
-  { en: "Push Jerk", pt: "Push jerk", descricao: "Extensão explosiva acima da cabeça com encaixe em semi-agachamento." },
-  { en: "Split Jerk", pt: "Split jerk", descricao: "Jerk com receção em tesoura para maior estabilidade." },
+  {
+    en: "Strict Press",
+    pt: "Press militar estrito",
+    descricao: "Press de ombros sem ajuda das pernas, usando apenas a força de ombros e braços."
+  },
+  {
+    en: "Push Press",
+    pt: "Push press",
+    descricao: "Press de ombros com pequeno impulso das pernas, terminando com a barra acima da cabeça."
+  },
+  {
+    en: "Push Jerk",
+    pt: "Push jerk",
+    descricao: "Impulso de pernas e encaixe da barra acima da cabeça, recebendo em semi-agachamento antes de estender."
+  },
+  {
+    en: "Split Jerk",
+    pt: "Split jerk",
+    descricao: "Jerk em passada, recebendo a barra overhead com uma perna à frente e outra atrás para maior estabilidade."
+  },
 
-  { en: "Thruster", pt: "Thruster", descricao: "Agachamento frontal seguido de press acima da cabeça num só movimento." },
-  { en: "Barbell Row", pt: "Remada com barra", descricao: "Com tronco inclinado, puxar a barra em direção ao abdómen." },
-  { en: "Bent Over Row", pt: "Remada inclinada", descricao: "Remada com maior inclinação do tronco, focando dorsais." },
-  { en: "Good Morning", pt: "Good morning", descricao: "Inclinar o tronco à frente com barra nas costas mantendo costas neutras." },
-  { en: "Lunges com barra", pt: "Passadas com barra", descricao: "Passadas à frente ou atrás com a barra sobre os ombros." },
-  { en: "Walking Lunge", pt: "Passadas a andar", descricao: "Deslocação contínua com passadas alternadas, mantendo o joelho traseiro a tocar no chão ou próximo disso. Pode ser realizada com halteres, kettlebells ou sem carga."
-},
-
-  { en: "Hip Thrust com barra", pt: "Hip thrust com barra", descricao: "Elevar a anca com costas apoiadas num banco e barra na bacia." },
+  {
+    en: "Thruster",
+    pt: "Thruster",
+    descricao: "Agachamento frontal seguido diretamente de press acima da cabeça num único movimento fluido."
+  },
+  {
+    en: "Barbell Row",
+    pt: "Remada com barra",
+    descricao: "Com o tronco inclinado à frente, puxar a barra em direção ao abdómen mantendo as costas neutras."
+  },
+  {
+    en: "Bent Over Row",
+    pt: "Remada inclinada",
+    descricao: "Remada com maior inclinação do tronco, focando dorsais e parte média das costas."
+  },
+  {
+    en: "Good Morning",
+    pt: "Good morning",
+    descricao: "Com a barra nas costas, inclinar o tronco à frente com ligeira flexão de joelhos e voltar à posição inicial."
+  },
+  {
+    en: "Lunges com barra",
+    pt: "Passadas com barra",
+    descricao: "Passadas à frente ou atrás com a barra apoiada nos ombros, mantendo o tronco direito."
+  },
+  {
+    en: "Hip Thrust com barra",
+    pt: "Hip thrust com barra",
+    descricao: "Elevar a anca com as costas apoiadas num banco e a barra sobre a bacia, focando glúteos."
+  },
 
   /* HALTERES E KETTLEBELLS */
-  { en: "Dumbbell Press", pt: "Press com halteres", descricao: "Press de ombros com halteres acima da cabeça." },
-  { en: "Dumbbell Bench Press", pt: "Supino com halteres", descricao: "Supino no banco com dois halteres." },
-  { en: "Dumbbell Snatch", pt: "Snatch com halteres", descricao: "Elevação explosiva do haltere do chão até overhead." },
-  { en: "Dumbbell Clean", pt: "Clean com halteres", descricao: "Levar o haltere até ao ombro com extensão de anca." },
-  { en: "Dumbbell Clean & Jerk", pt: "Clean & jerk com halteres", descricao: "Clean seguido de extensão overhead com haltere." },
-  { en: "Dumbbell Thruster", pt: "Thruster com halteres", descricao: "Agachamento + press com halteres." },
-  { en: "Dumbbell Row", pt: "Remada com halteres", descricao: "Remada unilateral ou bilateral puxando o haltere ao tronco." },
-  { en: "Dumbbell Lunges", pt: "Passadas com halteres", descricao: "Passadas com halteres junto ao corpo." },
+  {
+    en: "Dumbbell Press",
+    pt: "Press com halteres",
+    descricao: "Press de ombros com halteres, de pé ou sentado, subindo os halteres acima da cabeça."
+  },
+  {
+    en: "Dumbbell Bench Press",
+    pt: "Supino com halteres",
+    descricao: "Deitado no banco, empurrar dois halteres para cima a partir do peito, controlando a descida."
+  },
+  {
+    en: "Dumbbell Snatch",
+    pt: "Snatch com halteres",
+    descricao: "Levar o haltere do chão até acima da cabeça num movimento explosivo e contínuo."
+  },
+  {
+    en: "Dumbbell Clean",
+    pt: "Clean com halteres",
+    descricao: "Levar o haltere do chão ou das pernas até ao ombro, com extensão de anca."
+  },
+  {
+    en: "Dumbbell Clean & Jerk",
+    pt: "Clean & jerk com halteres",
+    descricao: "Clean com haltere até ao ombro seguido de impulso até overhead."
+  },
+  {
+    en: "Dumbbell Thruster",
+    pt: "Thruster com halteres",
+    descricao: "Agachamento seguido de press com halteres acima da cabeça num só movimento."
+  },
+  {
+    en: "Dumbbell Row",
+    pt: "Remada com halteres",
+    descricao: "Remada unilateral ou bilateral puxando o haltere em direção ao tronco."
+  },
+  {
+    en: "Dumbbell Lunges",
+    pt: "Passadas com halteres",
+    descricao: "Passadas segurando um haltere em cada mão junto ao corpo."
+  },
+  {
+    en: "Walking Lunge",
+    pt: "Passadas a andar",
+    descricao: "Passadas alternadas deslocando-se para a frente, com ou sem carga, mantendo o tronco direito e o joelho traseiro próximo do chão."
+  },
 
-  { en: "Kettlebell Swing", pt: "Swing com kettlebell", descricao: "Balanço da kettlebell com extensão explosiva da anca." },
-  { en: "Kettlebell Clean", pt: "Clean com kettlebell", descricao: "Transição da kettlebell até à posição de rack." },
-  { en: "Kettlebell Snatch", pt: "Snatch com kettlebell", descricao: "Movimento explosivo da kettlebell até overhead." },
-  { en: "Goblet Squat", pt: "Agachamento goblet", descricao: "Agachamento segurando kettlebell ou haltere junto ao peito." },
-  { en: "Kettlebell Lunges", pt: "Passadas com kettlebell", descricao: "Passadas segurando kettlebell ao lado ou em rack." },
+  {
+    en: "Kettlebell Swing",
+    pt: "Swing com kettlebell",
+    descricao: "Balanço da kettlebell usando sobretudo o impulso da anca, não dos braços."
+  },
+  {
+    en: "Kettlebell Clean",
+    pt: "Clean com kettlebell",
+    descricao: "Levar a kettlebell do fundo até à posição de rack junto ao peito."
+  },
+  {
+    en: "Kettlebell Snatch",
+    pt: "Snatch com kettlebell",
+    descricao: "Arranco unilateral, do chão ou do baloiço até acima da cabeça."
+  },
+  {
+    en: "Goblet Squat",
+    pt: "Agachamento goblet",
+    descricao: "Agachamento segurando a kettlebell ou haltere junto ao peito."
+  },
+  {
+    en: "Kettlebell Lunges",
+    pt: "Passadas com kettlebell",
+    descricao: "Passadas segurando a kettlebell ao lado do corpo ou em posição de rack."
+  },
 
   /* GINÁSTICA / CALISTENIA – BÁSICOS */
-  { en: "Pull-Up", pt: "Puxada na barra", descricao: "Suspenso na barra, puxar até o queixo ultrapassar a barra." },
-  { en: "Chin-Up", pt: "Puxada em supinação", descricao: "Tração com palmas para si, enfatizando bíceps." },
-  { en: "Strict Chin-Up", pt: "Chin-up estrito", descricao: "Tração controlada sem kipping." },
-  { en: "Scapular Pull-Up", pt: "Puxada escapular", descricao: "Movimento curto ativando apenas escápulas." },
+  {
+    en: "Pull-Up",
+    pt: "Puxada na barra",
+    descricao: "Suspenso na barra, puxar até o queixo ultrapassar a barra com pegada em pronação."
+  },
+  {
+    en: "Chin-Up",
+    pt: "Puxada em supinação",
+    descricao: "Puxada na barra com palmas das mãos viradas para ti, focando mais bíceps."
+  },
+  {
+    en: "Strict Chin-Up",
+    pt: "Chin-up estrito",
+    descricao: "Versão controlada sem kipping, subindo até o queixo ultrapassar a barra apenas com força muscular."
+  },
+  {
+    en: "Scapular Pull-Up",
+    pt: "Puxada escapular",
+    descricao: "Suspenso na barra, mover apenas as escápulas, aproximando ligeiramente o peito da barra sem dobrar os cotovelos."
+  },
 
-  { en: "Chest-to-Bar Pull-Up", pt: "Puxada ao peito", descricao: "Tração até o peito tocar na barra." },
-  { en: "Kipping Pull-Up", pt: "Pull-up com kipping", descricao: "Balanço hollow/arch ajudando a puxada." },
-  { en: "Bar Muscle-Up", pt: "Muscle-up na barra", descricao: "Puxada + transição para apoio acima da barra." },
-  { en: "Ring Muscle-Up", pt: "Muscle-up nas argolas", descricao: "Versão mais instável do muscle-up." },
-  { en: "Muscle-Up", pt: "Muscle-up", descricao: "Puxada + dip completos, barra ou argolas." },
+  {
+    en: "Chest-to-Bar Pull-Up",
+    pt: "Puxada ao peito",
+    descricao: "Puxada na barra até o peito tocar na barra, exigindo maior amplitude."
+  },
+  {
+    en: "Kipping Pull-Up",
+    pt: "Pull-up com kipping",
+    descricao: "Puxada na barra usando balanço hollow/arch para ganhar impulso e aumentar repetições."
+  },
+  {
+    en: "Bar Muscle-Up",
+    pt: "Muscle-up na barra",
+    descricao: "Transição explosiva que combina puxada e dip para passar o tronco acima da barra."
+  },
+  {
+    en: "Ring Muscle-Up",
+    pt: "Muscle-up nas argolas",
+    descricao: "Transição nas argolas, mais instável e exigente do que na barra."
+  },
+  {
+    en: "Muscle-Up",
+    pt: "Muscle-up",
+    descricao: "Termo genérico para o movimento que combina puxada e dip, em barra ou argolas."
+  },
 
-  { en: "Ring Row", pt: "Remada nas argolas", descricao: "Puxar o tronco em direção às argolas com corpo inclinado." },
-  { en: "Ring Dip", pt: "Dip nas argolas", descricao: "Flexão de braços nas argolas descendo até 90º." },
-  { en: "Ring Support Hold", pt: "Suporte nas argolas", descricao: "Manter posição de braços estendidos nas argolas." },
+  {
+    en: "Ring Row",
+    pt: "Remada nas argolas",
+    descricao: "Com o corpo inclinado sob as argolas, puxar o peito em direção às argolas mantendo o corpo alinhado."
+  },
+  {
+    en: "Ring Dip",
+    pt: "Dip nas argolas",
+    descricao: "Suportado nas argolas, descer até cerca de 90º de flexão de cotovelos e voltar à extensão completa."
+  },
+  {
+    en: "Ring Support Hold",
+    pt: "Suporte nas argolas",
+    descricao: "Manter a posição de braços estendidos nas argolas com corpo alinhado e ombros ativos."
+  },
 
-  { en: "Toes-to-Bar (T2B)", pt: "Toes-to-bar", descricao: "Tocar com os pés na barra mantendo balanço controlado." },
-  { en: "Knees-to-Elbows (K2E)", pt: "Knees-to-elbows", descricao: "Elevar joelhos até cotovelos." },
-  { en: "Hanging Knee Raise", pt: "Elevação de joelhos na barra", descricao: "Elevar joelhos até à altura da anca." },
+  {
+    en: "Toes-to-Bar (T2B)",
+    pt: "Toes-to-bar",
+    descricao: "Suspenso na barra, tocar com os pés na barra usando kip hollow/arch."
+  },
+  {
+    en: "Knees-to-Elbows (K2E)",
+    pt: "Knees-to-elbows",
+    descricao: "Suspenso na barra, elevar os joelhos até tocarem nos cotovelos."
+  },
+  {
+    en: "Hanging Knee Raise",
+    pt: "Elevação de joelhos na barra",
+    descricao: "Versão mais simples, elevando os joelhos em direção ao peito."
+  },
 
-  { en: "Sit-Up", pt: "Abdominal sit-up", descricao: "Subir tronco desde o chão até ficar sentado." },
-  { en: "Floor Leg Raise", pt: "Elevação de pernas no chão", descricao: "Elevar pernas estendidas mantendo lombar no chão." },
-  { en: "V-Up", pt: "V-up", descricao: "Elevar tronco e pernas formando um V." },
+  {
+    en: "Sit-Up",
+    pt: "Abdominal sit-up",
+    descricao: "Deitado de costas, subir o tronco até ficar sentado, podendo usar AbMat."
+  },
+  {
+    en: "Floor Leg Raise",
+    pt: "Elevação de pernas no chão",
+    descricao: "Deitado de costas, elevar as pernas estendidas mantendo a lombar encostada ao chão."
+  },
+  {
+    en: "V-Up",
+    pt: "V-up",
+    descricao: "Elevar simultaneamente tronco e pernas tocando com as mãos nos pés, formando um 'V'."
+  },
 
-  { en: "GHD Sit-Up", pt: "Abdominal em GHD", descricao: "Sit-up com grande amplitude na GHD." },
-  { en: "Back Extension (GHD)", pt: "Extensão lombar em GHD", descricao: "Extensão de tronco focando lombar." },
-  { en: "Back Extension", pt: "Extensão lombar", descricao: "Extensão do tronco realizada no chão ou banco, focando lombar e glúteos. Versão mais simples do movimento, utilizada em metcons e no trabalho de estabilidade." },
-  { en: "Pistol Squat", pt: "Agachamento pistol", descricao: "Agachamento numa só perna." },
+  {
+    en: "GHD Sit-Up",
+    pt: "Abdominal em GHD",
+    descricao: "Abdominal na máquina GHD com grande amplitude de movimento."
+  },
+  {
+    en: "Back Extension (GHD)",
+    pt: "Extensão lombar em GHD",
+    descricao: "Extensão de tronco na máquina GHD, focando lombar e glúteos."
+  },
+
+  {
+    en: "Pistol Squat",
+    pt: "Agachamento pistol",
+    descricao: "Agachamento numa só perna, mantendo a outra estendida à frente."
+  },
 
   /* HANDSTAND / INVERSÕES */
-  { en: "Handstand Hold", pt: "Pino estático", descricao: "Manter posição de pino com ombros ativos." },
-  { en: "Nose-to-Wall Handstand Hold", pt: "Pino nariz à parede", descricao: "Pino com alinhamento perfeito junto à parede." },
-  { en: "Handstand Walk", pt: "Caminhada em pino", descricao: "Mover-se em pino, usando as mãos." },
-  { en: "Handstand Shoulder Tap", pt: "Toques de ombro em pino", descricao: "Alternar toques de mão no ombro oposto." },
-  { en: "Handstand Push-Up (HSPU)", pt: "Pino com flexão", descricao: "Flexão de braços em pino." },
-  { en: "Strict Handstand Push-Up", pt: "Pino com flexão estrita", descricao: "HSPU sem kipping." },
-  { en: "Wall Walk", pt: "Subida à parede", descricao: "Caminhar com pés pela parede até ao pino." },
-  { en: "Handstand Walk Practice", pt: "Prática de caminhada em pino", descricao: "Ensaios curtos de deslocamento em pino." },
+  {
+    en: "Handstand Hold",
+    pt: "Pino estático",
+    descricao: "Manter a posição de pino, junto à parede ou livre, com ombros ativos e core firme."
+  },
+  {
+    en: "Nose-to-Wall Handstand Hold",
+    pt: "Pino nariz à parede",
+    descricao: "Pino com barriga voltada para a parede e nariz quase a tocar, alinhando corpo e ombros."
+  },
+  {
+    en: "Handstand Walk",
+    pt: "Caminhada em pino",
+    descricao: "Deslocar-se em pino utilizando as mãos, exigindo equilíbrio e controlo corporal."
+  },
+  {
+    en: "Handstand Shoulder Tap",
+    pt: "Toques de ombro em pino",
+    descricao: "Em pino, alternar toques de mão no ombro oposto, aumentando a estabilidade unilateral."
+  },
+  {
+    en: "Handstand Push-Up (HSPU)",
+    pt: "Pino com flexão",
+    descricao: "Flexão de braços em pino, com ou sem kipping, até a cabeça tocar no chão ou alvo."
+  },
+  {
+    en: "Strict Handstand Push-Up",
+    pt: "Pino com flexão estrita",
+    descricao: "HSPU sem kipping, controlando toda a amplitude apenas com força dos ombros."
+  },
+  {
+    en: "Wall Walk",
+    pt: "Subida à parede",
+    descricao: "A partir do chão, caminhar com os pés pela parede e as mãos para perto da parede até ao pino, e voltar a descer."
+  },
+  {
+    en: "Handstand Walk Practice",
+    pt: "Prática de caminhada em pino",
+    descricao: "Trabalho técnico de pequenas deslocações em pino para ganhar confiança e controlo."
+  },
 
-  /* CORE / HOLLOW–ARCH / PLANKS */
-  { en: "Hollow Hold", pt: "Hollow hold", descricao: "Isometria com costas coladas ao chão e pernas elevadas." },
-  { en: "Hollow Rock", pt: "Hollow rock", descricao: "Balançar mantendo posição hollow." },
-  { en: "Arch Hold", pt: "Arch hold", descricao: "Elevar peito e pernas criando forma arqueada." },
-  { en: "Arch Rock", pt: "Arch rock", descricao: "Balançar mantendo posição arch." },
-  { en: "Kip Swing", pt: "Kip swing", descricao: "Balanço hollow/arch em suspensão." },
+  /* CORE / HOLLOW–ARCH / PLANKS (SKILLS DE GINÁSTICA) */
+  {
+    en: "Hollow Hold",
+    pt: "Hollow hold",
+    descricao: "Deitado de costas, manter omoplatas e pernas elevadas, costas coladas ao chão e core contraído."
+  },
+  {
+    en: "Hollow Rock",
+    pt: "Hollow rock",
+    descricao: "Na posição de hollow hold, balançar para a frente e para trás mantendo a forma rígida."
+  },
+  {
+    en: "Arch Hold",
+    pt: "Arch hold",
+    descricao: "Deitado de barriga para baixo, elevar peito e pernas, criando posição de arco com braços à frente."
+  },
+  {
+    en: "Arch Rock",
+    pt: "Arch rock",
+    descricao: "Na posição de arch hold, balançar para a frente e para trás mantendo o corpo em tensão."
+  },
+  {
+    en: "Kip Swing",
+    pt: "Kip swing",
+    descricao: "Balanço hollow/arch na barra de tração, base para kipping pull-ups e toes-to-bar."
+  },
 
-  { en: "Plank Hold", pt: "Prancha isométrica", descricao: "Manter prancha rígida com core ativo." },
-  { en: "Plank Pike", pt: "Prancha em pike", descricao: "Elevar anca a partir de prancha formando um V invertido." },
-  { en: "Plank Jump", pt: "Salto a partir da prancha", descricao: "Salto com pés na direção das mãos regressando à prancha." },
+  {
+    en: "Plank",
+    pt: "Prancha",
+    descricao: "Posição de prancha, com antebraços ou mãos no chão, corpo alinhado e core contraído."
+  },
+  {
+    en: "Plank Hold",
+    pt: "Prancha isométrica",
+    descricao: "Manter posição de prancha com corpo alinhado dos ombros aos tornozelos, contraindo core e glúteos."
+  },
+  {
+    en: "Plank Pike",
+    pt: "Prancha em pike",
+    descricao: "A partir da prancha, elevar a anca formando um 'V' invertido e regressar ao alinhamento."
+  },
+  {
+    en: "Plank Jump",
+    pt: "Salto a partir da prancha",
+    descricao: "Em prancha, saltar com ambos os pés na direção das mãos e voltar atrás, mantendo o core firme."
+  },
 
-  { en: "Tuck Roll", pt: "Rolo em tuck", descricao: "Rolar para trás e para a frente em posição compacta." },
+  {
+    en: "Tuck Roll",
+    pt: "Rolo em tuck",
+    descricao: "Com joelhos ao peito, rolar para trás e para a frente mantendo o corpo compacto, útil para coordenação."
+  },
 
-  /* BANDA / SKILLS */
-  { en: "Band Pull-Down", pt: "Puxada com banda elástica", descricao: "Simula um lat pull-down com banda presa acima." },
-  { en: "Band Transition", pt: "Transição com banda", descricao: "Treino técnico de muscle-up com banda." },
-  { en: "Pull-Over", pt: "Pull-over na barra", descricao: "Transição da suspensão para cima da barra." },
+  /* SKILLS EM BARRA / RINGS – PROGRESSÕES */
+  {
+    en: "Band Pull-Down",
+    pt: "Puxada com banda elástica",
+    descricao: "Com a banda fixa acima da cabeça, puxar em direção ao peito, simulando um lat pull-down."
+  },
+  {
+    en: "Band Transition",
+    pt: "Transição com banda",
+    descricao: "Drill com banda para treinar a passagem de puxada para dip na técnica de muscle-up."
+  },
+  {
+    en: "Pull-Over",
+    pt: "Pull-over na barra",
+    descricao: "Movimento em que o corpo passa de suspensão para apoio em cima da barra num só gesto."
+  },
 
-  /* MOBILIDADE / PVC */
-  { en: "PVC Overhead Squat", pt: "Agachamento overhead com PVC", descricao: "Overhead squat com tubo PVC." },
-  { en: "PVC Pass Through", pt: "Passagem com PVC", descricao: "Passar PVC da frente para trás com braços estendidos." },
-  { en: "Dynamic Squat Stretch", pt: "Alongamento dinâmico de agachamento", descricao: "Mobilidade em agachamento profundo." },
+  /* PVC / MOBILIDADE / TÉCNICA */
+  {
+    en: "PVC Overhead Squat",
+    pt: "Agachamento overhead com PVC",
+    descricao: "Agachamento acima da cabeça usando tubo de PVC, focado em técnica e mobilidade sem carga."
+  },
+  {
+    en: "PVC Pass Through",
+    pt: "Passagem com tubo PVC",
+    descricao: "Levar o tubo de PVC da frente para trás e vice-versa, com braços estendidos, para mobilidade de ombros."
+  },
+  {
+    en: "Dynamic Squat Stretch",
+    pt: "Alongamento dinâmico de agachamento",
+    descricao: "Trabalho de mobilidade em agachamento profundo, alternando posições para libertar anca e tornozelos."
+  },
 
-  /* L-SIT */
-  { en: "L-Sit Hold", pt: "L-sit", descricao: "Manter pernas estendidas à frente em suporte." },
+  /* ABDOMINAIS / L-SIT E VARIAÇÕES */
+  {
+    en: "L-Sit Hold",
+    pt: "L-sit",
+    descricao: "Em apoio de mãos ou argolas, manter pernas estendidas à frente formando um 'L' com o tronco."
+  },
 
   /* METCON / CONDICIONAMENTO */
-  { en: "Burpee", pt: "Burpee", descricao: "Do pé ao chão e salto final." },
-  { en: "Burpee Box Jump-Over", pt: "Burpee box jump-over", descricao: "Burpee seguido de salto por cima da caixa." },
-  { en: "Box Jump", pt: "Salto para caixa", descricao: "Salto explosivo para cima da caixa." },
-  { en: "Box Jump Over", pt: "Salto por cima da caixa", descricao: "Salto sobre a caixa sem necessidade de extensão." },
-  { en: "Wall Ball", pt: "Lançamento à parede", descricao: "Agachamento + lançamento de bola à parede." },
+  {
+    en: "Burpee",
+    pt: "Burpee",
+    descricao: "Do pé para a posição de prancha, flexão opcional e salto final com extensão completa."
+  },
+  {
+    en: "Burpee Box Jump-Over",
+    pt: "Burpee box jump-over",
+    descricao: "Burpee seguido de salto por cima da caixa, podendo sair pelo outro lado."
+  },
+  {
+    en: "Burpee Box Jump",
+    pt: "Burpee box jump",
+    descricao: "Burpee seguido de salto para cima da caixa, terminando em extensão completa em cima da caixa."
+  },
+  {
+    en: "Burpee Pull-Up",
+    pt: "Burpee com pull-up",
+    descricao: "Burpee seguido de salto para a barra e realização de uma tração."
+  },
+  {
+    en: "Box Jump",
+    pt: "Salto para caixa",
+    descricao: "Salto com os dois pés para cima da caixa, terminando em extensão completa."
+  },
+  {
+    en: "Box Jump Over",
+    pt: "Salto por cima da caixa",
+    descricao: "Salto para cima e para o outro lado da caixa, sem necessidade de extensão completa em cima."
+  },
+  {
+    en: "Wall Ball",
+    pt: "Lançamento à parede",
+    descricao: "Agachamento com bola medicinal seguido de lançamento a um alvo na parede."
+  },
 
-  { en: "Rowing", pt: "Remo", descricao: "Trabalho na máquina de remo." },
-  { en: "Ski Erg", pt: "Ski erg", descricao: "Simulador de esqui nórdico." },
-  { en: "Assault Bike", pt: "Bicicleta de resistência", descricao: "Bicicleta com ventilador de ar." },
-  { en: "Running", pt: "Corrida", descricao: "Corrida contínua ou intervalada." },
-  { en: "Sprint", pt: "Sprint", descricao: "Corrida de alta intensidade." },
+  {
+    en: "Row",
+    pt: "Remo",
+    descricao: "Remo em máquina, semelhante a Rowing, trabalhando pernas, core e puxada com os braços."
+  },
+  {
+    en: "Rowing",
+    pt: "Remo",
+    descricao: "Remo em máquina, trabalhando pernas, core e puxada com os braços."
+  },
+  {
+    en: "Ski Erg",
+    pt: "Ski erg",
+    descricao: "Simulador de esqui, puxando as manetes de cima para baixo em movimento contínuo."
+  },
+  {
+    en: "Assault Bike",
+    pt: "Bicicleta de resistência",
+    descricao: "Bicicleta com resistência de ar, trabalhando simultaneamente braços e pernas."
+  },
+  {
+    en: "Running",
+    pt: "Corrida",
+    descricao: "Corrida simples, em tapete ou no exterior, em ritmo contínuo ou intervalado."
+  },
+  {
+    en: "Sprint",
+    pt: "Sprint",
+    descricao: "Corrida explosiva de curta distância em alta intensidade."
+  },
 
-  { en: "Double Under", pt: "Saltos duplos", descricao: "A corda passa duas vezes por salto." },
-  { en: "Single Under", pt: "Saltos simples", descricao: "A corda passa uma vez por salto." },
+  {
+    en: "Double Under",
+    pt: "Saltos duplos na corda",
+    descricao: "Saltos em que a corda passa duas vezes por baixo dos pés em cada salto."
+  },
+  {
+    en: "Single Under",
+    pt: "Saltos simples na corda",
+    descricao: "Saltos em que a corda passa uma vez por baixo dos pés em cada salto."
+  },
 
-  { en: "Sled Push", pt: "Empurrar trenó", descricao: "Empurrar trenó com carga." },
-  { en: "Sled Pull", pt: "Puxar trenó", descricao: "Puxar trenó com arnês ou corda." },
-  { en: "Farmer Carry", pt: "Caminhada com cargas", descricao: "Caminhar com halteres/kettlebells pesados." },
+  {
+    en: "Sled Push",
+    pt: "Empurrar trenó",
+    descricao: "Empurrar trenó com carga ao longo de uma distância definida."
+  },
+  {
+    en: "Sled Pull",
+    pt: "Puxar trenó",
+    descricao: "Puxar trenó com carga usando arnês ou corda, para trás ou para a frente."
+  },
+  {
+    en: "Farmer Carry",
+    pt: "Caminhada com cargas",
+    descricao: "Caminhar segurando cargas pesadas (halteres ou kettlebells) ao lado do corpo."
+  },
 
-  /* STRONGMAN / COMPLEXOS */
-  { en: "Bear Complex", pt: "Bear complex", descricao: "Sequência: power clean → front squat → push press → back squat → push press." },
-  { en: "Devil Press", pt: "Devil press", descricao: "Burpee + swing até overhead com halteres." },
-  { en: "Man Maker", pt: "Man maker", descricao: "Remada + burpee + clean + thruster com halteres." },
-  { en: "Sandbag Carry", pt: "Caminhada com saco", descricao: "Carregar saco pesado ao peito ou ombro." },
-  { en: "Yoke Carry", pt: "Caminhada com yoke", descricao: "Caminhar com estrutura pesada apoiada nos ombros." },
-  { en: "Rope Climb", pt: "Subida à corda", descricao: "Subir a corda com ou sem técnica de pernas." },
+  /* COMPLEXOS / STRONGMAN */
+  {
+    en: "Bear Complex",
+    pt: "Bear complex",
+    descricao: "Sequência contínua: power clean, front squat, push press, back squat e novo push press."
+  },
+  {
+    en: "Devil Press",
+    pt: "Devil press",
+    descricao: "Burpee com halteres seguido de swing até overhead num movimento fluido."
+  },
+  {
+    en: "Man Maker",
+    pt: "Man maker",
+    descricao: "Combinação de remada, burpee, clean e thruster com halteres."
+  },
+  {
+    en: "Sandbag Carry",
+    pt: "Caminhada com saco",
+    descricao: "Transportar um saco pesado ao peito, ombro ou costas ao longo de uma distância."
+  },
+  {
+    en: "Yoke Carry",
+    pt: "Caminhada com yoke",
+    descricao: "Caminhar com uma estrutura pesada (yoke) apoiada nos ombros, trabalhando força total."
+  },
+  {
+    en: "Rope Climb",
+    pt: "Subida à corda",
+    descricao: "Subir a corda usando técnica de pernas ou apenas braços, tocando um alvo no topo."
+  },
 
   /* ACESSÓRIOS / MOBILIDADE EXTRA */
-  { en: "Hip Thrust", pt: "Elevação de anca", descricao: "Elevar a anca com ou sem carga." },
-  { en: "Glute Bridge", pt: "Ponte de glúteos", descricao: "Elevar a anca com ombros apoiados no chão." },
-  { en: "Reverse Hyperextension", pt: "Hiperextensão reversa", descricao: "Elevar as pernas atrás do corpo na máquina Reverse Hyper." },
-  { en: "Shrug", pt: "Encolhimento de ombros", descricao: "Elevar ombros segurando barra ou halteres." },
+  {
+    en: "Hip Thrust",
+    pt: "Elevação de anca",
+    descricao: "Elevar a anca com costas apoiadas num banco, com ou sem carga, focando glúteos."
+  },
+  {
+    en: "Glute Bridge",
+    pt: "Ponte de glúteos",
+    descricao: "Elevar a anca a partir de posição deitado no chão, mantendo ombros apoiados."
+  },
+  {
+    en: "Reverse Hyperextension",
+    pt: "Hiperextensão reversa",
+    descricao: "Elevar as pernas atrás do corpo na máquina Reverse Hyper, trabalhando glúteos e lombar."
+  },
+  {
+    en: "Shrug",
+    pt: "Encolhimento de ombros",
+    descricao: "Elevar os ombros em direção às orelhas segurando barra ou halteres, focando trapézios."
+  },
 
-  /* === NOVOS EXERCÍCIOS ADICIONADOS === */
+  /* BODYWEIGHT / WARM-UP EXTRA */
   {
     en: "Air Squat",
     pt: "Agachamento livre",
-    descricao: "Agachamento sem carga, usado em aquecimento e metcon."
+    descricao: "Agachamento apenas com o peso corporal, pés à largura dos ombros, descendo até a anca ficar abaixo da linha dos joelhos e subindo com extensão completa."
   },
   {
     en: "Jumping Jack",
     pt: "Saltos de abertura",
-    descricao: "Movimento de aquecimento com braços e pernas a abrir e fechar."
+    descricao: "Saltos em que braços e pernas abrem e fecham em simultâneo, usados sobretudo em aquecimento geral."
   },
   {
     en: "Down Dog / Up Dog",
     pt: "Transição cão a olhar para baixo / cobra",
-    descricao: "Sequência de mobilidade entre posições de alongamento."
+    descricao: "Sequência de mobilidade entre a posição de cão a olhar para baixo e a posição de cobra, alongando ombros, cadeia posterior e coluna."
   },
   {
     en: "Dead Hang",
-    pt: "Pendurado estático",
-    descricao: "Manter-se pendurado na barra com ombros ativos."
+    pt: "Pendurado estático na barra",
+    descricao: "Manter-se pendurado na barra com braços estendidos e ombros ativos, sem balançar, reforçando pega e estabilidade escapular."
   },
   {
-       en: "Wall Sit",
-       pt: "Sentar na parede",
-       descricao: "Isometria a 90 graus com costas na parede."
+    en: "Wall Sit",
+    pt: "Sentar na parede",
+    descricao: "Isometria de pernas com costas apoiadas na parede e joelhos a 90 graus, mantendo a posição durante o tempo prescrito."
   },
   {
     en: "DB Devil Press",
-    pt: "Devil press (halteres)",
-    descricao: "Burpee + swing até overhead com halteres."
+    pt: "Devil press com halteres",
+    descricao: "Burpee com halteres seguido de swing até overhead num só movimento contínuo, exercício muito exigente de corpo inteiro."
   },
   {
     en: "KB Swing (Russian)",
     pt: "Swing russo com kettlebell",
-    descricao: "Swing até altura dos ombros."
+    descricao: "Swing da kettlebell até à altura dos ombros, focado na extensão explosiva da anca e na cadeia posterior."
   },
   {
     en: "KB Swing (American)",
     pt: "Swing americano com kettlebell",
-    descricao: "Swing até overhead, amplitude máxima."
+    descricao: "Swing da kettlebell até acima da cabeça, exigindo maior amplitude de movimento e controlo de ombros."
   }
-    {
-    en: "KB Thruster",
-    pt: "Thruster com kettlebell",
-    descricao: "Agachamento seguido de extensão acima da cabeça segurando uma kettlebell em rack. Pode ser executado unilateral ou bilateral, combinando força e capacidade cardiovascular."
-  }
-    {
-    en: "Down and Up",
-    pt: "Down and up",
-    descricao: "Versão simples do burpee em que o atleta desce ao chão e regressa à posição de pé sem salto final, muito usada em aquecimentos e transições."
-  },
-  {
-    en: "Back Extension",
-    pt: "Extensão lombar",
-    descricao: "Movimento de extensão do tronco focando lombar e glúteos, realizado no chão ou em banco, diferente da versão em GHD."
-  }
-
 ];
 
-/* Movimentos considerados técnicos (técnica / força / skill) */
+/* Movimentos considerados técnicos (para % e para sugerir tipo "técnica/força") */
 const TECHNICAL_MOVES = [
-  /* — FORÇA / BARRA — */
-  "Chest Press",
+  // Força / barra – básicos e de %
   "Back Squat",
   "Front Squat",
   "Overhead Squat",
-  "Sots Press",
   "Deadlift",
   "Sumo Deadlift",
   "Romanian Deadlift (RDL)",
-  "Snatch Deadlift",
-  "Power Clean",
-  "Hang Clean",
-  "Squat Clean",
-  "Clean & Jerk",
-  "Power Snatch",
-  "Hang Power Snatch",
-  "Squat Snatch",
+  "Chest Press",
   "Strict Press",
   "Push Press",
   "Push Jerk",
   "Split Jerk",
   "Thruster",
+  "Good Morning",
   "Barbell Row",
   "Bent Over Row",
-  "Good Morning",
-  "Lunges com barra",
   "Hip Thrust com barra",
+  "Lunges com barra",
 
-  /* — HALTERES / KB COM TÉCNICA — */
-  "Dumbbell Press",
-  "Dumbbell Bench Press",
+  // Levantamento olímpico
+  "Power Clean",
+  "Squat Clean",
+  "Hang Clean",
+  "Hang Power Clean",
+  "Clean & Jerk",
+  "Power Snatch",
+  "Squat Snatch",
+  "Snatch Deadlift",
+  "Hang Power Snatch",
+  "Sots Press",
+
+  // Halteres / KB com técnica
   "Dumbbell Snatch",
   "Dumbbell Clean",
   "Dumbbell Clean & Jerk",
   "Dumbbell Thruster",
+  "Dumbbell Bench Press",
+  "Dumbbell Press",
   "Dumbbell Row",
   "Dumbbell Lunges",
-
   "Kettlebell Swing",
   "Kettlebell Clean",
   "Kettlebell Snatch",
@@ -1662,7 +2106,7 @@ const TECHNICAL_MOVES = [
   "KB Swing (Russian)",
   "KB Swing (American)",
 
-  /* — GINÁSTICA / SKILLS — */
+  // Ginástica técnica / skills
   "Pull-Up",
   "Chin-Up",
   "Strict Chin-Up",
@@ -1672,15 +2116,16 @@ const TECHNICAL_MOVES = [
   "Bar Muscle-Up",
   "Ring Muscle-Up",
   "Muscle-Up",
-  "Ring Row",
   "Ring Dip",
   "Ring Support Hold",
+  "Ring Row",
   "Toes-to-Bar (T2B)",
   "Knees-to-Elbows (K2E)",
   "Hanging Knee Raise",
   "Pistol Squat",
+  "L-Sit Hold",
 
-  /* — HANDSTAND / INVERSÕES — */
+  // Handstand / inversões
   "Handstand Hold",
   "Nose-to-Wall Handstand Hold",
   "Handstand Walk",
@@ -1690,57 +2135,53 @@ const TECHNICAL_MOVES = [
   "Wall Walk",
   "Handstand Walk Practice",
 
-  /* — CORE TÉCNICO / GINÁSTICA — */
+  // Core / shapes ginásticos
   "Hollow Hold",
   "Hollow Rock",
   "Arch Hold",
   "Arch Rock",
   "Kip Swing",
-  "L-Sit Hold",
 
-  /* — BANDA / PROGRESSÕES — */
+  // Técnicos de barra/argolas com banda
   "Band Pull-Down",
   "Band Transition",
   "Pull-Over",
-  
-  /* — GHD / LOMBAR — */
-  "Back Extension (GHD)",
-  "Back Extension",
 
-  /* — PVC / MOBILIDADE TÉCNICA — */
+  // PVC / mobilidade técnica
   "PVC Overhead Squat",
   "PVC Pass Through",
   "Dynamic Squat Stretch"
 ];
 
-/* Movimentos considerados de metcon / condicionamento */
+/* Movimentos de metcon / condicionamento (para sugerir tipo "metcon") */
 const METCON_MOVES = [
-  /* — PESO CORPORAL (METCON BASE) — */
+  // Metcon clássicos de peso corporal
   "Burpee",
   "Burpee Box Jump-Over",
-  "Down and Up",
+  "Burpee Box Jump",
+  "Burpee Pull-Up",
   "Air Squat",
-  "KB Thruster",
   "Jumping Jack",
   "Sit-Up",
-  "Walking Lunge",
   "Floor Leg Raise",
   "V-Up",
+  "Plank",
   "Plank Hold",
   "Plank Pike",
   "Plank Jump",
   "Tuck Roll",
   "Wall Sit",
 
-  /* — CAIXA / WALL BALL — */
+  // Caixa / wall ball
   "Box Jump",
   "Box Jump Over",
   "Wall Ball",
 
-  /* — HALTERES / KB EM CONTEXTO DE METCON — */
+  // Halteres / KB em contexto de condicionamento
   "Dumbbell Snatch",
   "Dumbbell Thruster",
   "Dumbbell Lunges",
+  "Walking Lunge",
   "DB Devil Press",
   "Devil Press",
   "Man Maker",
@@ -1750,23 +2191,26 @@ const METCON_MOVES = [
   "KB Swing (American)",
   "Goblet Squat",
 
-  /* — CARDIO — */
+  // Cardio máquinas e corrida
   "Running",
   "Sprint",
   "Rowing",
+  "Row",
   "Ski Erg",
   "Assault Bike",
+
+  // Corda
   "Double Under",
   "Single Under",
 
-  /* — STRONGMAN/FUNÇÃO DE METCON — */
+  // Carries / trenó / strongman de condicionamento
   "Farmer Carry",
   "Sandbag Carry",
   "Yoke Carry",
   "Sled Push",
   "Sled Pull",
 
-  /* — SUBIDA À CORDA — */
+  // Subida à corda – em WOD é quase sempre metcon
   "Rope Climb"
 ];
 
@@ -4016,6 +4460,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
