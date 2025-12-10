@@ -969,22 +969,14 @@
       <h4 style="margin:0 0 4px;">Preenchimento automático com foto do quadro</h4>
 
       <div class="form-row">
-        <<button class="btn-secondary" id="wodPhotoBtn">📷 Tirar / escolher foto do quadro</button>
+        <button class="btn-secondary" id="wodPhotoBtn">📷 Tirar / escolher foto do quadro</button>
+<input
+  type="file"
+  id="wodPhotoInput"
+  accept="image/*"
+  style="display:none;"
+/>
 
-      <!-- Novo: um input para câmara e outro para galeria -->
-      <input
-       type="file"
-       id="wodPhotoCamera"
-       accept="image/*"
-       capture="environment"
-      style="display:none;"
-      />
-      <input
-      type="file"
-      id="wodPhotoGallery"
-      accept="image/*"
-      style="display:none;"
-      />
 
       <div class="helper-text" id="wodPhotoStatus">
         Tira uma foto ao quadro com o WOD. O texto é lido automaticamente e aparece abaixo
@@ -2386,9 +2378,8 @@ const treinoScrollEl = document.getElementById("treinoScroll");
 /* Resultado global do WOD + OCR do quadro */
 let wodResultados = JSON.parse(localStorage.getItem(STORAGE_WOD_RESULT) || "{}");
 const treinoResultadoEl = document.getElementById("treinoResultado");
-const wodPhotoBtn = document.getElementById("wodPhotoBtn");
-const wodPhotoCameraInput = document.getElementById("wodPhotoCamera");
-const wodPhotoGalleryInput = document.getElementById("wodPhotoGallery");
+const wodPhotoBtn   = document.getElementById("wodPhotoBtn");
+const wodPhotoInput = document.getElementById("wodPhotoInput");
 const wodOcrPreviewEl = document.getElementById("wodOcrPreview");
 const wodOcrApplyBtn = document.getElementById("wodOcrApplyBtn");
 const wodPhotoStatusEl = document.getElementById("wodPhotoStatus");
@@ -4055,30 +4046,77 @@ if (treinoResultadoEl) {
   });
 }
 
-/* Foto do quadro → OCR (escolher entre câmara ou galeria) */
-if (wodPhotoBtn && wodPhotoCameraInput && wodPhotoGalleryInput) {
-  wodPhotoBtn.addEventListener("click", () => {
-    const usarCamera = window.confirm(
-      "Queres tirar foto agora?\n\n'OK' = Tirar foto\n'Cancelar' = Escolher da galeria"
-    );
-
-    if (usarCamera) {
-      wodPhotoCameraInput.value = "";
-      wodPhotoCameraInput.click();
-    } else {
-      wodPhotoGalleryInput.value = "";
-      wodPhotoGalleryInput.click();
-    }
-  });
-
-  const onPhotoFileChange = (e) => {
+/* Foto do quadro → OCR – popup Foto / Galeria */
+if (wodPhotoInput) {
+  wodPhotoInput.addEventListener("change", (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
     handleWodPhotoFile(file);
-  };
+  });
+}
 
-  wodPhotoCameraInput.addEventListener("change", onPhotoFileChange);
-  wodPhotoGalleryInput.addEventListener("change", onPhotoFileChange);
+// elementos do popup
+const photoChoiceModal   = document.getElementById("photoChoiceModal");
+const photoChoiceCamera  = document.getElementById("photoChoiceCamera");
+const photoChoiceGallery = document.getElementById("photoChoiceGallery");
+const photoChoiceClose   = document.getElementById("photoChoiceClose");
+
+function openPhotoChoiceModal() {
+  if (photoChoiceModal) {
+    photoChoiceModal.classList.add("active");
+  } else {
+    // fallback: se algo falhar, abre a galeria
+    if (wodPhotoInput) {
+      wodPhotoInput.removeAttribute("capture");
+      wodPhotoInput.click();
+    }
+  }
+}
+
+function closePhotoChoiceModal() {
+  if (photoChoiceModal) {
+    photoChoiceModal.classList.remove("active");
+  }
+}
+
+// botão principal → abre popup
+if (wodPhotoBtn) {
+  wodPhotoBtn.addEventListener("click", () => {
+    if (wodPhotoInput) wodPhotoInput.value = "";
+    openPhotoChoiceModal();
+  });
+}
+
+// botão "Foto"
+if (photoChoiceCamera && wodPhotoInput) {
+  photoChoiceCamera.addEventListener("click", () => {
+    wodPhotoInput.setAttribute("capture", "environment");
+    closePhotoChoiceModal();
+    wodPhotoInput.click();
+  });
+}
+
+// botão "Galeria"
+if (photoChoiceGallery && wodPhotoInput) {
+  photoChoiceGallery.addEventListener("click", () => {
+    wodPhotoInput.removeAttribute("capture");
+    closePhotoChoiceModal();
+    wodPhotoInput.click();
+  });
+}
+
+// botão "Fechar"
+if (photoChoiceClose) {
+  photoChoiceClose.addEventListener("click", closePhotoChoiceModal);
+}
+
+// fechar tocando fora
+if (photoChoiceModal) {
+  photoChoiceModal.addEventListener("click", (e) => {
+    if (e.target === photoChoiceModal) {
+      closePhotoChoiceModal();
+    }
+  });
 }
 
 if (wodOcrApplyBtn) {
@@ -4858,11 +4896,121 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("service-worker.js");
   });
 }
+/* ===== POPUP FOTO / GALERIA ===== */
+
+#photoChoiceModal {
+  position: fixed;
+  inset: 0;
+  display: none;              /* fica escondido até abrir */
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+#photoChoiceModal.active {
+  display: flex;
+}
+
+.photo-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.photo-modal-card {
+  position: relative;
+  background: #101711;
+  color: #ffffff;
+  padding: 16px 18px;
+  border-radius: 18px;
+  width: 82%;
+  max-width: 320px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: inherit;
+}
+
+.photo-modal-card h3 {
+  margin: 0 0 6px;
+  text-align: center;
+  font-size: 1.05rem;
+}
+
+.photo-modal-card p {
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #e1e1e1;
+}
+
+.photo-modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.photo-btn {
+  flex: 1;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.photo-btn-camera {
+  background: linear-gradient(135deg, #0f9d58, #16c172);
+  color: #06140b;
+}
+
+.photo-btn-gallery {
+  background: #2d3748;
+  color: #ffffff;
+}
+
+.photo-btn-camera:active,
+.photo-btn-gallery:active {
+  transform: translateY(1px);
+}
+
+.photo-btn-close {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: #c0c0c0;
+  font-size: 0.8rem;
+  text-align: center;
+  margin-top: 2px;
+  padding: 4px;
+}
 
 </script>
+<!-- POPUP PARA ESCOLHER FOTO OU GALERIA -->
+<div id="photoChoiceModal">
+  <div class="photo-modal-backdrop"></div>
+  <div class="photo-modal-card">
+    <h3>Foto ou galeria?</h3>
+    <p>Escolhe se queres tirar foto agora ou usar uma imagem que já tens.</p>
+
+    <div class="photo-modal-actions">
+      <button type="button" id="photoChoiceCamera" class="photo-btn photo-btn-camera">
+        📷 Foto
+      </button>
+      <button type="button" id="photoChoiceGallery" class="photo-btn photo-btn-gallery">
+        🖼 Galeria
+      </button>
+    </div>
+
+    <button type="button" id="photoChoiceClose" class="photo-btn-close">
+      Fechar
+    </button>
+  </div>
+</div>
 
 </body>
 </html>
+
 
 
 
