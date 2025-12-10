@@ -971,12 +971,12 @@
       <div class="form-row">
         <button class="btn-secondary" id="wodPhotoBtn">📷 Tirar / escolher foto do quadro</button>
         <input
-         type="file"
-         id="wodPhotoInput"
-         accept="image/*"
-         style="display:none;"
-         />
-
+        type="file"
+        id="wodPhotoInput"
+        accept="image/*"
+        capture
+        style="display:none;"
+        />
       </div>
 
       <div class="helper-text" id="wodPhotoStatus">
@@ -4844,6 +4844,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
