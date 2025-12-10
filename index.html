@@ -969,15 +969,22 @@
       <h4 style="margin:0 0 4px;">Preenchimento automático com foto do quadro</h4>
 
       <div class="form-row">
-        <button class="btn-secondary" id="wodPhotoBtn">📷 Tirar / escolher foto do quadro</button>
-        <input
-        type="file"
-        id="wodPhotoInput"
-        accept="image/*"
-        capture
-        style="display:none;"
-        />
-      </div>
+        <<button class="btn-secondary" id="wodPhotoBtn">📷 Tirar / escolher foto do quadro</button>
+
+      <!-- Novo: um input para câmara e outro para galeria -->
+      <input
+       type="file"
+       id="wodPhotoCamera"
+       accept="image/*"
+       capture="environment"
+      style="display:none;"
+      />
+      <input
+      type="file"
+      id="wodPhotoGallery"
+      accept="image/*"
+      style="display:none;"
+      />
 
       <div class="helper-text" id="wodPhotoStatus">
         Tira uma foto ao quadro com o WOD. O texto é lido automaticamente e aparece abaixo
@@ -2380,12 +2387,12 @@ const treinoScrollEl = document.getElementById("treinoScroll");
 let wodResultados = JSON.parse(localStorage.getItem(STORAGE_WOD_RESULT) || "{}");
 const treinoResultadoEl = document.getElementById("treinoResultado");
 const wodPhotoBtn = document.getElementById("wodPhotoBtn");
-const wodPhotoInput = document.getElementById("wodPhotoInput");
-const wodPhotoStatusEl = document.getElementById("wodPhotoStatus");
+const wodPhotoCameraInput = document.getElementById("wodPhotoCamera");
+const wodPhotoGalleryInput = document.getElementById("wodPhotoGallery");
 const wodOcrPreviewEl = document.getElementById("wodOcrPreview");
 const wodOcrApplyBtn = document.getElementById("wodOcrApplyBtn");
-  
-
+const wodPhotoStatusEl = document.getElementById("wodPhotoStatus");
+ 
 /* Chips de resumo do dia */
 const treinoStatsRow = document.getElementById("treinoStats");
 const statCargaEl = document.getElementById("statCarga");
@@ -4048,18 +4055,30 @@ if (treinoResultadoEl) {
   });
 }
 
-/* Foto do quadro → OCR */
-if (wodPhotoBtn && wodPhotoInput) {
+/* Foto do quadro → OCR (escolher entre câmara ou galeria) */
+if (wodPhotoBtn && wodPhotoCameraInput && wodPhotoGalleryInput) {
   wodPhotoBtn.addEventListener("click", () => {
-    wodPhotoInput.value = "";
-    wodPhotoInput.click();
+    const usarCamera = window.confirm(
+      "Queres tirar foto agora?\n\n'OK' = Tirar foto\n'Cancelar' = Escolher da galeria"
+    );
+
+    if (usarCamera) {
+      wodPhotoCameraInput.value = "";
+      wodPhotoCameraInput.click();
+    } else {
+      wodPhotoGalleryInput.value = "";
+      wodPhotoGalleryInput.click();
+    }
   });
 
-  wodPhotoInput.addEventListener("change", (e) => {
+  const onPhotoFileChange = (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
     handleWodPhotoFile(file);
-  });
+  };
+
+  wodPhotoCameraInput.addEventListener("change", onPhotoFileChange);
+  wodPhotoGalleryInput.addEventListener("change", onPhotoFileChange);
 }
 
 if (wodOcrApplyBtn) {
@@ -4844,6 +4863,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
