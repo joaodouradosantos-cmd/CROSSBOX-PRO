@@ -968,10 +968,10 @@
 
       <hr style="margin:10px 0 6px; border:none; border-top:1px solid #b5b5b5;">
 
-      <h4 style="margin:0 0 4px;">Preenchimento automático com foto do quadro</h4>
+     <h4 style="margin:0 0 4px;">Preenchimento automático com foto do quadro</h4>
 
 <div class="form-row">
-  <button class="btn-secondary" id="wodPhotoBtn">
+  <button class="btn-secondary" id="wodPhotoBtn" type="button">
     📷 Tirar / escolher foto do quadro
   </button>
 </div>
@@ -998,15 +998,14 @@
 
 <textarea
   id="wodOcrPreview"
-  rows="3"
+  rows="4"
   placeholder="Aqui vais ver o texto lido do quadro (OCR). Podes corrigir à mão antes de converter em registos no WOD."
-  style="margin-top:6px; width:100%; resize:vertical;"
+  style="margin-top:6px; width:100%; min-height:90px; max-height:260px; overflow-y:hidden; resize:none;"
 ></textarea>
 
 <button class="btn-primary" id="wodOcrApplyBtn" style="margin-top:6px;">
   Converter texto do quadro em WOD
 </button>
-
 
       <hr style="margin:12px 0; border:none; border-top:1px solid #b5b5b5;">
 
@@ -1062,13 +1061,19 @@
 
     <!-- HISTÓRICO WOD – agora logo abaixo do WOD -->
     <div class="card">
-      <h3 style="margin-top:0; margin-bottom:8px;">📜 Histórico WOD</h3>
-      <p class="helper-text">
-        Lista completa de todos os treinos registados, ordenados da data mais recente para a mais antiga.
-      </p>
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:4px;">
+    <h3 style="margin:0;">📜 Histórico WOD</h3>
+    <button class="btn-secondary" id="printHistoryBtn" type="button">
+      🖨 Imprimir / exportar
+    </button>
+  </div>
 
-      <div class="scroll" id="dailyHistoryScroll">
-        <table>
+  <p class="helper-text">
+    Lista completa de todos os treinos registados, ordenados da data mais recente para a mais antiga.
+  </p>
+
+  <div class="scroll" id="dailyHistoryScroll">
+    <table>
           <thead>
             <tr>
               <th>Data</th>
@@ -2398,6 +2403,19 @@ const wodPhotoGalleryInput = document.getElementById("wodPhotoGallery");
 const wodOcrPreviewEl = document.getElementById("wodOcrPreview");
 const wodOcrApplyBtn = document.getElementById("wodOcrApplyBtn");
 const wodPhotoStatusEl = document.getElementById("wodPhotoStatus");
+// Ajuste automático da altura da caixa de texto do OCR
+if (wodOcrPreviewEl) {
+  const autoResizeOcr = () => {
+    wodOcrPreviewEl.style.height = "auto";
+    const novaAltura = Math.min(wodOcrPreviewEl.scrollHeight, 260);
+    wodOcrPreviewEl.style.height = novaAltura + "px";
+  };
+
+  wodOcrPreviewEl.addEventListener("input", autoResizeOcr);
+  // ajustar logo à partida (por ex. quando o OCR preenche o texto)
+  autoResizeOcr();
+}
+
  
 /* Chips de resumo do dia */
 const treinoStatsRow = document.getElementById("treinoStats");
@@ -4998,6 +5016,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
