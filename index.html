@@ -855,195 +855,195 @@
 
 </div>
            
-                    <!-- WOD -->
-    <section id="opt-wod" class="option-section active">
-      <div class="card">
-        <h3 style="margin-top:0; margin-bottom:8px;">🟩 WOD</h3>
+                             <!-- WOD -->
+          <section id="opt-wod" class="option-section active">
+            <div class="card">
+              <h3 style="margin-top:0; margin-bottom:8px;">🟩 WOD</h3>
 
-        <!-- LINHA 1: data / procura / exercício -->
-        <div class="form-row">
-          <div class="field">
-            <label>Data</label>
-            <input id="treinoData" type="date" />
-          </div>
-          <div class="field">
-            <label>Procurar exercício</label>
-            <input id="treinoExercicioSearch" type="text" placeholder="Nome EN/PT." />
-          </div>
-          <div class="field">
-            <label>Exercício</label>
-            <select id="treinoExercicio"></select>
-          </div>
-        </div>
+              <!-- LINHA 1: data / procura / exercício -->
+              <div class="form-row">
+                <div class="field">
+                  <label>Data</label>
+                  <input id="treinoData" type="date" />
+                </div>
+                <div class="field">
+                  <label>Procurar exercício</label>
+                  <input id="treinoExercicioSearch" type="text" placeholder="Nome EN/PT." />
+                </div>
+                <div class="field">
+                  <label>Exercício</label>
+                  <select id="treinoExercicio"></select>
+                </div>
+              </div>
 
-        <!-- LINHA 2: parte / formato -->
-        <div class="form-row">
-          <div class="field">
-            <label>Parte</label>
-            <select id="treinoParte">
-              <option value="">—</option>
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="C">C</option>
-              <option value="D">D</option>
-              <option value="Outro">Outro</option>
-            </select>
-          </div>
+              <!-- LINHA 2: parte / formato -->
+              <div class="form-row">
+                <div class="field">
+                  <label>Parte</label>
+                  <select id="treinoParte">
+                    <option value="">—</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="Outro">Outro</option>
+                  </select>
+                </div>
 
-          <div class="field">
-            <label>Formato</label>
-            <select id="treinoFormato">
-              <option value="">—</option>
-              <option value="For Time">For Time</option>
-              <option value="AMRAP">AMRAP</option>
-              <option value="EMOM">EMOM</option>
-              <option value="A cada X′ × Y">A cada X′ × Y</option>
-              <option value="Intervalos 2′ on / 2′ off">2′ on / 2′ off</option>
-              <option value="Chipper">Chipper</option>
-              <option value="Carga total">Carga total</option>
-            </select>
-          </div>
-        </div>
+                <div class="field">
+                  <label>Formato</label>
+                  <select id="treinoFormato">
+                    <option value="">—</option>
+                    <option value="For Time">For Time</option>
+                    <option value="AMRAP">AMRAP</option>
+                    <option value="EMOM">EMOM</option>
+                    <option value="A cada X′ × Y">A cada X′ × Y</option>
+                    <option value="Intervalos 2′ on / 2′ off">2′ on / 2′ off</option>
+                    <option value="Chipper">Chipper</option>
+                    <option value="Carga total">Carga total</option>
+                  </select>
+                </div>
+              </div>
 
-        <!-- GRELLA 3x2 DO WOD -->
-        <div class="wod-grid">
-          <div class="field">
-            <label>Séries</label>
-            <input id="treinoRondas" type="number" min="1" />
-          </div>
+              <!-- GRELLA 3x2 DO WOD -->
+              <div class="wod-grid">
+                <div class="field">
+                  <label>Séries</label>
+                  <input id="treinoRondas" type="number" min="1" />
+                </div>
 
-          <div class="field">
-            <label>Repetições</label>
-            <input id="treinoReps" type="number" min="1" />
-          </div>
+                <div class="field">
+                  <label>Repetições</label>
+                  <input id="treinoReps" type="number" min="1" />
+                </div>
 
-          <div class="field">
-            <label>Peso kg</label>
-            <input id="treinoPeso" type="number" step="0.5" min="0" />
-          </div>
+                <div class="field">
+                  <label>Peso kg</label>
+                  <input id="treinoPeso" type="number" step="0.5" min="0" />
+                </div>
 
-          <div class="field">
-            <label>%1RM</label>
-            <input id="treinoPercent" type="number" min="10" max="130" step="1" />
-          </div>
+                <div class="field">
+                  <label>%1RM</label>
+                  <input id="treinoPercent" type="number" min="10" max="130" step="1" />
+                </div>
 
-          <div class="field">
-            <label>Tempo</label>
-            <input id="treinoTempo" type="text" placeholder="Ex.: 12:35, 20', AMRAP 10'..." />
-          </div>
+                <div class="field">
+                  <label>Tempo</label>
+                  <input id="treinoTempo" type="text" placeholder="Ex.: 12:35, 20', AMRAP 10'..." />
+                </div>
 
-          <div class="field">
-            <label>Distância (km)</label>
-            <input id="treinoDist" type="number" step="0.01" min="0" />
-          </div>
-        </div>
+                <div class="field">
+                  <label>Distância (km)</label>
+                  <input id="treinoDist" type="number" step="0.01" min="0" />
+                </div>
+              </div>
 
-        <div class="helper-text" id="treinoPercentInfo" style="margin-top:-4px; margin-bottom:4px;">
-        </div>
+              <div class="helper-text" id="treinoPercentInfo" style="margin-top:-4px; margin-bottom:4px;">
+              </div>
 
-        <button class="btn-primary" id="treinoAdd">Adicionar ao WOD</button>
-        <div class="helper-text">
-          A carga de cada exercício (kg) é calculada como: peso × repetições × rondas.
-          A distância em metcon é somada à parte, em km.
-        </div>
+              <button class="btn-primary" id="treinoAdd">Adicionar ao WOD</button>
+              <div class="helper-text">
+                A carga de cada exercício (kg) é calculada como: peso × repetições × rondas.
+                A distância em metcon é somada à parte, em km.
+              </div>
 
-        <!-- Resultado global do WOD -->
-        <div class="form-row" style="margin-top:10px;">
-          <div class="field">
-            <label>Resultado do WOD</label>
-            <select id="treinoResultado">
-              <option value="">— Selecionar —</option>
-              <option value="rx">Fiz tudo conforme o quadro (RX)</option>
-              <option value="adaptado">Fiz tudo mas adaptei cargas/skills</option>
-              <option value="incompleto">Não concluí todos os exercícios</option>
-            </select>
-          </div>
-        </div>
+              <!-- Resultado global do WOD -->
+              <div class="form-row" style="margin-top:10px;">
+                <div class="field">
+                  <label>Resultado do WOD</label>
+                  <select id="treinoResultado">
+                    <option value="">— Selecionar —</option>
+                    <option value="rx">Fiz tudo conforme o quadro (RX)</option>
+                    <option value="adaptado">Fiz tudo mas adaptei cargas/skills</option>
+                    <option value="incompleto">Não concluí todos os exercícios</option>
+                  </select>
+                </div>
+              </div>
 
-        <hr style="margin:10px 0 6px; border:none; border-top:1px solid #b5b5b5;">
+              <hr style="margin:10px 0 6px; border:none; border-top:1px solid #b5b5b5;">
 
-        <h4 style="margin:0 0 4px;">Preenchimento automático com foto do quadro</h4>
+              <h4 style="margin:0 0 4px;">Preenchimento automático com foto do quadro</h4>
 
-        <div class="form-row">
-          <button class="btn-secondary" id="wodPhotoBtn">📷 Tirar / escolher foto do quadro</button>
-          <input
-            type="file"
-            id="wodPhotoInput"
-            accept="image/*"
-            capture="environment"
-            style="display:none;"
-          />
-        </div>
+              <div class="form-row">
+                <button class="btn-secondary" id="wodPhotoBtn">📷 Tirar / escolher foto do quadro</button>
+                <input
+                  type="file"
+                  id="wodPhotoInput"
+                  accept="image/*"
+                  capture="environment"
+                  style="display:none;"
+                />
+              </div>
 
-        <div class="helper-text" id="wodPhotoStatus">
-          Tira uma foto ao quadro com o WOD. O texto é lido automaticamente e aparece abaixo
-          para conferires e corrigires antes de converter em registos no WOD.
-        </div>
+              <div class="helper-text" id="wodPhotoStatus">
+                Tira uma foto ao quadro com o WOD. O texto é lido automaticamente e aparece abaixo
+                para conferires e corrigires antes de converter em registos no WOD.
+              </div>
 
-        <textarea
-          id="wodOcrPreview"
-          rows="3"
-          placeholder="Aqui vais ver o texto lido do quadro (OCR). Podes corrigir à mão antes de converter em registos no WOD."
-          style="margin-top:6px; width:100%; resize:vertical;"
-        ></textarea>
+              <textarea
+                id="wodOcrPreview"
+                rows="3"
+                placeholder="Aqui vais ver o texto lido do quadro (OCR). Podes corrigir à mão antes de converter em registos no WOD."
+                style="margin-top:6px; width:100%; resize:vertical;"
+              ></textarea>
 
-        <button class="btn-primary" id="wodOcrApplyBtn" style="margin-top:6px;">
-          Converter texto do quadro em WOD
-        </button>
+              <button class="btn-primary" id="wodOcrApplyBtn" style="margin-top:6px;">
+                Converter texto do quadro em WOD
+              </button>
 
-        <hr style="margin:12px 0; border:none; border-top:1px solid #b5b5b5;">
+              <hr style="margin:12px 0; border:none; border-top:1px solid #b5b5b5;">
 
-        <!-- Resumo rápido do dia (sempre visível) -->
-        <div class="helper-text" id="treinoResumo" style="margin-bottom:4px;"></div>
-        <div class="helper-text" id="treinoSugestao" style="margin-top:0; font-weight:500;"></div>
-        <div class="helper-text" id="weeklyHistory" style="margin-top:4px;"></div>
+              <!-- Resumo rápido do dia (sempre visível) -->
+              <div class="helper-text" id="treinoResumo" style="margin-bottom:4px;"></div>
+              <div class="helper-text" id="treinoSugestao" style="margin-top:0; font-weight:500;"></div>
+              <div class="helper-text" id="weeklyHistory" style="margin-top:4px;"></div>
 
-        <!-- Resumo rápido em chips -->
-        <div id="treinoStats" class="stats-row" style="display:none;">
-          <div class="stat-chip">
-            <span>Carga total</span>
-            <span id="statCarga">0 kg</span>
-          </div>
-          <div class="stat-chip">
-            <span>Exercícios</span>
-            <span id="statExercicios">0</span>
-          </div>
-          <div class="stat-chip" id="statTempoChip">
-            <span>Melhor tempo</span>
-            <span id="statTempo">–</span>
-          </div>
-          <div class="stat-chip">
-            <span>Volume</span>
-            <span id="statVolume">0 reps</span>
-          </div>
-        </div>
+              <!-- Resumo rápido em chips -->
+              <div id="treinoStats" class="stats-row" style="display:none;">
+                <div class="stat-chip">
+                  <span>Carga total</span>
+                  <span id="statCarga">0 kg</span>
+                </div>
+                <div class="stat-chip">
+                  <span>Exercícios</span>
+                  <span id="statExercicios">0</span>
+                </div>
+                <div class="stat-chip" id="statTempoChip">
+                  <span>Melhor tempo</span>
+                  <span id="statTempo">–</span>
+                </div>
+                <div class="stat-chip">
+                  <span>Volume</span>
+                  <span id="statVolume">0 reps</span>
+                </div>
+              </div>
 
-        <!-- WOD do dia – compacto e fácil de ler -->
-        <h4 style="margin-top:10px; margin-bottom:4px;">WOD do dia</h4>
-        <div class="scroll" id="treinoScroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Parte</th>
-                <th>Formato</th>
-                <th>Exercício</th>
-                <th>Tipo</th>
-                <th>Rondas</th>
-                <th>Reps</th>
-                <th>Peso</th>
-                <th>% 1RM</th>
-                <th>Tempo</th>
-                <th>Distância (km)</th>
-                <th>Carga (kg)</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="treinoBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
+              <!-- WOD do dia – compacto e fácil de ler -->
+              <h4 style="margin-top:10px; margin-bottom:4px;">WOD do dia</h4>
+              <div class="scroll" id="treinoScroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th>Parte</th>
+                      <th>Formato</th>
+                      <th>Exercício</th>
+                      <th>Tipo</th>
+                      <th>Rondas</th>
+                      <th>Reps</th>
+                      <th>Peso</th>
+                      <th>% 1RM</th>
+                      <th>Tempo</th>
+                      <th>Distância (km)</th>
+                      <th>Carga (kg)</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="treinoBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
 
     <!-- HISTÓRICO WOD – NOVA SECÇÃO -->
 <section id="opt-historico" class="option-section">
@@ -4796,6 +4796,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
