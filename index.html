@@ -970,39 +970,43 @@
 
       <h4 style="margin:0 0 4px;">Preenchimento automático com foto do quadro</h4>
 
-      <div class="form-row">
-        <<button class="btn-secondary" id="wodPhotoBtn">📷 Tirar / escolher foto do quadro</button>
+<div class="form-row">
+  <button class="btn-secondary" id="wodPhotoBtn">
+    📷 Tirar / escolher foto do quadro
+  </button>
+</div>
 
-      <!-- Novo: um input para câmara e outro para galeria -->
-      <input
-       type="file"
-       id="wodPhotoCamera"
-       accept="image/*"
-       capture="environment"
-      style="display:none;"
-      />
-      <input
-      type="file"
-      id="wodPhotoGallery"
-      accept="image/*"
-      style="display:none;"
-      />
+<!-- Novo: um input para câmara e outro para galeria -->
+<input
+  type="file"
+  id="wodPhotoCamera"
+  accept="image/*"
+  capture="environment"
+  style="display:none;"
+/>
+<input
+  type="file"
+  id="wodPhotoGallery"
+  accept="image/*"
+  style="display:none;"
+/>
 
-      <div class="helper-text" id="wodPhotoStatus">
-        Tira uma foto ao quadro com o WOD. O texto é lido automaticamente e aparece abaixo
-        para conferires e corrigires antes de converter em registos no WOD.
-      </div>
+<div class="helper-text" id="wodPhotoStatus">
+  Tira uma foto ao quadro com o WOD. O texto é lido automaticamente e aparece abaixo
+  para conferires e corrigires antes de converter em registos no WOD.
+</div>
 
-      <textarea
-        id="wodOcrPreview"
-        rows="3"
-        placeholder="Aqui vais ver o texto lido do quadro (OCR). Podes corrigir à mão antes de converter em registos no WOD."
-        style="margin-top:6px; width:100%; resize:vertical;"
-      ></textarea>
+<textarea
+  id="wodOcrPreview"
+  rows="3"
+  placeholder="Aqui vais ver o texto lido do quadro (OCR). Podes corrigir à mão antes de converter em registos no WOD."
+  style="margin-top:6px; width:100%; resize:vertical;"
+></textarea>
 
-      <button class="btn-primary" id="wodOcrApplyBtn" style="margin-top:6px;">
-        Converter texto do quadro em WOD
-      </button>
+<button class="btn-primary" id="wodOcrApplyBtn" style="margin-top:6px;">
+  Converter texto do quadro em WOD
+</button>
+
 
       <hr style="margin:12px 0; border:none; border-top:1px solid #b5b5b5;">
 
@@ -4880,6 +4884,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
