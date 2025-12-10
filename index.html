@@ -859,8 +859,12 @@
     <section id="opt-wod" class="option-section active">
       <div class="card">
         <h3 style="margin-top:0; margin-bottom:8px;">🟩 WOD</h3>
+          <!-- WOD -->
+    <section id="opt-wod" class="option-section active">
+      <div class="card">
+        <h3 style="margin-top:0; margin-bottom:8px;">🟩 WOD</h3>
 
-              <!-- LINHA 1: data / procura / exercício -->
+        <!-- LINHA 1: data / procura / exercício -->
         <div class="form-row">
           <div class="field">
             <label>Data</label>
@@ -876,7 +880,7 @@
           </div>
         </div>
 
-                <!-- LINHA 2: parte / formato / estrutura do bloco -->
+        <!-- LINHA 2: parte / formato -->
         <div class="form-row">
           <div class="field">
             <label>Parte</label>
@@ -903,6 +907,7 @@
               <option value="Carga total">Carga total</option>
             </select>
           </div>
+        </div>
 
         <!-- GRELLA 3x2 DO WOD -->
         <div class="wod-grid">
@@ -937,69 +942,26 @@
           </div>
         </div>
 
-          <div class="helper-text" id="treinoPercentInfo" style="margin-top:-4px; margin-bottom:4px;">
+        <div class="helper-text" id="treinoPercentInfo" style="margin-top:-4px; margin-bottom:4px;">
         </div>
 
-        <<button class="btn-primary" id="treinoAdd">Adicionar ao WOD</button>
+        <button class="btn-primary" id="treinoAdd">Adicionar ao WOD</button>
         <div class="helper-text">
-        A carga de cada exercício (kg) é calculada como: peso × repetições × rondas.
-        A distância em metcon é somada à parte, em km.
+          A carga de cada exercício (kg) é calculada como: peso × repetições × rondas.
+          A distância em metcon é somada à parte, em km.
         </div>
-<!-- Resultado global do WOD -->
-<div class="form-row" style="margin-top:10px;">
-  <div class="field">
-    <label>Resultado do WOD</label>
-    <select id="treinoResultado">
-      <option value="">— Selecionar —</option>
-      <option value="rx">Fiz tudo conforme o quadro (RX)</option>
-      <option value="adaptado">Fiz tudo mas adaptei cargas/skills</option>
-      <option value="incompleto">Não concluí todos os exercícios</option>
-    </select>
-  </div>
-</div>
 
-<hr style="margin:10px 0 6px; border:none; border-top:1px solid #b5b5b5;">
-
-<h4 style="margin:0 0 4px;">Preenchimento automático com foto do quadro</h4>
-
-<div class="form-row">
-  <button class="btn-secondary" id="wodPhotoBtn">📷 Tirar / escolher foto do quadro</button>
-  <input
-    type="file"
-    id="wodPhotoInput"
-    accept="image/*"
-    capture="environment"
-    style="display:none;"
-  />
-</div>
-
-<div class="helper-text" id="wodPhotoStatus">
-  Tira uma foto ao quadro com o WOD. O texto é lido automaticamente e aparece abaixo
-  para conferires e corrigires antes de converter em registos no WOD.
-</div>
-
-<textarea
-  id="wodOcrPreview"
-  rows="3"
-  placeholder="Aqui vais ver o texto lido do quadro (OCR). Podes corrigir à mão antes de converter em registos no WOD."
-  style="margin-top:6px; width:100%; resize:vertical;"
-></textarea>
-
-<button class="btn-primary" id="wodOcrApplyBtn" style="margin-top:6px;">
-  Converter texto do quadro em WOD
-</button>
-
-        <!-- Resultado global do WOD -->
+        <!-- Resultado global do WOD (apenas UMA vez) -->
         <div class="form-row" style="margin-top:10px;">
-        <div class="field">
-        <label>Resultado do WOD</label>
-        <select id="treinoResultado">
-        <option value="">— Selecionar —</option>
-        <option value="rx">Fiz tudo conforme o quadro (RX)</option>
-        <option value="adaptado">Fiz tudo mas adaptei cargas/skills</option>
-        <option value="incompleto">Não concluí todos os exercícios</option>
-        </select>
-        </div>
+          <div class="field">
+            <label>Resultado do WOD</label>
+            <select id="treinoResultado">
+              <option value="">— Selecionar —</option>
+              <option value="rx">Fiz tudo conforme o quadro (RX)</option>
+              <option value="adaptado">Fiz tudo mas adaptei cargas/skills</option>
+              <option value="incompleto">Não concluí todos os exercícios</option>
+            </select>
+          </div>
         </div>
 
         <hr style="margin:10px 0 6px; border:none; border-top:1px solid #b5b5b5;">
@@ -1007,37 +969,37 @@
         <h4 style="margin:0 0 4px;">Preenchimento automático com foto do quadro</h4>
 
         <div class="form-row">
-       <button class="btn-secondary" id="wodPhotoBtn">📷 Tirar / escolher foto do quadro</button>
-       <input
-      type="file"
-      id="wodPhotoInput"
-      accept="image/*"
-      capture="environment"
-      style="display:none;"
-      />
-         </div>
+          <button class="btn-secondary" id="wodPhotoBtn">📷 Tirar / escolher foto do quadro</button>
+          <input
+            type="file"
+            id="wodPhotoInput"
+            accept="image/*"
+            capture="environment"
+            style="display:none;"
+          />
+        </div>
 
-         <div class="helper-text" id="wodPhotoStatus">
-         Tira uma foto ao quadro com o WOD. O texto é lido automaticamente e aparece abaixo
-         para conferires e corrigires antes de converter em registos no WOD.
-         </div>
+        <div class="helper-text" id="wodPhotoStatus">
+          Tira uma foto ao quadro com o WOD. O texto é lido automaticamente e aparece abaixo
+          para conferires e corrigires antes de converter em registos no WOD.
+        </div>
 
-         <textarea
-         id="wodOcrPreview"
-         rows="3"
-         placeholder="Aqui vais ver o texto lido do quadro (OCR). Podes corrigir à mão antes de converter em registos no WOD."
-         style="margin-top:6px; width:100%; resize:vertical;"
-         ></textarea>
+        <textarea
+          id="wodOcrPreview"
+          rows="3"
+          placeholder="Aqui vais ver o texto lido do quadro (OCR). Podes corrigir à mão antes de converter em registos no WOD."
+          style="margin-top:6px; width:100%; resize:vertical;"
+        ></textarea>
 
         <button class="btn-primary" id="wodOcrApplyBtn" style="margin-top:6px;">
-         Converter texto do quadro em WOD
+          Converter texto do quadro em WOD
         </button>
-  
-        </div> <!-- fecha o primeiro card do WOD -->
 
-        <div class="card">
-         <h3 style="margin-top:0; margin-bottom:8px;">Registo e histórico</h3>
-  
+      </div> <!-- fecha o primeiro card do WOD -->
+
+      <div class="card">
+        <h3 style="margin-top:0; margin-bottom:8px;">Registo e histórico</h3>
+
         <!-- Resumo rápido do dia (sempre visível) -->
         <div class="helper-text" id="treinoResumo" style="margin-bottom:4px;"></div>
         <div class="helper-text" id="treinoSugestao" style="margin-top:0; font-weight:500;"></div>
@@ -1063,7 +1025,6 @@
           </div>
         </div>
 
-            
         <!-- WOD do dia – compacto e fácil de ler -->
         <h4 style="margin-top:10px; margin-bottom:4px;">WOD do dia</h4>
         <div class="scroll" id="treinoScroll">
@@ -1088,8 +1049,9 @@
             <tbody id="treinoBody"></tbody>
           </table>
         </div>
-       </div>
-      </section>
+      </div>
+    </section>
+
     <!-- HISTÓRICO WOD – NOVA SECÇÃO -->
 <section id="opt-historico" class="option-section">
   <div class="card">
@@ -4841,6 +4803,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
