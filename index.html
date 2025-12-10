@@ -680,7 +680,15 @@
 #sec-1rm .card {
   margin-bottom: 18px;
 }
-
+/* Ajuste da caixa de edição do OCR */
+#wodOcrPreview {
+  min-height: 160px;
+  max-height: 360px;
+  resize: vertical;
+  overflow-y: auto;
+  font-size: 15px;
+  line-height: 1.4;
+}
 </style>
 </head>
 <body>
@@ -3326,6 +3334,62 @@ function printTreinosPdf() {
       </table>
       `;
     }
+    // Histórico em formato WOD (anotação dia / A) / B) / C) )
+    html += `<h2>Histórico em formato WOD (anotação)</h2>`;
+
+    if (!listaFull.length) {
+      html += `<p>Sem registos de WOD.</p>`;
+    } else {
+      // agrupar por data e por parte (A, B, C, D…)
+      const group = {};
+      listaFull.forEach(t => {
+        const d = t.date || "Sem data";
+        const p = t.parte || "";
+        if (!group[d]) group[d] = {};
+        if (!group[d][p]) group[d][p] = [];
+        group[d][p].push(t);
+      });
+
+      const datasOrdenadas = Object.keys(group).sort((a, b) => b.localeCompare(a));
+
+      datasOrdenadas.forEach(diaKey => {
+        html += `<h3>${diaKey}</h3>`;
+
+        // ordenar partes na sequência A, B, C, D…
+        const partes = Object.keys(group[diaKey]).sort();
+
+        partes.forEach(parteKey => {
+          const listaParte = group[diaKey][parteKey];
+          if (!listaParte || !listaParte.length) return;
+
+          html += `<p><strong>${parteKey})</strong></p><ul>`;
+
+          listaParte.forEach(t => {
+            const label = MOVES_PT[t.ex] ? `${t.ex} – ${MOVES_PT[t.ex]}` : (t.ex || "");
+            const pesoTxt = t.peso ? formatKg(t.peso) : "";
+            const percTxt = t.perc1rm ? (t.perc1rm * 100).toFixed(0) + "%" : "";
+            const distTxt = t.distanciaKm ? formatKm(t.distanciaKm) : "";
+            const cargaTxt = t.carga ? formatKg(t.carga) : "";
+
+            let linha = "";
+
+            if (t.formato) linha += `${t.formato} · `;
+            linha += label || "Exercício";
+            if (t.rondas) linha += ` · ${t.rondas} rondas`;
+            if (t.reps) linha += ` × ${t.reps} reps`;
+            if (pesoTxt) linha += ` · ${pesoTxt}`;
+            if (percTxt) linha += ` (${percTxt})`;
+            if (t.tempo) linha += ` · tempo: ${t.tempo}`;
+            if (distTxt) linha += ` · distância: ${distTxt}`;
+            if (cargaTxt) linha += ` · carga: ${cargaTxt}`;
+
+            html += `<li>${linha}</li>`;
+          });
+
+          html += `</ul>`;
+        });
+      });
+    }
 
     // Histórico diário completo
     html += `<h2>Histórico diário completo</h2>`;
@@ -5016,6 +5080,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
