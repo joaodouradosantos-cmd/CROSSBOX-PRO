@@ -940,16 +940,104 @@
           <div class="helper-text" id="treinoPercentInfo" style="margin-top:-4px; margin-bottom:4px;">
         </div>
 
-        <button class="btn-primary" id="treinoAdd">Adicionar ao WOD</button>
+        <<button class="btn-primary" id="treinoAdd">Adicionar ao WOD</button>
         <div class="helper-text">
-          A carga de cada exercício (kg) é calculada como: peso × repetições × rondas.
-          A distância em metcon é somada à parte, em km.
+        A carga de cada exercício (kg) é calculada como: peso × repetições × rondas.
+        A distância em metcon é somada à parte, em km.
         </div>
-      </div>
+<!-- Resultado global do WOD -->
+<div class="form-row" style="margin-top:10px;">
+  <div class="field">
+    <label>Resultado do WOD</label>
+    <select id="treinoResultado">
+      <option value="">— Selecionar —</option>
+      <option value="rx">Fiz tudo conforme o quadro (RX)</option>
+      <option value="adaptado">Fiz tudo mas adaptei cargas/skills</option>
+      <option value="incompleto">Não concluí todos os exercícios</option>
+    </select>
+  </div>
+</div>
 
-      <div class="card">
-        <h3 style="margin-top:0; margin-bottom:8px;">Registo e histórico</h3>
+<hr style="margin:10px 0 6px; border:none; border-top:1px solid #b5b5b5;">
 
+<h4 style="margin:0 0 4px;">Preenchimento automático com foto do quadro</h4>
+
+<div class="form-row">
+  <button class="btn-secondary" id="wodPhotoBtn">📷 Tirar / escolher foto do quadro</button>
+  <input
+    type="file"
+    id="wodPhotoInput"
+    accept="image/*"
+    capture="environment"
+    style="display:none;"
+  />
+</div>
+
+<div class="helper-text" id="wodPhotoStatus">
+  Tira uma foto ao quadro com o WOD. O texto é lido automaticamente e aparece abaixo
+  para conferires e corrigires antes de converter em registos no WOD.
+</div>
+
+<textarea
+  id="wodOcrPreview"
+  rows="3"
+  placeholder="Aqui vais ver o texto lido do quadro (OCR). Podes corrigir à mão antes de converter em registos no WOD."
+  style="margin-top:6px; width:100%; resize:vertical;"
+></textarea>
+
+<button class="btn-primary" id="wodOcrApplyBtn" style="margin-top:6px;">
+  Converter texto do quadro em WOD
+</button>
+
+        <!-- Resultado global do WOD -->
+        <div class="form-row" style="margin-top:10px;">
+        <div class="field">
+        <label>Resultado do WOD</label>
+        <select id="treinoResultado">
+        <option value="">— Selecionar —</option>
+        <option value="rx">Fiz tudo conforme o quadro (RX)</option>
+        <option value="adaptado">Fiz tudo mas adaptei cargas/skills</option>
+        <option value="incompleto">Não concluí todos os exercícios</option>
+        </select>
+        </div>
+        </div>
+
+        <hr style="margin:10px 0 6px; border:none; border-top:1px solid #b5b5b5;">
+
+        <h4 style="margin:0 0 4px;">Preenchimento automático com foto do quadro</h4>
+
+        <div class="form-row">
+       <button class="btn-secondary" id="wodPhotoBtn">📷 Tirar / escolher foto do quadro</button>
+       <input
+      type="file"
+      id="wodPhotoInput"
+      accept="image/*"
+      capture="environment"
+      style="display:none;"
+      />
+         </div>
+
+         <div class="helper-text" id="wodPhotoStatus">
+         Tira uma foto ao quadro com o WOD. O texto é lido automaticamente e aparece abaixo
+         para conferires e corrigires antes de converter em registos no WOD.
+         </div>
+
+         <textarea
+         id="wodOcrPreview"
+         rows="3"
+         placeholder="Aqui vais ver o texto lido do quadro (OCR). Podes corrigir à mão antes de converter em registos no WOD."
+         style="margin-top:6px; width:100%; resize:vertical;"
+         ></textarea>
+
+        <button class="btn-primary" id="wodOcrApplyBtn" style="margin-top:6px;">
+         Converter texto do quadro em WOD
+        </button>
+  
+        </div> <!-- fecha o primeiro card do WOD -->
+
+        <div class="card">
+         <h3 style="margin-top:0; margin-bottom:8px;">Registo e histórico</h3>
+  
         <!-- Resumo rápido do dia (sempre visível) -->
         <div class="helper-text" id="treinoResumo" style="margin-bottom:4px;"></div>
         <div class="helper-text" id="treinoSugestao" style="margin-top:0; font-weight:500;"></div>
@@ -1252,17 +1340,20 @@
 </div>
 
 <script>
-/* ===== CHAVES DE ARMAZENAMENTO ===== */
 const STORAGE_PROFILE = "crossfit_profile";
 const STORAGE_RM = "crossfit_1rm";
 const STORAGE_RM_HISTORY = "crossfit_1rm_history";
 const STORAGE_TREINO = "crossfit_treinos";
+const STORAGE_WOD_RESULT = "crossfit_wod_result";
 const STORAGE_BACKUP_META = "crossfit_backup_meta";
 
 /* NOVOS ARMAZENAMENTOS */
 const STORAGE_RESERVAS = "crossfit_reservas";
 const STORAGE_PRESENCAS = "crossfit_presencas";
 const STORAGE_RANKINGS = "crossfit_rankings";
+
+/* ENDPOINT DO BACKEND PARA OCR DO QUADRO */
+const OCR_ENDPOINT = "https://o-teu-backend.exemplo/ocr-wod"; // troca pela tua URL real
 
 /* ===== PERFIL ===== */
 let profile = JSON.parse(localStorage.getItem(STORAGE_PROFILE) || "{}");
@@ -2282,6 +2373,15 @@ const weeklyHistoryEl = document.getElementById("weeklyHistory");
 const printHistoryBtn = document.getElementById("printHistoryBtn");
 const dailyHistoryBody = document.getElementById("dailyHistoryBody");
 const treinoScrollEl = document.getElementById("treinoScroll");
+/* Resultado global do WOD + OCR do quadro */
+let wodResultados = JSON.parse(localStorage.getItem(STORAGE_WOD_RESULT) || "{}");
+const treinoResultadoEl = document.getElementById("treinoResultado");
+const wodPhotoBtn = document.getElementById("wodPhotoBtn");
+const wodPhotoInput = document.getElementById("wodPhotoInput");
+const wodPhotoStatusEl = document.getElementById("wodPhotoStatus");
+const wodOcrPreviewEl = document.getElementById("wodOcrPreview");
+const wodOcrApplyBtn = document.getElementById("wodOcrApplyBtn");
+  
 
 /* Chips de resumo do dia */
 const treinoStatsRow = document.getElementById("treinoStats");
@@ -3467,6 +3567,248 @@ if (treinoExEl) {
     updateWodPercentFromPeso();
   });
 }
+/* ===== Resultado global do WOD (RX / adaptado / incompleto) ===== */
+
+function saveWodResultados() {
+  try {
+    localStorage.setItem(STORAGE_WOD_RESULT, JSON.stringify(wodResultados));
+  } catch (e) {
+    console.error("Erro ao guardar resultado do WOD:", e);
+  }
+}
+
+function updateResultadoUIForDate(dateStr) {
+  if (!treinoResultadoEl) return;
+  const d = dateStr || (treinoDataEl && treinoDataEl.value) || "";
+  const val = wodResultados[d] || "";
+  treinoResultadoEl.value = val;
+}
+
+/* ===== FOTO DO QUADRO → OCR → TEXTO ===== */
+
+async function handleWodPhotoFile(file) {
+  if (!file || !OCR_ENDPOINT) return;
+
+  if (wodPhotoStatusEl) {
+    wodPhotoStatusEl.textContent = "A processar a foto do quadro, aguarda um momento...";
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const resp = await fetch(OCR_ENDPOINT, {
+      method: "POST",
+      body: formData
+    });
+
+    if (!resp.ok) {
+      throw new Error("Resposta inválida do servidor de OCR.");
+    }
+
+    const data = await resp.json();
+    const rawText = data && data.text ? String(data.text) : "";
+
+    if (!rawText.trim()) {
+      if (wodPhotoStatusEl) {
+        wodPhotoStatusEl.textContent =
+          "Não foi possível ler texto útil do quadro. Tenta outra foto com melhor luz e contraste.";
+      }
+      return;
+    }
+
+    if (wodOcrPreviewEl) {
+      wodOcrPreviewEl.value = rawText.trim();
+    }
+    if (wodPhotoStatusEl) {
+      wodPhotoStatusEl.textContent =
+        "Texto do quadro reconhecido. Revê e corrige aqui em baixo antes de converter em registos no WOD.";
+    }
+  } catch (err) {
+    console.error("Erro no OCR do quadro:", err);
+    if (wodPhotoStatusEl) {
+      wodPhotoStatusEl.textContent =
+        "Ocorreu um erro ao enviar a foto para o servidor de OCR. Verifica a ligação à internet e tenta de novo.";
+    }
+  }
+}
+
+/* ===== Parser do texto do quadro → entradas de WOD ===== */
+
+function buildTreinoFromLine(line, date, parteAtual) {
+  if (!line) return null;
+  const texto = String(line).trim();
+  if (!texto) return null;
+
+  const lower = texto.toLowerCase();
+
+  // 1) tentar encontrar exercício pelo nome em EN
+  let ex = null;
+
+  if (typeof ALL_EXERCISES !== "undefined" && Array.isArray(ALL_EXERCISES)) {
+    for (const nome of ALL_EXERCISES) {
+      if (lower.includes(nome.toLowerCase())) {
+        ex = nome;
+        break;
+      }
+    }
+  }
+
+  // 2) se não encontrar em EN, tenta pela designação PT do EXER_INFO
+  if (!ex && typeof EXER_INFO !== "undefined" && Array.isArray(EXER_INFO)) {
+    for (const info of EXER_INFO) {
+      if (lower.includes(info.pt.toLowerCase())) {
+        ex = info.en;
+        break;
+      }
+    }
+  }
+
+  if (!ex) {
+    return null;
+  }
+
+  // séries / reps (5x5, 4 x 10, etc.)
+  let rondas = 1;
+  let reps = 0;
+
+  const mSeries = texto.match(/(\d+)\s*[x×]\s*(\d+)/i);
+  if (mSeries) {
+    rondas = parseInt(mSeries[1], 10) || 1;
+    reps = parseInt(mSeries[2], 10) || 0;
+  } else {
+    const mReps = texto.match(/(\d+)\s*(reps|repetições|repeticoes|rep)/i);
+    if (mReps) {
+      reps = parseInt(mReps[1], 10) || 0;
+    }
+  }
+
+  // percentagem do 1RM ou peso direto
+  let peso = 0;
+  let perc1rm = null;
+
+  const mPerc = texto.match(/(\d{1,3})\s*%/);
+  if (mPerc && dataRm[ex]) {
+    const p = parseFloat(mPerc[1]);
+    if (!isNaN(p) && p > 0) {
+      perc1rm = p / 100;
+      peso = dataRm[ex] * perc1rm;
+    }
+  } else {
+    const mPeso = texto.match(/(\d+(?:[\.,]\d+)?)\s*(kg|kgs|quilo|quilos)\b/i);
+    if (mPeso) {
+      const val = parseFloat(mPeso[1].replace(",", "."));
+      if (!isNaN(val)) {
+        peso = val;
+        if (dataRm[ex] && dataRm[ex] > 0) {
+          perc1rm = peso / dataRm[ex];
+        }
+      }
+    }
+  }
+
+  // formato (AMRAP, EMOM, For Time...)
+  let formato = "";
+  const mFormato = texto.match(/\b(AMRAP|EMOM|For Time|Chipper|For\s+time)\b/i);
+  if (mFormato) {
+    formato = mFormato[1]
+      .replace(/\s+/g, " ")
+      .replace(/^for time$/i, "For Time");
+  }
+
+  // distância
+  let distanciaKm = 0;
+  const mDist = texto.match(/(\d+(?:[\.,]\d+)?)\s*(km|kilometros|quilometros|m)\b/i);
+  if (mDist) {
+    const val = parseFloat(mDist[1].replace(",", "."));
+    if (!isNaN(val)) {
+      const unidade = mDist[2].toLowerCase();
+      distanciaKm = unidade === "m" ? val / 1000 : val;
+    }
+  }
+
+  const tipo = inferTipo(ex);
+  const carga = calcCarga({ peso, reps, rondas });
+
+  return {
+    date,
+    parte: parteAtual || "",
+    formato,
+    ex,
+    tipo,
+    rondas,
+    reps,
+    peso,
+    tempo: "",
+    carga,
+    perc1rm,
+    distanciaKm
+  };
+}
+
+function applyOcrToWod() {
+  if (!wodOcrPreviewEl) return;
+  const raw = (wodOcrPreviewEl.value || "").trim();
+  if (!raw) {
+    if (wodPhotoStatusEl) {
+      wodPhotoStatusEl.textContent =
+        "Não há texto do quadro para converter. Faz primeiro o OCR ou escreve/cola o texto.";
+    }
+    return;
+  }
+
+  const hoje = new Date().toISOString().slice(0, 10);
+  const date = (treinoDataEl && treinoDataEl.value) ? treinoDataEl.value : hoje;
+
+  const linhas = raw
+    .split(/\r?\n/)
+    .map(l => l.trim())
+    .filter(l => l.length > 0);
+
+  if (!linhas.length) {
+    if (wodPhotoStatusEl) {
+      wodPhotoStatusEl.textContent = "O texto do quadro está vazio depois de limpar as linhas.";
+    }
+    return;
+  }
+
+  let parteAtual = "";
+  let criados = 0;
+
+  linhas.forEach(linha => {
+    const mParte =
+      linha.match(/^parte\s+([A-D])\b/i) ||
+      linha.match(/^([A-D])[\)\.\:\-]\s*/i);
+
+    if (mParte) {
+      parteAtual = mParte[1].toUpperCase();
+      return;
+    }
+
+    const entry = buildTreinoFromLine(linha, date, parteAtual);
+    if (entry) {
+      treinos.unshift(entry);
+      criados++;
+    }
+  });
+
+  if (!criados) {
+    if (wodPhotoStatusEl) {
+      wodPhotoStatusEl.textContent =
+        "O texto do quadro foi lido, mas não foi possível identificar exercícios conhecidos. Ajusta o texto à mão e tenta de novo.";
+    }
+    return;
+  }
+
+  saveTreinos();
+  registerBackupMeta("WOD criado a partir de foto do quadro");
+  renderTreinos();
+
+  if (wodPhotoStatusEl) {
+    wodPhotoStatusEl.textContent =
+      "Foram criados " + criados + " blocos no WOD a partir do quadro. Confere e ajusta manualmente se necessário.";
+  }
+}
 
 function renderTreinos() {
   if (!treinoBody) return;
@@ -3475,6 +3817,7 @@ function renderTreinos() {
   const hoje = new Date().toISOString().slice(0,10);
   const dia = (treinoDataEl && treinoDataEl.value) ? treinoDataEl.value : hoje;
   const lista = treinos.filter(t => t.date === dia);
+  updateResultadoUIForDate(dia);
 
   // Se não houver WOD nesse dia
   if (!lista.length) {
@@ -3678,11 +4021,49 @@ function renderTreinos() {
 if (treinoAddBtn) {
   treinoAddBtn.addEventListener("click", addTreinoEntry);
 }
+
 if (treinoDataEl) {
-  treinoDataEl.addEventListener("change", renderTreinos);
+  treinoDataEl.addEventListener("change", () => {
+    renderTreinos();
+    updateResultadoUIForDate(treinoDataEl.value);
+  });
 }
 
-  if (printHistoryBtn) {
+/* Resultado global do WOD (RX / adaptado / incompleto) */
+if (treinoResultadoEl) {
+  treinoResultadoEl.addEventListener("change", () => {
+    const dia = (treinoDataEl && treinoDataEl.value) ||
+                new Date().toISOString().slice(0, 10);
+    const val = treinoResultadoEl.value || "";
+    if (val) {
+      wodResultados[dia] = val;
+    } else {
+      delete wodResultados[dia];
+    }
+    saveWodResultados();
+    registerBackupMeta("Resultado do WOD atualizado");
+  });
+}
+
+/* Foto do quadro → OCR */
+if (wodPhotoBtn && wodPhotoInput) {
+  wodPhotoBtn.addEventListener("click", () => {
+    wodPhotoInput.value = "";
+    wodPhotoInput.click();
+  });
+
+  wodPhotoInput.addEventListener("change", (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    handleWodPhotoFile(file);
+  });
+}
+
+if (wodOcrApplyBtn) {
+  wodOcrApplyBtn.addEventListener("click", applyOcrToWod);
+}
+
+if (printHistoryBtn) {
   printHistoryBtn.addEventListener("click", printTreinosPdf);
 }
 
@@ -4460,6 +4841,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
