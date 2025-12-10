@@ -1479,7 +1479,7 @@ const EXER_INFO = [
 
   { en: "GHD Sit-Up", pt: "Abdominal em GHD", descricao: "Sit-up com grande amplitude na GHD." },
   { en: "Back Extension (GHD)", pt: "Extensão lombar em GHD", descricao: "Extensão de tronco focando lombar." },
-
+  { en: "Back Extension", pt: "Extensão lombar", descricao: "Extensão do tronco realizada no chão ou banco, focando lombar e glúteos. Versão mais simples do movimento, utilizada em metcons e no trabalho de estabilidade." },
   { en: "Pistol Squat", pt: "Agachamento pistol", descricao: "Agachamento numa só perna." },
 
   /* HANDSTAND / INVERSÕES */
@@ -1598,6 +1598,16 @@ const EXER_INFO = [
     pt: "Thruster com kettlebell",
     descricao: "Agachamento seguido de extensão acima da cabeça segurando uma kettlebell em rack. Pode ser executado unilateral ou bilateral, combinando força e capacidade cardiovascular."
   }
+    {
+    en: "Down and Up",
+    pt: "Down and up",
+    descricao: "Versão simples do burpee em que o atleta desce ao chão e regressa à posição de pé sem salto final, muito usada em aquecimentos e transições."
+  },
+  {
+    en: "Back Extension",
+    pt: "Extensão lombar",
+    descricao: "Movimento de extensão do tronco focando lombar e glúteos, realizado no chão ou em banco, diferente da versão em GHD."
+  }
 
 ];
 
@@ -1659,15 +1669,12 @@ const TECHNICAL_MOVES = [
   "Bar Muscle-Up",
   "Ring Muscle-Up",
   "Muscle-Up",
-
   "Ring Row",
   "Ring Dip",
   "Ring Support Hold",
-
   "Toes-to-Bar (T2B)",
   "Knees-to-Elbows (K2E)",
   "Hanging Knee Raise",
-
   "Pistol Squat",
 
   /* — HANDSTAND / INVERSÕES — */
@@ -1692,6 +1699,10 @@ const TECHNICAL_MOVES = [
   "Band Pull-Down",
   "Band Transition",
   "Pull-Over",
+  
+  /* — GHD / LOMBAR — */
+  "Back Extension (GHD)",
+  "Back Extension",
 
   /* — PVC / MOBILIDADE TÉCNICA — */
   "PVC Overhead Squat",
@@ -1704,6 +1715,7 @@ const METCON_MOVES = [
   /* — PESO CORPORAL (METCON BASE) — */
   "Burpee",
   "Burpee Box Jump-Over",
+  "Down and Up",
   "Air Squat",
   "KB Thruster",
   "Jumping Jack",
@@ -4000,6 +4012,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
