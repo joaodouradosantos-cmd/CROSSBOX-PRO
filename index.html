@@ -1079,8 +1079,15 @@
   <p class="helper-text">
     Lista completa de todos os treinos registados, ordenados da data mais recente para a mais antiga.
   </p>
+  
+      <!-- Modo texto tipo quadro, agrupado por dia/parte -->
+  <div
+    class="helper-text"
+    id="dailyHistoryText"
+    style="margin-top:4px; margin-bottom:6px; white-space:pre-line; font-size:0.75rem;"
+  ></div>
 
-  <div class="scroll" id="dailyHistoryScroll">
+    <div class="scroll" id="dailyHistoryScroll">
     <table>
           <thead>
             <tr>
@@ -2401,6 +2408,7 @@ const treinoSugestaoEl = document.getElementById("treinoSugestao");
 const weeklyHistoryEl = document.getElementById("weeklyHistory");
 const printHistoryBtn = document.getElementById("printHistoryBtn");
 const dailyHistoryBody = document.getElementById("dailyHistoryBody");
+const dailyHistoryTextEl = document.getElementById("dailyHistoryText"); // NOVO
 const treinoScrollEl = document.getElementById("treinoScroll");
 /* Resultado global do WOD + OCR do quadro */
 let wodResultados = JSON.parse(localStorage.getItem(STORAGE_WOD_RESULT) || "{}");
@@ -3114,77 +3122,153 @@ function addTreinoEntry() {
 function renderDailyHistory() {
   if (!dailyHistoryBody) return;
   dailyHistoryBody.innerHTML = "";
+  if (dailyHistoryTextEl) {
+    dailyHistoryTextEl.textContent = "";
+  }
 
   if (!treinos.length) return;
 
-  // criar array com índice para conseguir apagar mesmo estando ordenado
+  // ordenar por data desc e guardar índice original para o botão de apagar
   const sorted = treinos
     .map((t, i) => ({ ...t, idx: i }))
     .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
 
-  sorted.forEach(t => {
+  // ---------- 1) TABELA (como já tinhas) ----------
+  sorted.forEach(item => {
     const tr = document.createElement("tr");
 
     const tdDate = document.createElement("td");
-    tdDate.textContent = t.date || "";
+    tdDate.textContent = item.date || "";
     tr.appendChild(tdDate);
 
     const tdParte = document.createElement("td");
-    tdParte.textContent = t.parte || "";
+    tdParte.textContent = item.parte || "";
     tr.appendChild(tdParte);
 
     const tdFormato = document.createElement("td");
-    tdFormato.textContent = t.formato || "";
+    tdFormato.textContent = item.formato || "";
     tr.appendChild(tdFormato);
 
     const tdEx = document.createElement("td");
-    const label = MOVES_PT[t.ex] ? `${t.ex} – ${MOVES_PT[t.ex]}` : t.ex;
+    const label = MOVES_PT[item.ex] ? `${item.ex} – ${MOVES_PT[item.ex]}` : item.ex;
     tdEx.textContent = label || "";
     tr.appendChild(tdEx);
 
     const tdTipo = document.createElement("td");
-    tdTipo.textContent = t.tipo || "";
+    tdTipo.textContent = item.tipo || "";
     tr.appendChild(tdTipo);
 
     const tdR = document.createElement("td");
-    tdR.textContent = t.rondas || "";
+    tdR.textContent = item.rondas || "";
     tr.appendChild(tdR);
 
     const tdReps = document.createElement("td");
-    tdReps.textContent = t.reps || "";
+    tdReps.textContent = item.reps || "";
     tr.appendChild(tdReps);
 
     const tdPeso = document.createElement("td");
-    tdPeso.textContent = t.peso ? formatKg(t.peso) : "";
+    tdPeso.textContent = item.peso ? formatKg(item.peso) : "";
     tr.appendChild(tdPeso);
 
     const tdPerc = document.createElement("td");
-    tdPerc.textContent = t.perc1rm ? (t.perc1rm * 100).toFixed(0) + "%" : "";
+    tdPerc.textContent = item.perc1rm ? (item.perc1rm * 100).toFixed(0) + "%" : "";
     tr.appendChild(tdPerc);
 
     const tdTempo = document.createElement("td");
-    tdTempo.textContent = t.tempo || "";
+    tdTempo.textContent = item.tempo || "";
     tr.appendChild(tdTempo);
 
     const tdDist = document.createElement("td");
-    tdDist.textContent = t.distanciaKm ? formatKm(t.distanciaKm) : "";
+    tdDist.textContent = item.distanciaKm ? formatKm(item.distanciaKm) : "";
     tr.appendChild(tdDist);
 
     const tdCarga = document.createElement("td");
-    tdCarga.textContent = t.carga ? formatKg(t.carga) : "";
+    // se não houver carga gravada, calcula rápido (peso × reps × rondas)
+    let carga = item.carga;
+    if (carga == null) {
+      const pesoNum = Number(item.peso) || 0;
+      const repsNum = Number(item.reps) || 0;
+      const rdsNum = Number(item.rondas) || 0;
+      carga = pesoNum * repsNum * rdsNum;
+    }
+    tdCarga.textContent = carga ? formatKg(carga) : "";
     tr.appendChild(tdCarga);
 
-    // botão do lixo
+    // botão de apagar
     const tdDel = document.createElement("td");
     const btn = document.createElement("button");
-    btn.textContent = "🗑";
-    btn.className = "btn-delete";
-    btn.addEventListener("click", () => deleteTreinoEntry(t.idx));
+    btn.textContent = "🗑️";
+    btn.className = "btn-secondary";
+    btn.style.padding = "2px 6px";
+    btn.addEventListener("click", () => deleteTreinoEntry(item.idx));
     tdDel.appendChild(btn);
     tr.appendChild(tdDel);
 
     dailyHistoryBody.appendChild(tr);
   });
+
+  // ---------- 2) MODO TEXTO TIPO QUADRO ----------
+  if (!dailyHistoryTextEl) return;
+
+  // agrupar por dia e por parte
+  const grupos = {};
+
+  sorted.forEach(item => {
+    const dia = item.date || "Sem data";
+    const parte = item.parte || "Outro";
+
+    if (!grupos[dia]) grupos[dia] = {};
+    if (!grupos[dia][parte]) grupos[dia][parte] = [];
+    grupos[dia][parte].push(item);
+  });
+
+  const diasOrdenados = Object.keys(grupos).sort((a, b) => b.localeCompare(a));
+  const linhasTexto = [];
+
+  diasOrdenados.forEach(dia => {
+    linhasTexto.push(dia);
+
+    // garantir ordem A, B, C, D, Outro
+    ["A", "B", "C", "D", "Outro"].forEach(parte => {
+      const listaParte = grupos[dia][parte];
+      if (!listaParte || !listaParte.length) return;
+
+      const prefixo = parte === "Outro" ? "Outro)" : `${parte})`;
+      linhasTexto.push(` ${prefixo}`);
+
+      listaParte.forEach(item => {
+        const nome = MOVES_PT[item.ex] ? `${item.ex} – ${MOVES_PT[item.ex]}` : (item.ex || "");
+        const tipo = item.tipo || "";
+        const rds = item.rondas ? `${item.rondas} rds` : "";
+        const reps = item.reps ? `${item.reps} reps` : "";
+        const peso = item.peso ? formatKg(item.peso) : "";
+        const tempo = item.tempo ? item.tempo : "";
+        let carga = item.carga;
+        if (carga == null) {
+          const pesoNum = Number(item.peso) || 0;
+          const repsNum = Number(item.reps) || 0;
+          const rdsNum = Number(item.rondas) || 0;
+          carga = pesoNum * repsNum * rdsNum;
+        }
+
+        const partesLinha = [];
+        if (nome) partesLinha.push(nome);
+        if (tipo) partesLinha.push(tipo);
+        if (rds || reps) partesLinha.push([rds, reps].filter(Boolean).join(" · "));
+        if (peso) partesLinha.push(peso);
+        if (tempo) partesLinha.push(tempo);
+        if (carga) partesLinha.push(`carga ${formatKg(carga)}`);
+
+        linhasTexto.push("   - " + partesLinha.join(" · "));
+      });
+
+      linhasTexto.push(""); // linha em branco entre partes
+    });
+
+    linhasTexto.push(""); // linha em branco entre dias
+  });
+
+  dailyHistoryTextEl.textContent = linhasTexto.join("\n");
 }
   
 function printTreinosPdf() {
@@ -5080,6 +5164,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
