@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -20,8 +21,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Stardos+Stencil:wght@400;700&display=swap" rel="stylesheet">
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.0/dist/tesseract.min.js"></script>
 
   <style>
     :root {
@@ -468,7 +467,7 @@
     }
 
     /* REMOVER RISCOS APENAS NO CARD "REGISTO E HISTÓRICO" */
-    #opt-sec .card:nth-of-type(2) {
+    #opt-wod .card:nth-of-type(2) {
       background-image: none !important;
       background-color: #e1e1e1 !important;
     }
@@ -479,12 +478,12 @@
 
 /* Aumentar a altura útil do guia – usa quase o ecrã todo */
 /* WOD do dia – mais alto */
-#sec-wod #treinoScroll {
+#opt-wod #treinoScroll {
   max-height: calc(100vh - 260px);
 }
 
 /* Histórico WOD – aproveitar o ecrã quase todo */
-#sec-wod #dailyHistoryScroll {
+#opt-historico #dailyHistoryScroll {
   max-height: calc(100vh - 220px);
 }
 
@@ -605,90 +604,38 @@
   text-align: center !important;
 }
 /* Campos do WOD mais compactos no telemóvel */
-#sec-wod .field label {
+#opt-wod .field label {
   font-size: 0.7rem;
   line-height: 1.1;
 }
 /* ===== GRELLA 3x2 PARA O WOD ===== */
-#sec-wod .wod-grid {
+#opt-wod .wod-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px 10px;
   margin-top: 8px;
 }
 
-#sec-wod .wod-grid .field {
+#opt-wod .wod-grid .field {
   min-width: 0;
 }
 
-#sec-wod .field input {
-  padding: 6px 8px;
+#opt-wod .field input {
+  padding: 6px 8px;      /* em vez de 10px – ficam mais baixinhos */
 }
 
 /* Placeholder um pouco mais pequeno */
-#sec-wod .field input::placeholder {
+#opt-wod .field input::placeholder {
   font-size: 0.75rem;
 }
 
 /* Em ecrãs pequenos, garantir que as colunas não ficam gigantes */
 @media (max-width: 600px) {
-  #sec-wod .field {
+  #opt-wod .field {
     min-width: 110px;
   }
 }
-/* --- POLIMENTO CROSSFIT PARA OS TABS PRINCIPAIS --- */
 
-.tab-btn {
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  border-width: 2px;
-  border-color: rgba(255, 255, 255, 0.10); /* borda super suave */
-  transition: background 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-}
-
-/* Hover sutil */
-.tab-btn:hover {
-  border-color: rgba(255, 255, 255, 0.20);
-}
-
-/* Ativo: verde mais definido + brilho suave */
-.tab-btn.active {
-  background: linear-gradient(135deg, #009c3b, #00c853);
-  border-color: rgba(255, 255, 255, 0.40);
-  box-shadow: 0 0 8px rgba(0, 255, 140, 0.25);
-  color: #08210e;
-}
-
-/* Toque a imitar botão físico */
-.tab-btn:active {
-  transform: translateY(1px);
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.40);
-}
-
-/* Para o emoji ficar alinhado e discreto */
-.tab-btn .emoji {
-  margin-right: 4px;
-  opacity: 0.85;
-  font-size: 1rem;
-}
-/* Dar mais espaço à última card do 1RM (lista de exercícios) */
-#sec-1rm .card:last-of-type {
-  min-height: 260px; /* se ainda ficar apertado, sobe para 280 */
-}
-
-/* Um pouco mais de espaço entre as cards do 1RM */
-#sec-1rm .card {
-  margin-bottom: 18px;
-}
-/* Ajuste da caixa de edição do OCR */
-#wodOcrPreview {
-  min-height: 160px;
-  max-height: 360px;
-  resize: vertical;
-  overflow-y: auto;
-  font-size: 15px;
-  line-height: 1.4;
-}
 </style>
 </head>
 <body>
@@ -774,18 +721,8 @@
 
   <!-- TABS PRINCIPAIS -->
   <div class="tabs">
-  <button class="tab-btn active" data-target="sec-1rm">
-  <span class="emoji">🏋️</span>1RM
-  </button>
-
-<button class="tab-btn" data-target="sec-wod">
-  <span class="emoji">🟩</span>WOD
-</button>
-
-<button class="tab-btn" data-target="sec-tools">
-  <span class="emoji">🧰</span>Tools
-</button>
-
+    <button class="tab-btn active" data-target="sec-1rm">1RM</button>
+    <button class="tab-btn" data-target="sec-opcoes">WOD & Tools</button>
   </div>
 
   <!-- SECÇÃO 1: 1RM -->
@@ -867,280 +804,328 @@
 
 </section>
 
-    <!-- SECÇÃO 2: WOD (tab do meio) -->
-  <section id="sec-wod" class="section">
+  <!-- SECÇÃO 2: OPÇÕES -->
+  <section id="sec-opcoes" class="section">
 
-    <!-- WOD -->
     <div class="card">
-      <h3 style="margin-top:0; margin-bottom:8px;">🟩 WOD</h3>
+    <div class="options-grid">
 
-      <!-- LINHA 1: data / procura / exercício -->
-      <div class="form-row">
-        <div class="field">
-          <label>Data</label>
-          <input id="treinoData" type="date" />
-        </div>
-        <div class="field">
-          <label>Procurar exercício</label>
-          <input id="treinoExercicioSearch" type="text" placeholder="Nome EN/PT." />
-        </div>
-        <div class="field">
-          <label>Exercício</label>
-          <select id="treinoExercicio"></select>
-        </div>
-      </div>
+  <button class="btn-secondary opt-btn" data-target="opt-wod">
+    <span class="opt-emoji">🟩</span>
+    <span>WOD</span>
+  </button>
 
-      <!-- LINHA 2: parte / formato -->
-      <div class="form-row">
-        <div class="field">
-          <label>Parte</label>
-          <select id="treinoParte">
-            <option value="">—</option>
-            <option value="A">A</option>
-            <option value="B">B</option>
-            <option value="C">C</option>
-            <option value="D">D</option>
-            <option value="Outro">Outro</option>
-          </select>
-        </div>
+  <!-- OBJETIVO → opt-calc -->
+  <button class="btn-secondary opt-btn" data-target="opt-calc">
+    <span class="opt-emoji">📊</span>
+    <span>OBJETIVO</span>
+  </button>
 
-        <div class="field">
-          <label>Formato</label>
-          <select id="treinoFormato">
-            <option value="">—</option>
-            <option value="For Time">For Time</option>
-            <option value="AMRAP">AMRAP</option>
-            <option value="EMOM">EMOM</option>
-            <option value="A cada X′ × Y">A cada X′ × Y</option>
-            <option value="Intervalos 2′ on / 2′ off">2′ on / 2′ off</option>
-            <option value="Chipper">Chipper</option>
-            <option value="Carga total">Carga total</option>
-          </select>
-                  </div> <!-- fim do .field Formato -->
-      </div>  <!-- fim da form-row parte/formato -->
+  <!-- GRÁFICO → opt-graficos -->
+  <button class="btn-secondary opt-btn" data-target="opt-graficos">
+    <span class="opt-emoji">📉</span>
+    <span>GRÁFICO</span>
+  </button>
 
-      <!-- Botões rápidos: adicionar direto à parte A/B/C/D/Outro -->
-      <div class="form-row" style="margin-top:4px;">
-        <div class="field" style="flex:1 1 100%;">
-          <label>Adicionar exercício diretamente em</label>
-          <div style="display:flex; gap:6px; flex-wrap:wrap;">
-            <button type="button" class="btn-secondary" data-parte-btn="A">A</button>
-            <button type="button" class="btn-secondary" data-parte-btn="B">B</button>
-            <button type="button" class="btn-secondary" data-parte-btn="C">C</button>
-            <button type="button" class="btn-secondary" data-parte-btn="D">D</button>
-            <button type="button" class="btn-secondary" data-parte-btn="Outro">Outro</button>
+  <!-- DESEMPENHO → opt-performance -->
+  <button class="btn-secondary opt-btn" data-target="opt-performance">
+    <span class="opt-emoji">🥇</span>
+    <span>DESEMPENHO</span>
+  </button>
+
+  <button class="btn-secondary opt-btn" data-target="opt-guia">
+    <span class="opt-emoji">📚</span>
+    <span>EXERCÍCIOS</span>
+  </button>
+
+  <button class="btn-secondary opt-btn" data-target="opt-backup">
+    <span class="opt-emoji">💾</span>
+    <span>BACKUP</span>
+  </button>
+
+  <!-- RESERVAS → sec-reservas -->
+  <button class="btn-secondary opt-btn" data-target="sec-reservas">
+    <span class="opt-emoji">📅</span>
+    <span>RESERVAS</span>
+  </button>
+
+  <button class="btn-secondary opt-btn" data-target="opt-historico">
+    <span class="opt-emoji">📜</span>
+    <span>HISTÓRICO</span>
+  </button>
+
+</div>
+           
+           <!-- WOD -->
+    <section id="opt-wod" class="option-section active">
+      <div class="card">
+        <h3 style="margin-top:0; margin-bottom:8px;">🟩 WOD</h3>
+
+              <!-- LINHA 1: data / procura / exercício -->
+        <div class="form-row">
+          <div class="field">
+            <label>Data</label>
+            <input id="treinoData" type="date" />
+          </div>
+          <div class="field">
+            <label>Procurar exercício</label>
+            <input id="treinoExercicioSearch" type="text" placeholder="Nome EN/PT." />
+          </div>
+          <div class="field">
+            <label>Exercício</label>
+            <select id="treinoExercicio"></select>
           </div>
         </div>
-      </div>
 
+                <!-- LINHA 2: parte / formato / estrutura do bloco -->
+        <div class="form-row">
+          <div class="field">
+            <label>Parte</label>
+            <select id="treinoParte">
+              <option value="">—</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Formato</label>
+            <select id="treinoFormato">
+              <option value="">—</option>
+              <option value="For Time">For Time</option>
+              <option value="AMRAP">AMRAP</option>
+              <option value="EMOM">EMOM</option>
+              <option value="A cada X′ × Y">A cada X′ × Y</option>
+              <option value="Intervalos 2′ on / 2′ off">2′ on / 2′ off</option>
+              <option value="Chipper">Chipper</option>
+              <option value="Carga total">Carga total</option>
+            </select>
+          </div>
+
+        <!-- GRELLA 3x2 DO WOD -->
+        <div class="wod-grid">
+          <div class="field">
+            <label>Séries</label>
+            <input id="treinoRondas" type="number" min="1" />
+          </div>
+
+          <div class="field">
+            <label>Repetições</label>
+            <input id="treinoReps" type="number" min="1" />
+          </div>
+
+          <div class="field">
+            <label>Peso kg</label>
+            <input id="treinoPeso" type="number" step="0.5" min="0" />
+          </div>
+
+          <div class="field">
+            <label>%1RM</label>
+            <input id="treinoPercent" type="number" min="10" max="130" step="1" />
+          </div>
+
+          <div class="field">
+            <label>Tempo</label>
+            <input id="treinoTempo" type="text" placeholder="Ex.: 12:35, 20', AMRAP 10'..." />
+          </div>
+
+          <div class="field">
+            <label>Distância (km)</label>
+            <input id="treinoDist" type="number" step="0.01" min="0" />
+          </div>
         </div>
-      </div>
 
-      <!-- GRELLA 3x2 DO WOD -->
-      <div class="wod-grid">
-        <div class="field">
-          <label>Séries</label>
-          <input id="treinoRondas" type="number" min="1" />
+          <div class="helper-text" id="treinoPercentInfo" style="margin-top:-4px; margin-bottom:4px;">
         </div>
 
-        <div class="field">
-          <label>Repetições</label>
-          <input id="treinoReps" type="number" min="1" />
-        </div>
-
-        <div class="field">
-          <label>Peso kg</label>
-          <input id="treinoPeso" type="number" step="0.5" min="0" />
-        </div>
-
-        <div class="field">
-          <label>%1RM</label>
-          <input id="treinoPercent" type="number" min="10" max="130" step="1" />
-        </div>
-
-        <div class="field">
-          <label>Tempo</label>
-          <input id="treinoTempo" type="text" placeholder="Ex.: 12:35, 20', AMRAP 10'..." />
-        </div>
-
-        <div class="field">
-          <label>Distância (km)</label>
-          <input id="treinoDist" type="number" step="0.01" min="0" />
-        </div>
-      </div>
-
-      <div class="helper-text" id="treinoPercentInfo" style="margin-top:-4px; margin-bottom:4px;">
-      </div>
-
-      <button class="btn-primary" id="treinoAddBtn">Adicionar ao WOD</button>
-      <div class="helper-text">
+        <<button class="btn-primary" id="treinoAdd">Adicionar ao WOD</button>
+        <div class="helper-text">
         A carga de cada exercício (kg) é calculada como: peso × repetições × rondas.
         A distância em metcon é somada à parte, em km.
-      </div>
-
-      <!-- Resultado global do WOD -->
-      <div class="form-row" style="margin-top:10px;">
-        <div class="field">
-          <label>Resultado do WOD</label>
-          <select id="treinoResultado">
-            <option value="">— Selecionar —</option>
-            <option value="rx">Fiz tudo conforme o quadro (RX)</option>
-            <option value="adaptado">Fiz tudo mas adaptei cargas/skills</option>
-            <option value="incompleto">Não concluí todos os exercícios</option>
-          </select>
         </div>
-      </div>
-
-      <hr style="margin:10px 0 6px; border:none; border-top:1px solid #b5b5b5;">
-<h4 style="margin:0 0 4px;">Anotação da WOD do quadro</h4>
-
-      <hr style="margin:12px 0; border:none; border-top:1px solid #b5b5b5;">
-
-      <!-- Resumo rápido do dia (sempre visível) -->
-      <div class="helper-text" id="treinoResumo" style="margin-bottom:4px;"></div>
-      <div class="helper-text" id="treinoSugestao" style="margin-top:0; font-weight:500;"></div>
-      <div class="helper-text" id="weeklyHistory" style="margin-top:4px;"></div>
-
-      <!-- Resumo rápido em chips -->
-      <div id="treinoStats" class="stats-row" style="display:none;">
-        <div class="stat-chip">
-          <span>Carga total</span>
-          <span id="statCarga">0 kg</span>
-        </div>
-        <div class="stat-chip">
-          <span>Exercícios</span>
-          <span id="statExercicios">0</span>
-        </div>
-        <div class="stat-chip" id="statTempoChip">
-          <span>Melhor tempo</span>
-          <span id="statTempo">–</span>
-        </div>
-        <div class="stat-chip">
-          <span>Volume</span>
-          <span id="statVolume">0 reps</span>
-        </div>
-      </div>
-
-      <!-- WOD do dia – compacto e fácil de ler -->
-       <div class="scroll" id="treinoScroll"
-        style="display:nome;">
-         <table>
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Parte</th>
-              <th>Formato</th>
-              <th>Exercício</th>
-              <th>Tipo</th>
-              <th>Rondas</th>
-              <th>Reps</th>
-              <th>Peso</th>
-              <th>% 1RM</th>
-              <th>Tempo</th>
-              <th>Distância (km)</th>
-              <th>Carga (kg)</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="treinoBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- HISTÓRICO WOD – agora logo abaixo do WOD -->
-    <div class="card">
-  <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:4px;">
-    <h3 style="margin:0;">📜 Histórico WOD</h3>
-    <button class="btn-secondary" id="printHistoryBtn" type="button">
-      🖨 Imprimir / exportar
-    </button>
+<!-- Resultado global do WOD -->
+<div class="form-row" style="margin-top:10px;">
+  <div class="field">
+    <label>Resultado do WOD</label>
+    <select id="treinoResultado">
+      <option value="">— Selecionar —</option>
+      <option value="rx">Fiz tudo conforme o quadro (RX)</option>
+      <option value="adaptado">Fiz tudo mas adaptei cargas/skills</option>
+      <option value="incompleto">Não concluí todos os exercícios</option>
+    </select>
   </div>
+</div>
 
-  <p class="helper-text">
-    Lista completa de todos os treinos registados, ordenados da data mais recente para a mais antiga.
-  </p>
+<hr style="margin:10px 0 6px; border:none; border-top:1px solid #b5b5b5;">
+
+<h4 style="margin:0 0 4px;">Preenchimento automático com foto do quadro</h4>
+
+<div class="form-row">
+  <button class="btn-secondary" id="wodPhotoBtn">📷 Tirar / escolher foto do quadro</button>
+  <input
+    type="file"
+    id="wodPhotoInput"
+    accept="image/*"
+    capture="environment"
+    style="display:none;"
+  />
+</div>
+
+<div class="helper-text" id="wodPhotoStatus">
+  Tira uma foto ao quadro com o WOD. O texto é lido automaticamente e aparece abaixo
+  para conferires e corrigires antes de converter em registos no WOD.
+</div>
+
+<textarea
+  id="wodOcrPreview"
+  rows="3"
+  placeholder="Aqui vais ver o texto lido do quadro (OCR). Podes corrigir à mão antes de converter em registos no WOD."
+  style="margin-top:6px; width:100%; resize:vertical;"
+></textarea>
+
+<button class="btn-primary" id="wodOcrApplyBtn" style="margin-top:6px;">
+  Converter texto do quadro em WOD
+</button>
+
+        <!-- Resultado global do WOD -->
+        <div class="form-row" style="margin-top:10px;">
+        <div class="field">
+        <label>Resultado do WOD</label>
+        <select id="treinoResultado">
+        <option value="">— Selecionar —</option>
+        <option value="rx">Fiz tudo conforme o quadro (RX)</option>
+        <option value="adaptado">Fiz tudo mas adaptei cargas/skills</option>
+        <option value="incompleto">Não concluí todos os exercícios</option>
+        </select>
+        </div>
+        </div>
+
+        <hr style="margin:10px 0 6px; border:none; border-top:1px solid #b5b5b5;">
+
+        <h4 style="margin:0 0 4px;">Preenchimento automático com foto do quadro</h4>
+
+        <div class="form-row">
+       <button class="btn-secondary" id="wodPhotoBtn">📷 Tirar / escolher foto do quadro</button>
+       <input
+      type="file"
+      id="wodPhotoInput"
+      accept="image/*"
+      capture="environment"
+      style="display:none;"
+      />
+         </div>
+
+         <div class="helper-text" id="wodPhotoStatus">
+         Tira uma foto ao quadro com o WOD. O texto é lido automaticamente e aparece abaixo
+         para conferires e corrigires antes de converter em registos no WOD.
+         </div>
+
+         <textarea
+         id="wodOcrPreview"
+         rows="3"
+         placeholder="Aqui vais ver o texto lido do quadro (OCR). Podes corrigir à mão antes de converter em registos no WOD."
+         style="margin-top:6px; width:100%; resize:vertical;"
+         ></textarea>
+
+        <button class="btn-primary" id="wodOcrApplyBtn" style="margin-top:6px;">
+         Converter texto do quadro em WOD
+        </button>
   
-      <!-- Modo texto tipo quadro, agrupado por dia/parte -->
-  <div
-    class="helper-text"
-    id="dailyHistoryText"
-    style="margin-top:4px; margin-bottom:6px; white-space:pre-line; font-size:0.75rem;"
-  ></div>
+        </div> <!-- fecha o primeiro card do WOD -->
+
+        <div class="card">
+         <h3 style="margin-top:0; margin-bottom:8px;">Registo e histórico</h3>
+  
+        <!-- Resumo rápido do dia (sempre visível) -->
+        <div class="helper-text" id="treinoResumo" style="margin-bottom:4px;"></div>
+        <div class="helper-text" id="treinoSugestao" style="margin-top:0; font-weight:500;"></div>
+        <div class="helper-text" id="weeklyHistory" style="margin-top:4px;"></div>
+
+        <!-- Resumo rápido em chips -->
+        <div id="treinoStats" class="stats-row" style="display:none;">
+          <div class="stat-chip">
+            <span>Carga total</span>
+            <span id="statCarga">0 kg</span>
+          </div>
+          <div class="stat-chip">
+            <span>Exercícios</span>
+            <span id="statExercicios">0</span>
+          </div>
+          <div class="stat-chip" id="statTempoChip">
+            <span>Melhor tempo</span>
+            <span id="statTempo">–</span>
+          </div>
+          <div class="stat-chip">
+            <span>Volume</span>
+            <span id="statVolume">0 reps</span>
+          </div>
+        </div>
+
+            
+        <!-- WOD do dia – compacto e fácil de ler -->
+        <h4 style="margin-top:10px; margin-bottom:4px;">WOD do dia</h4>
+        <div class="scroll" id="treinoScroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Parte</th>
+                <th>Formato</th>
+                <th>Exercício</th>
+                <th>Tipo</th>
+                <th>Rondas</th>
+                <th>Reps</th>
+                <th>Peso</th>
+                <th>% 1RM</th>
+                <th>Tempo</th>
+                <th>Distância (km)</th>
+                <th>Carga (kg)</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="treinoBody"></tbody>
+          </table>
+        </div>
+       </div>
+      </section>
+    <!-- HISTÓRICO WOD – NOVA SECÇÃO -->
+<section id="opt-historico" class="option-section">
+  <div class="card">
+    <h3 style="margin-top:0; margin-bottom:8px;">📜 Histórico WOD</h3>
+    <p class="helper-text">
+      Lista completa de todos os treinos registados, ordenados da data mais recente para a mais antiga.
+    </p>
 
     <div class="scroll" id="dailyHistoryScroll">
-    <table>
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Parte</th>
-              <th>Formato</th>
-              <th>Exercício</th>
-              <th>Tipo</th>
-              <th>Rondas</th>
-              <th>Reps</th>
-              <th>Peso</th>
-              <th>% 1RM</th>
-              <th>Tempo</th>
-              <th>Distância (km)</th>
-              <th>Carga (kg)</th>
-              <th></th> <!-- lixo -->
-            </tr>
-          </thead>
-          <tbody id="dailyHistoryBody"></tbody>
-        </table>
-      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Parte</th>
+            <th>Formato</th>
+            <th>Exercício</th>
+            <th>Tipo</th>
+            <th>Rondas</th>
+            <th>Reps</th>
+            <th>Peso</th>
+            <th>% 1RM</th>
+            <th>Tempo</th>
+            <th>Distância (km)</th>
+            <th>Carga (kg)</th>
+            <th></th> <!-- lixo -->
+          </tr>
+        </thead>
+        <tbody id="dailyHistoryBody"></tbody>
+      </table>
     </div>
+  </div>
+</section>
 
-  </section>
-
-  <!-- SECÇÃO 3: TOOLS (tab da direita) -->
-  <section id="sec-tools" class="section">
-
-    <!-- BOTÕES DE TOOLS (sem WOD / HISTÓRICO) -->
-    <div class="card">
-      <div class="options-grid">
-
-        <!-- OBJETIVO → opt-calc -->
-        <button class="btn-secondary opt-btn" data-target="opt-calc">
-          <span class="opt-emoji">📊</span>
-          <span>OBJETIVO</span>
-        </button>
-
-        <!-- GRÁFICO → opt-graficos -->
-        <button class="btn-secondary opt-btn" data-target="opt-graficos">
-          <span class="opt-emoji">📉</span>
-          <span>GRÁFICO</span>
-        </button>
-
-        <!-- DESEMPENHO → opt-performance -->
-        <button class="btn-secondary opt-btn" data-target="opt-performance">
-          <span class="opt-emoji">🥇</span>
-          <span>DESEMPENHO</span>
-        </button>
-
-        <!-- GUIA EXERCÍCIOS → opt-guia -->
-        <button class="btn-secondary opt-btn" data-target="opt-guia">
-          <span class="opt-emoji">📚</span>
-          <span>EXERCÍCIOS</span>
-        </button>
-
-        <!-- BACKUP → opt-backup -->
-        <button class="btn-secondary opt-btn" data-target="opt-backup">
-          <span class="opt-emoji">💾</span>
-          <span>BACKUP</span>
-        </button>
-
-        <!-- RESERVAS → sec-reservas -->
-        <button class="btn-secondary opt-btn" data-target="sec-reservas">
-          <span class="opt-emoji">📅</span>
-          <span>RESERVAS</span>
-        </button>
-
-      </div>
-    </div>
-         
     <!-- OBJETIVO -->
-    <section id="opt-calc" class="option-section active">
+    <section id="opt-calc" class="option-section">
       <div class="card">
         <h3 style="margin-top:0; margin-bottom:8px;">🧮 Objetivo</h3>
 
@@ -1368,8 +1353,8 @@ const STORAGE_RESERVAS = "crossfit_reservas";
 const STORAGE_PRESENCAS = "crossfit_presencas";
 const STORAGE_RANKINGS = "crossfit_rankings";
 
-/* OCR do quadro feito localmente no browser com Tesseract.js (sem backend externo) */
-const OCR_ENDPOINT = null; // já não é usado, mantido só para não rebentar nada antigo
+/* ENDPOINT DO BACKEND PARA OCR DO QUADRO */
+const OCR_ENDPOINT = "https://o-teu-backend.exemplo/ocr-wod"; // troca pela tua URL real
 
 /* ===== PERFIL ===== */
 let profile = JSON.parse(localStorage.getItem(STORAGE_PROFILE) || "{}");
@@ -2374,7 +2359,6 @@ const treinoExEl = document.getElementById("treinoExercicio");
 const treinoExSearchEl = document.getElementById("treinoExercicioSearch");
 const treinoParteEl = document.getElementById("treinoParte");
 const treinoFormatoEl = document.getElementById("treinoFormato");
-const quickParteBtns = document.querySelectorAll("[data-parte-btn]");
 const treinoRondasEl = document.getElementById("treinoRondas");
 const treinoRepsEl = document.getElementById("treinoReps");
 const treinoPesoEl = document.getElementById("treinoPeso");
@@ -2382,38 +2366,24 @@ const treinoTempoEl = document.getElementById("treinoTempo");
 const treinoDistEl = document.getElementById("treinoDist");
 const treinoPercentEl = document.getElementById("treinoPercent");
 const treinoPercentInfoEl = document.getElementById("treinoPercentInfo");
-const treinoAddBtn = document.getElementById("treinoAddBtn");
+const treinoAddBtn = document.getElementById("treinoAdd");
 const treinoBody = document.getElementById("treinoBody");
 const treinoResumoEl = document.getElementById("treinoResumo");
 const treinoSugestaoEl = document.getElementById("treinoSugestao");
 const weeklyHistoryEl = document.getElementById("weeklyHistory");
 const printHistoryBtn = document.getElementById("printHistoryBtn");
 const dailyHistoryBody = document.getElementById("dailyHistoryBody");
-const dailyHistoryTextEl = document.getElementById("dailyHistoryText"); // NOVO
 const treinoScrollEl = document.getElementById("treinoScroll");
 /* Resultado global do WOD + OCR do quadro */
 let wodResultados = JSON.parse(localStorage.getItem(STORAGE_WOD_RESULT) || "{}");
 const treinoResultadoEl = document.getElementById("treinoResultado");
 const wodPhotoBtn = document.getElementById("wodPhotoBtn");
-const wodPhotoCameraInput = document.getElementById("wodPhotoCamera");
-const wodPhotoGalleryInput = document.getElementById("wodPhotoGallery");
+const wodPhotoInput = document.getElementById("wodPhotoInput");
+const wodPhotoStatusEl = document.getElementById("wodPhotoStatus");
 const wodOcrPreviewEl = document.getElementById("wodOcrPreview");
 const wodOcrApplyBtn = document.getElementById("wodOcrApplyBtn");
-const wodPhotoStatusEl = document.getElementById("wodPhotoStatus");
-// Ajuste automático da altura da caixa de texto do OCR
-if (wodOcrPreviewEl) {
-  const autoResizeOcr = () => {
-    wodOcrPreviewEl.style.height = "auto";
-    const novaAltura = Math.min(wodOcrPreviewEl.scrollHeight, 260);
-    wodOcrPreviewEl.style.height = novaAltura + "px";
-  };
+  
 
-  wodOcrPreviewEl.addEventListener("input", autoResizeOcr);
-  // ajustar logo à partida (por ex. quando o OCR preenche o texto)
-  autoResizeOcr();
-}
-
- 
 /* Chips de resumo do dia */
 const treinoStatsRow = document.getElementById("treinoStats");
 const statCargaEl = document.getElementById("statCarga");
@@ -3103,153 +3073,77 @@ function addTreinoEntry() {
 function renderDailyHistory() {
   if (!dailyHistoryBody) return;
   dailyHistoryBody.innerHTML = "";
-  if (dailyHistoryTextEl) {
-    dailyHistoryTextEl.textContent = "";
-  }
 
   if (!treinos.length) return;
 
-  // ordenar por data desc e guardar índice original para o botão de apagar
+  // criar array com índice para conseguir apagar mesmo estando ordenado
   const sorted = treinos
     .map((t, i) => ({ ...t, idx: i }))
     .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
 
-  // ---------- 1) TABELA (como já tinhas) ----------
-  sorted.forEach(item => {
+  sorted.forEach(t => {
     const tr = document.createElement("tr");
 
     const tdDate = document.createElement("td");
-    tdDate.textContent = item.date || "";
+    tdDate.textContent = t.date || "";
     tr.appendChild(tdDate);
 
     const tdParte = document.createElement("td");
-    tdParte.textContent = item.parte || "";
+    tdParte.textContent = t.parte || "";
     tr.appendChild(tdParte);
 
     const tdFormato = document.createElement("td");
-    tdFormato.textContent = item.formato || "";
+    tdFormato.textContent = t.formato || "";
     tr.appendChild(tdFormato);
 
     const tdEx = document.createElement("td");
-    const label = MOVES_PT[item.ex] ? `${item.ex} – ${MOVES_PT[item.ex]}` : item.ex;
+    const label = MOVES_PT[t.ex] ? `${t.ex} – ${MOVES_PT[t.ex]}` : t.ex;
     tdEx.textContent = label || "";
     tr.appendChild(tdEx);
 
     const tdTipo = document.createElement("td");
-    tdTipo.textContent = item.tipo || "";
+    tdTipo.textContent = t.tipo || "";
     tr.appendChild(tdTipo);
 
     const tdR = document.createElement("td");
-    tdR.textContent = item.rondas || "";
+    tdR.textContent = t.rondas || "";
     tr.appendChild(tdR);
 
     const tdReps = document.createElement("td");
-    tdReps.textContent = item.reps || "";
+    tdReps.textContent = t.reps || "";
     tr.appendChild(tdReps);
 
     const tdPeso = document.createElement("td");
-    tdPeso.textContent = item.peso ? formatKg(item.peso) : "";
+    tdPeso.textContent = t.peso ? formatKg(t.peso) : "";
     tr.appendChild(tdPeso);
 
     const tdPerc = document.createElement("td");
-    tdPerc.textContent = item.perc1rm ? (item.perc1rm * 100).toFixed(0) + "%" : "";
+    tdPerc.textContent = t.perc1rm ? (t.perc1rm * 100).toFixed(0) + "%" : "";
     tr.appendChild(tdPerc);
 
     const tdTempo = document.createElement("td");
-    tdTempo.textContent = item.tempo || "";
+    tdTempo.textContent = t.tempo || "";
     tr.appendChild(tdTempo);
 
     const tdDist = document.createElement("td");
-    tdDist.textContent = item.distanciaKm ? formatKm(item.distanciaKm) : "";
+    tdDist.textContent = t.distanciaKm ? formatKm(t.distanciaKm) : "";
     tr.appendChild(tdDist);
 
     const tdCarga = document.createElement("td");
-    // se não houver carga gravada, calcula rápido (peso × reps × rondas)
-    let carga = item.carga;
-    if (carga == null) {
-      const pesoNum = Number(item.peso) || 0;
-      const repsNum = Number(item.reps) || 0;
-      const rdsNum = Number(item.rondas) || 0;
-      carga = pesoNum * repsNum * rdsNum;
-    }
-    tdCarga.textContent = carga ? formatKg(carga) : "";
+    tdCarga.textContent = t.carga ? formatKg(t.carga) : "";
     tr.appendChild(tdCarga);
 
-    // botão de apagar
+    // botão do lixo
     const tdDel = document.createElement("td");
     const btn = document.createElement("button");
-    btn.textContent = "🗑️";
-    btn.className = "btn-secondary";
-    btn.style.padding = "2px 6px";
-    btn.addEventListener("click", () => deleteTreinoEntry(item.idx));
+    btn.textContent = "🗑";
+    btn.className = "btn-delete";
+    btn.addEventListener("click", () => deleteTreinoEntry(t.idx));
     tdDel.appendChild(btn);
     tr.appendChild(tdDel);
 
     dailyHistoryBody.appendChild(tr);
   });
-
-  // ---------- 2) MODO TEXTO TIPO QUADRO ----------
-  if (!dailyHistoryTextEl) return;
-
-  // agrupar por dia e por parte
-  const grupos = {};
-
-  sorted.forEach(item => {
-    const dia = item.date || "Sem data";
-    const parte = item.parte || "Outro";
-
-    if (!grupos[dia]) grupos[dia] = {};
-    if (!grupos[dia][parte]) grupos[dia][parte] = [];
-    grupos[dia][parte].push(item);
-  });
-
-  const diasOrdenados = Object.keys(grupos).sort((a, b) => b.localeCompare(a));
-  const linhasTexto = [];
-
-  diasOrdenados.forEach(dia => {
-    linhasTexto.push(dia);
-
-    // garantir ordem A, B, C, D, Outro
-    ["A", "B", "C", "D", "Outro"].forEach(parte => {
-      const listaParte = grupos[dia][parte];
-      if (!listaParte || !listaParte.length) return;
-
-      const prefixo = parte === "Outro" ? "Outro)" : `${parte})`;
-      linhasTexto.push(` ${prefixo}`);
-
-      listaParte.forEach(item => {
-        const nome = MOVES_PT[item.ex] ? `${item.ex} – ${MOVES_PT[item.ex]}` : (item.ex || "");
-        const tipo = item.tipo || "";
-        const rds = item.rondas ? `${item.rondas} rds` : "";
-        const reps = item.reps ? `${item.reps} reps` : "";
-        const peso = item.peso ? formatKg(item.peso) : "";
-        const tempo = item.tempo ? item.tempo : "";
-        let carga = item.carga;
-        if (carga == null) {
-          const pesoNum = Number(item.peso) || 0;
-          const repsNum = Number(item.reps) || 0;
-          const rdsNum = Number(item.rondas) || 0;
-          carga = pesoNum * repsNum * rdsNum;
-        }
-
-        const partesLinha = [];
-        if (nome) partesLinha.push(nome);
-        if (tipo) partesLinha.push(tipo);
-        if (rds || reps) partesLinha.push([rds, reps].filter(Boolean).join(" · "));
-        if (peso) partesLinha.push(peso);
-        if (tempo) partesLinha.push(tempo);
-        if (carga) partesLinha.push(`carga ${formatKg(carga)}`);
-
-        linhasTexto.push("   - " + partesLinha.join(" · "));
-      });
-
-      linhasTexto.push(""); // linha em branco entre partes
-    });
-
-    linhasTexto.push(""); // linha em branco entre dias
-  });
-
-  dailyHistoryTextEl.textContent = linhasTexto.join("\n");
 }
   
 function printTreinosPdf() {
@@ -3398,62 +3292,6 @@ function printTreinosPdf() {
         </tbody>
       </table>
       `;
-    }
-    // Histórico em formato WOD (anotação dia / A) / B) / C) )
-    html += `<h2>Histórico em formato WOD (anotação)</h2>`;
-
-    if (!listaFull.length) {
-      html += `<p>Sem registos de WOD.</p>`;
-    } else {
-      // agrupar por data e por parte (A, B, C, D…)
-      const group = {};
-      listaFull.forEach(t => {
-        const d = t.date || "Sem data";
-        const p = t.parte || "";
-        if (!group[d]) group[d] = {};
-        if (!group[d][p]) group[d][p] = [];
-        group[d][p].push(t);
-      });
-
-      const datasOrdenadas = Object.keys(group).sort((a, b) => b.localeCompare(a));
-
-      datasOrdenadas.forEach(diaKey => {
-        html += `<h3>${diaKey}</h3>`;
-
-        // ordenar partes na sequência A, B, C, D…
-        const partes = Object.keys(group[diaKey]).sort();
-
-        partes.forEach(parteKey => {
-          const listaParte = group[diaKey][parteKey];
-          if (!listaParte || !listaParte.length) return;
-
-          html += `<p><strong>${parteKey})</strong></p><ul>`;
-
-          listaParte.forEach(t => {
-            const label = MOVES_PT[t.ex] ? `${t.ex} – ${MOVES_PT[t.ex]}` : (t.ex || "");
-            const pesoTxt = t.peso ? formatKg(t.peso) : "";
-            const percTxt = t.perc1rm ? (t.perc1rm * 100).toFixed(0) + "%" : "";
-            const distTxt = t.distanciaKm ? formatKm(t.distanciaKm) : "";
-            const cargaTxt = t.carga ? formatKg(t.carga) : "";
-
-            let linha = "";
-
-            if (t.formato) linha += `${t.formato} · `;
-            linha += label || "Exercício";
-            if (t.rondas) linha += ` · ${t.rondas} rondas`;
-            if (t.reps) linha += ` × ${t.reps} reps`;
-            if (pesoTxt) linha += ` · ${pesoTxt}`;
-            if (percTxt) linha += ` (${percTxt})`;
-            if (t.tempo) linha += ` · tempo: ${t.tempo}`;
-            if (distTxt) linha += ` · distância: ${distTxt}`;
-            if (cargaTxt) linha += ` · carga: ${cargaTxt}`;
-
-            html += `<li>${linha}</li>`;
-          });
-
-          html += `</ul>`;
-        });
-      });
     }
 
     // Histórico diário completo
@@ -3747,154 +3585,35 @@ function updateResultadoUIForDate(dateStr) {
   treinoResultadoEl.value = val;
 }
 
-/* ===== FOTO DO QUADRO → OCR LOCAL (Tesseract) → TEXTO ===== */
-// Pré-processamento da foto do quadro para melhorar o OCR
-async function preprocessImageForOcr(file) {
-  // 1) Ler o ficheiro para DataURL
-  const dataUrl = await new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(reader.error || new Error("Erro ao ler ficheiro"));
-    reader.readAsDataURL(file);
-  });
-
-  // 2) Criar imagem em memória
-  const img = await new Promise((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => resolve(image);
-    image.onerror = reject;
-    image.src = dataUrl;
-  });
-
-  // 3) Canvas base para redimensionar (não precisamos da resolução toda da câmara)
-  const baseCanvas = document.createElement("canvas");
-  const baseCtx = baseCanvas.getContext("2d");
-
-  const maxWidth = 1600; // largura alvo
-  const scale = img.width > maxWidth ? maxWidth / img.width : 1;
-  const width = Math.round(img.width * scale);
-  const height = Math.round(img.height * scale);
-
-  baseCanvas.width = width;
-  baseCanvas.height = height;
-  baseCtx.drawImage(img, 0, 0, width, height);
-
-  // 4) Crop fixo para tirar paredes e focar no quadro
-  //    (ajusta estes percentuais se achares que corta demais ou de menos)
-  const marginX = Math.round(width * 0.08);  // 8% de cada lado
-  const marginY = Math.round(height * 0.12); // 12% em cima e em baixo
-  const cropW = width - marginX * 2;
-  const cropH = height - marginY * 2;
-
-  const workCanvas = document.createElement("canvas");
-  const workCtx = workCanvas.getContext("2d");
-  workCanvas.width = cropW;
-  workCanvas.height = cropH;
-
-  // desenhar só a área central (o quadro)
-  workCtx.drawImage(
-    baseCanvas,
-    marginX,
-    marginY,
-    cropW,
-    cropH,
-    0,
-    0,
-    cropW,
-    cropH
-  );
-
-  // 5) Obter pixels e aplicar grayscale + contraste + threshold
-  let imageData = workCtx.getImageData(0, 0, cropW, cropH);
-  let data = imageData.data;
-
-  // grayscale
-  for (let i = 0; i < data.length; i += 4) {
-    const r = data[i];
-    const g = data[i + 1];
-    const b = data[i + 2];
-    const v = 0.299 * r + 0.587 * g + 0.114 * b;
-    data[i] = data[i + 1] = data[i + 2] = v;
-  }
-
-  // contraste
-  const contrast = 60; // podes afinar entre 40 e 80
-  const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
-  for (let i = 0; i < data.length; i += 4) {
-    data[i] = factor * (data[i] - 128) + 128;
-    data[i + 1] = factor * (data[i + 1] - 128) + 128;
-    data[i + 2] = factor * (data[i + 2] - 128) + 128;
-  }
-
-  // threshold (preto/branco puro – ideal para quadro branco)
-  for (let i = 0; i < data.length; i += 4) {
-    const v = data[i];
-    const t = v > 150 ? 255 : 0; // limiar ajustável
-    data[i] = data[i + 1] = data[i + 2] = t;
-  }
-
-  workCtx.putImageData(imageData, 0, 0);
-
-  // 6) Converter o resultado final em blob para o Tesseract
-  const processedBlob = await new Promise((resolve, reject) => {
-    workCanvas.toBlob((blob) => {
-      if (blob) resolve(blob);
-      else reject(new Error("Erro ao gerar imagem processada"));
-    }, "image/png");
-  });
-
-  return processedBlob;
-}
-
-/* ===== FOTO DO QUADRO → PRÉ-PROCESSAMENTO → OCR LOCAL (Tesseract) → TEXTO ===== */
+/* ===== FOTO DO QUADRO → OCR → TEXTO ===== */
 
 async function handleWodPhotoFile(file) {
-  if (!file) return;
-
-  if (!window.Tesseract) {
-    console.error("Tesseract.js não está carregado.");
-    if (wodPhotoStatusEl) {
-      wodPhotoStatusEl.textContent =
-        "OCR indisponível. Abre a app com ligação à internet pelo menos uma vez para carregar o motor de OCR.";
-    }
-    return;
-  }
+  if (!file || !OCR_ENDPOINT) return;
 
   if (wodPhotoStatusEl) {
-    wodPhotoStatusEl.textContent = "A preparar a imagem do quadro…";
+    wodPhotoStatusEl.textContent = "A processar a foto do quadro, aguarda um momento...";
   }
 
   try {
-    // pré-processar a foto (crop + contraste + preto/branco)
-    const processedBlob = await preprocessImageForOcr(file);
+    const formData = new FormData();
+    formData.append("image", file);
 
-    if (wodPhotoStatusEl) {
-      wodPhotoStatusEl.textContent = "A ler o texto do quadro…";
-    }
-
-    const result = await Tesseract.recognize(processedBlob, "eng+por", {
-      tessedit_char_whitelist:
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'/%:@().,-+ xX"
+    const resp = await fetch(OCR_ENDPOINT, {
+      method: "POST",
+      body: formData
     });
 
-    let rawText =
-      result && result.data && typeof result.data.text === "string"
-        ? result.data.text
-        : "";
+    if (!resp.ok) {
+      throw new Error("Resposta inválida do servidor de OCR.");
+    }
 
-    rawText = rawText.replace(/\r\n/g, "\n");
-
-    // limpeza básica: tirar espaços a mais e linhas vazias repetidas
-    rawText = rawText
-      .split("\n")
-      .map((line) => line.trim())
-      .filter((line, idx, arr) => line !== "" || (idx > 0 && arr[idx - 1] !== ""))
-      .join("\n");
+    const data = await resp.json();
+    const rawText = data && data.text ? String(data.text) : "";
 
     if (!rawText.trim()) {
       if (wodPhotoStatusEl) {
         wodPhotoStatusEl.textContent =
-          "Não foi possível ler texto útil. Tenta aproximar mais a câmara e garantir boa luz no quadro.";
+          "Não foi possível ler texto útil do quadro. Tenta outra foto com melhor luz e contraste.";
       }
       return;
     }
@@ -3904,104 +3623,30 @@ async function handleWodPhotoFile(file) {
     }
     if (wodPhotoStatusEl) {
       wodPhotoStatusEl.textContent =
-        "Texto do quadro reconhecido. Revê e corrige aqui em baixo antes de converter em WOD.";
+        "Texto do quadro reconhecido. Revê e corrige aqui em baixo antes de converter em registos no WOD.";
     }
   } catch (err) {
-    console.error("Erro no OCR local do quadro:", err);
+    console.error("Erro no OCR do quadro:", err);
     if (wodPhotoStatusEl) {
       wodPhotoStatusEl.textContent =
-        "Não foi possível ler o texto da imagem. Tira outra foto com melhor foco/luz e tenta novamente.";
+        "Ocorreu um erro ao enviar a foto para o servidor de OCR. Verifica a ligação à internet e tenta de novo.";
     }
   }
 }
 
-// ===== Conversor avançado do texto do quadro → WOD (modo misto) =====
+/* ===== Parser do texto do quadro → entradas de WOD ===== */
 
-// Alcunhas / sinónimos usados no quadro → nome base do exercício
-const WOD_ALIASES = {
-  "ring row": "Ring Row",
-  "ring rows": "Ring Row",
-  "plank/pike": "Plank Pike",
-  "plank pike": "Plank Pike",
-  "plank jump": "Plank Jump",
-  "tuck roll": "Tuck Roll",
-  "push ups": "Push Up",
-  "push up": "Push Up",
-  "pull ups": "Pull Up",
-  "pull up": "Pull Up",
-  "chin ups": "Chin Up",
-  "chin up": "Chin Up",
-  "muscle ups": "Muscle Up",
-  "muscle up": "Muscle Up",
-  "wall walks": "Wall Walk",
-  "wall walk": "Wall Walk",
-  "handstand hold": "Handstand Hold",
-  "handstand push up": "Handstand Push Up",
-  "handstand push-up": "Handstand Push Up",
-  "hspu": "Handstand Push Up",
-  "box jump over": "Box Jump Over",
-  "box jump": "Box Jump",
-  "double unders": "Double Under",
-  "leg raises": "Leg Raise",
-  "leg raise": "Leg Raise",
-  "v-ups": "V-Up",
-  "v ups": "V-Up",
-  "wall balls": "Wall Ball",
-  "wall ball": "Wall Ball",
-  "pvc pass through": "PVC Pass Through",
-  "pvc overhead squat": "PVC Overhead Squat",
-  "sotts press": "Sotts Press",
-  "dynamic squat stretch": "Dynamic Squat Stretch",
-  "dinamic squat stretch": "Dynamic Squat Stretch",
-  "lock lat pull": "Lat Pulldown",
-  "lat pull": "Lat Pulldown",
-  "bar pull down": "Lat Pulldown",
-  "bar pull": "Lat Pulldown",
-  "bar transition": "Bar Muscle Up",
-  "front squat": "Front Squat",
-  "back squat": "Back Squat",
-  "overhead squat": "Overhead Squat",
-  "oh squat": "Overhead Squat",
-  "hang power snatch": "Hang Power Snatch",
-  "power snatch": "Power Snatch",
-  "hang clean": "Hang Clean",
-  "power clean": "Power Clean",
-  "snatch deadlift": "Snatch Deadlift",
-  "shoulder press": "Shoulder Press",
-  "push press": "Push Press",
-  "chest press": "Bench Press",
-  "ring dips": "Ring Dip",
-  "ring dip": "Ring Dip",
-  "thrusters": "Thruster",
-  "db/kb thrusters": "Thruster",
-  "kb overhead lunge": "Kettlebell Lunges",
-  "kb box step up": "Goblet Squat"
-};
-
-// Cria UM exercício a partir de UMA linha
-function buildTreinoFromLine(line, date, parteAtual, meta) {
+function buildTreinoFromLine(line, date, parteAtual) {
   if (!line) return null;
   const texto = String(line).trim();
   if (!texto) return null;
 
-  meta = meta || {};
-
   const lower = texto.toLowerCase();
 
-  // 1) DETETAR EXERCÍCIO
+  // 1) tentar encontrar exercício pelo nome em EN
   let ex = null;
-  let isFreeText = false;
 
-  // 1a) pelas alcunhas
-  for (const key in WOD_ALIASES) {
-    if (lower.includes(key)) {
-      ex = WOD_ALIASES[key];
-      break;
-    }
-  }
-
-  // 1b) pelo nome EN em ALL_EXERCISES
-  if (!ex && typeof ALL_EXERCISES !== "undefined" && Array.isArray(ALL_EXERCISES)) {
+  if (typeof ALL_EXERCISES !== "undefined" && Array.isArray(ALL_EXERCISES)) {
     for (const nome of ALL_EXERCISES) {
       if (lower.includes(nome.toLowerCase())) {
         ex = nome;
@@ -4010,7 +3655,7 @@ function buildTreinoFromLine(line, date, parteAtual, meta) {
     }
   }
 
-  // 1c) pela designação PT em EXER_INFO
+  // 2) se não encontrar em EN, tenta pela designação PT do EXER_INFO
   if (!ex && typeof EXER_INFO !== "undefined" && Array.isArray(EXER_INFO)) {
     for (const info of EXER_INFO) {
       if (lower.includes(info.pt.toLowerCase())) {
@@ -4020,92 +3665,51 @@ function buildTreinoFromLine(line, date, parteAtual, meta) {
     }
   }
 
-  // 1d) se nada bater, entra como texto livre (técnica)
   if (!ex) {
-    const semBullet = texto.replace(/^[-•]\s*/, "");
-    if (!semBullet) return null;
-    ex = semBullet;
-    isFreeText = true;
+    return null;
   }
 
-  // 2) RONDAS E REPS
-  let rondas = (meta.defaultRondas != null) ? meta.defaultRondas : 1;
-  let reps = (meta.defaultReps != null) ? meta.defaultReps : 0;
+  // séries / reps (5x5, 4 x 10, etc.)
+  let rondas = 1;
+  let reps = 0;
 
-  // 2a) "5x5", "4 × 10"
   const mSeries = texto.match(/(\d+)\s*[x×]\s*(\d+)/i);
   if (mSeries) {
-    const s = parseInt(mSeries[1], 10);
-    const r = parseInt(mSeries[2], 10);
-    if (!isNaN(s) && s > 0) rondas = s;
-    if (!isNaN(r) && r > 0) reps = r;
+    rondas = parseInt(mSeries[1], 10) || 1;
+    reps = parseInt(mSeries[2], 10) || 0;
   } else {
-    // 2b) "... 10 reps"
-    const mReps = texto.match(/(\d+)\s*(reps?|repetições|repeticoes|rep)/i);
+    const mReps = texto.match(/(\d+)\s*(reps|repetições|repeticoes|rep)/i);
     if (mReps) {
-      const r = parseInt(mReps[1], 10);
-      if (!isNaN(r) && r > 0) reps = r;
+      reps = parseInt(mReps[1], 10) || 0;
     }
   }
 
-  // 2c) número inicial da linha como reps (se não for segundos "20\"")
-  if (!reps) {
-    const temAspas = /["”“′’]/.test(texto);
-    if (!temAspas) {
-      const mInicio = texto.match(/^[-•]?\s*(\d+)\s+[^\d]/);
-      if (mInicio) {
-        const r = parseInt(mInicio[1], 10);
-        if (!isNaN(r) && r > 0) reps = r;
-      }
-    }
-  }
-
-  if (!reps) reps = 1;
-  if (!rondas) rondas = 1;
-
-  // 3) PERCENTAGEM / PESO
+  // percentagem do 1RM ou peso direto
   let peso = 0;
   let perc1rm = null;
 
   const mPerc = texto.match(/(\d{1,3})\s*%/);
-  if (mPerc && typeof dataRm !== "undefined" && dataRm[ex]) {
+  if (mPerc && dataRm[ex]) {
     const p = parseFloat(mPerc[1]);
     if (!isNaN(p) && p > 0) {
       perc1rm = p / 100;
       peso = dataRm[ex] * perc1rm;
     }
   } else {
-    // 3a) dois pesos: "40/60kg" → usa o MAIOR (masculino)
-    const mPesoDuplo = texto.match(
-      /(\d+(?:[\.,]\d+)?)\s*\/\s*(\d+(?:[\.,]\d+)?)\s*(kg|kgs|quilo|quilos)\b/i
-    );
-    if (mPesoDuplo) {
-      const v1 = parseFloat(mPesoDuplo[1].replace(",", "."));
-      const v2 = parseFloat(mPesoDuplo[2].replace(",", "."));
-      const maior = Math.max(isNaN(v1) ? 0 : v1, isNaN(v2) ? 0 : v2);
-      if (maior > 0) {
-        peso = maior;
-        if (typeof dataRm !== "undefined" && dataRm[ex] && dataRm[ex] > 0) {
+    const mPeso = texto.match(/(\d+(?:[\.,]\d+)?)\s*(kg|kgs|quilo|quilos)\b/i);
+    if (mPeso) {
+      const val = parseFloat(mPeso[1].replace(",", "."));
+      if (!isNaN(val)) {
+        peso = val;
+        if (dataRm[ex] && dataRm[ex] > 0) {
           perc1rm = peso / dataRm[ex];
-        }
-      }
-    } else {
-      // 3b) peso simples "40kg"
-      const mPeso = texto.match(/(\d+(?:[\.,]\d+)?)\s*(kg|kgs|quilo|quilos)\b/i);
-      if (mPeso) {
-        const val = parseFloat(mPeso[1].replace(",", "."));
-        if (!isNaN(val)) {
-          peso = val;
-          if (typeof dataRm !== "undefined" && dataRm[ex] && dataRm[ex] > 0) {
-            perc1rm = peso / dataRm[ex];
-          }
         }
       }
     }
   }
 
-  // 4) FORMATO (AMRAP, EMOM, For Time...)
-  let formato = meta.formato || "";
+  // formato (AMRAP, EMOM, For Time...)
+  let formato = "";
   const mFormato = texto.match(/\b(AMRAP|EMOM|For Time|Chipper|For\s+time)\b/i);
   if (mFormato) {
     formato = mFormato[1]
@@ -4113,7 +3717,7 @@ function buildTreinoFromLine(line, date, parteAtual, meta) {
       .replace(/^for time$/i, "For Time");
   }
 
-  // 5) DISTÂNCIA
+  // distância
   let distanciaKm = 0;
   const mDist = texto.match(/(\d+(?:[\.,]\d+)?)\s*(km|kilometros|quilometros|m)\b/i);
   if (mDist) {
@@ -4124,18 +3728,8 @@ function buildTreinoFromLine(line, date, parteAtual, meta) {
     }
   }
 
-  // 6) TIPO E CARGA
-  let tipo = "técnica";
-  if (!isFreeText && typeof inferTipo === "function") {
-    tipo = inferTipo(ex);
-  }
-
-  let carga = 0;
-  if (typeof calcCarga === "function") {
-    carga = calcCarga({ peso, reps, rondas });
-  } else {
-    carga = peso * reps * rondas;
-  }
+  const tipo = inferTipo(ex);
+  const carga = calcCarga({ peso, reps, rondas });
 
   return {
     date,
@@ -4147,13 +3741,12 @@ function buildTreinoFromLine(line, date, parteAtual, meta) {
     reps,
     peso,
     tempo: "",
-    distanciaKm,
     carga,
-    perc1rm
+    perc1rm,
+    distanciaKm
   };
 }
 
-// Converte TODO o texto do quadro em vários exercícios
 function applyOcrToWod() {
   if (!wodOcrPreviewEl) return;
   const raw = (wodOcrPreviewEl.value || "").trim();
@@ -4175,75 +3768,26 @@ function applyOcrToWod() {
 
   if (!linhas.length) {
     if (wodPhotoStatusEl) {
-      wodPhotoStatusEl.textContent =
-        "O texto do quadro está vazio depois de limpar as linhas.";
+      wodPhotoStatusEl.textContent = "O texto do quadro está vazio depois de limpar as linhas.";
     }
     return;
   }
 
   let parteAtual = "";
   let criados = 0;
-  const parteMeta = {};
 
   linhas.forEach(linha => {
-    // 1) cabeçalho de parte (A, B, C, D, E)
     const mParte =
-      linha.match(/^parte\s+([A-E])\b/i) ||
-      linha.match(/^([A-E])[\)\.\:\-]\s*/i);
+      linha.match(/^parte\s+([A-D])\b/i) ||
+      linha.match(/^([A-D])[\)\.\:\-]\s*/i);
 
     if (mParte) {
       parteAtual = mParte[1].toUpperCase();
-      if (!parteMeta[parteAtual]) parteMeta[parteAtual] = {};
-      const meta = parteMeta[parteAtual];
-      const resto = linha.slice(mParte[0].length).trim().toLowerCase();
-
-      // formato da parte
-      if (/amrap/.test(resto)) {
-        meta.formato = "AMRAP";
-      } else if (/emom/.test(resto)) {
-        meta.formato = "EMOM";
-      } else if (/time\s*cap|tc\b/.test(resto)) {
-        meta.formato = "For Time";
-      } else if (/cada|coda/.test(resto)) {
-        meta.formato = "A cada X′ × Y";
-      } else if (/on\s*\/\s*.*off/.test(resto)) {
-        meta.formato = "Intervalos";
-      }
-
-      // séries tipo "5x5"
-      const mSeriesHeader = resto.match(/(\d+)\s*[x×]\s*(\d+)/i);
-      if (mSeriesHeader) {
-        const ser = parseInt(mSeriesHeader[1], 10);
-        const rep = parseInt(mSeriesHeader[2], 10);
-        if (!isNaN(ser)) parteMeta[parteAtual].defaultRondas = ser;
-        if (!isNaN(rep)) parteMeta[parteAtual].defaultReps = rep;
-      }
-
-      // "x 3", "×4" no fim → rondas
-      const mRondasX = resto.match(/[x×]\s*(\d+)\b/i);
-      if (mRondasX) {
-        const r = parseInt(mRondasX[1], 10);
-        if (!isNaN(r)) parteMeta[parteAtual].defaultRondas = r;
-      }
-
-      // "3 rondas"
-      const mRondasPalavra = resto.match(/(\d+)\s*(rondas?|rounds?|rds?)/i);
-      if (mRondasPalavra) {
-        const r = parseInt(mRondasPalavra[1], 10);
-        if (!isNaN(r)) parteMeta[parteAtual].defaultRondas = r;
-      }
-
       return;
     }
 
-    // 2) linha de exercício
-    const meta = parteAtual ? (parteMeta[parteAtual] || {}) : {};
-    const entry = buildTreinoFromLine(linha, date, parteAtual, meta);
-
+    const entry = buildTreinoFromLine(linha, date, parteAtual);
     if (entry) {
-      if (!Array.isArray(treinos)) {
-        treinos = [];
-      }
       treinos.unshift(entry);
       criados++;
     }
@@ -4252,21 +3796,18 @@ function applyOcrToWod() {
   if (!criados) {
     if (wodPhotoStatusEl) {
       wodPhotoStatusEl.textContent =
-        "O texto do quadro foi lido, mas não foi possível identificar exercícios úteis. Ajusta o texto à mão e tenta de novo.";
+        "O texto do quadro foi lido, mas não foi possível identificar exercícios conhecidos. Ajusta o texto à mão e tenta de novo.";
     }
     return;
   }
 
-  if (typeof saveTreinos === "function") saveTreinos();
-  if (typeof registerBackupMeta === "function") {
-    registerBackupMeta("WOD criado a partir de foto do quadro");
-  }
-  if (typeof renderTreinos === "function") renderTreinos();
+  saveTreinos();
+  registerBackupMeta("WOD criado a partir de foto do quadro");
+  renderTreinos();
 
   if (wodPhotoStatusEl) {
     wodPhotoStatusEl.textContent =
-      "Foram criados " + criados +
-      " blocos no WOD a partir do quadro. Confere e ajusta manualmente se necessário.";
+      "Foram criados " + criados + " blocos no WOD a partir do quadro. Confere e ajusta manualmente se necessário.";
   }
 }
 
@@ -4481,19 +4022,6 @@ function renderTreinos() {
 if (treinoAddBtn) {
   treinoAddBtn.addEventListener("click", addTreinoEntry);
 }
-  // Botões rápidos: adicionar directamente em A/B/C/D/Outro
-if (quickParteBtns && quickParteBtns.length) {
-  quickParteBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const parte = btn.getAttribute("data-parte-btn") || "";
-      if (treinoParteEl) {
-        treinoParteEl.value = parte; // define a parte automaticamente
-      }
-      addTreinoEntry(); // reutiliza a função que já grava o treino
-    });
-  });
-}
-
 
 if (treinoDataEl) {
   treinoDataEl.addEventListener("change", () => {
@@ -4518,42 +4046,20 @@ if (treinoResultadoEl) {
   });
 }
 
-/* Foto do quadro → OCR (escolher entre câmara ou galeria) */
-if (wodPhotoBtn && wodPhotoCameraInput && wodPhotoGalleryInput) {
+/* Foto do quadro → OCR */
+if (wodPhotoBtn && wodPhotoInput) {
   wodPhotoBtn.addEventListener("click", () => {
-    const usarCamera = window.confirm(
-      "Queres tirar foto agora?\n\n'OK' = Tirar foto\n'Cancelar' = Escolher da galeria"
-    );
-
-    if (usarCamera) {
-      wodPhotoCameraInput.value = "";
-      wodPhotoCameraInput.click();
-    } else {
-      wodPhotoGalleryInput.value = "";
-      wodPhotoGalleryInput.click();
-    }
+    wodPhotoInput.value = "";
+    wodPhotoInput.click();
   });
 
-  const onPhotoFileChange = (e) => {
+  wodPhotoInput.addEventListener("change", (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
-
-    // DEBUG: confirmar que o ficheiro vem da câmara/galeria
-    console.log("Ficheiro escolhido para OCR:", {
-      nome: file.name,
-      tamanho: file.size,
-      tipo: file.type
-    });
-
     handleWodPhotoFile(file);
-  };
-
-  /* LIGAR inputs da CÂMARA e da GALERIA ao handler */
-  wodPhotoCameraInput.addEventListener("change", onPhotoFileChange);
-  wodPhotoGalleryInput.addEventListener("change", onPhotoFileChange);
+  });
 }
 
-/* Botões adicionais do WOD */
 if (wodOcrApplyBtn) {
   wodOcrApplyBtn.addEventListener("click", applyOcrToWod);
 }
@@ -5336,9 +4842,6 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
-
-
-
 
 
 
