@@ -994,24 +994,6 @@
       <hr style="margin:10px 0 6px; border:none; border-top:1px solid #b5b5b5;">
 <h4 style="margin:0 0 4px;">Anotação da WOD do quadro</h4>
 
-<textarea
-  id="wodNota"
-  placeholder="Escreve aqui a WOD do quadro à mão.
-Exemplo:
-A) AMRAP 7'
-- 5 Hang Clean
-- 5 Front Squat
-B) EMOM 6' @65%
-- 2 Clean
-- 2 Front Squat
-..."
-  style="margin-top:6px; width:100%; min-height:160px; resize:vertical;"
-></textarea>
-
-<button class="btn-primary" id="guardarNotaWod" style="margin-top:6px;">
-  Guardar anotação da WOD
-</button>
-
       <hr style="margin:12px 0; border:none; border-top:1px solid #b5b5b5;">
 
       <!-- Resumo rápido do dia (sempre visível) -->
@@ -5349,29 +5331,12 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("service-worker.js");
   });
 }
-// === Guardar anotação da WOD ===
-const wodNotaEl = document.getElementById("wodNota");
-const guardarNotaWodBtn = document.getElementById("guardarNotaWod");
-
-function saveWodNote() {
-  if (!wodNotaEl) return;
-  const texto = wodNotaEl.value.trim();
-  if (!texto) return;
-
-  const hoje = new Date().toISOString().slice(0, 10);
-
-  localStorage.setItem("wodNota_" + hoje, texto);
-  alert("Anotação da WOD guardada!");
-}
-
-if (guardarNotaWodBtn) {
-  guardarNotaWodBtn.addEventListener("click", saveWodNote);
-}
 
 </script>
 
 </body>
 </html>
+
 
 
 
