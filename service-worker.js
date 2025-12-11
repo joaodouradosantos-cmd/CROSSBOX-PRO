@@ -1,33 +1,36 @@
-// service-worker.js – CrossBox PRO (offline simples e seguro)
 
-const CACHE_NAME = "crossbox-pro-shell-v1";
+// service-worker-pro.js – CrossBox PRO
 
-// Ficheiros essenciais da app
-const APP_SHELL = [
-  "./",
-  "./index.html",
+// 🔁 sobe a versão sempre que alterares o SW
+const STATIC_CACHE = "crossbox-pro-static-v4";
+const RUNTIME_CACHE = "crossbox-pro-runtime-v4";
+
+// Em GitHub Pages é mais seguro tratar o "shell" como ./ (raiz da app)
+const APP_SHELL_URL = new URL("./", self.location).toString();
+
+const PRECACHE_URLS = [
+  "./", // raiz da app
   "./manifest.json",
   "./imagens/crossbox_logo.png",
   "./imagens/crossbox_logo-192.png",
   "./imagens/crossbox_logo-512.png"
-  // se no futuro criares ficheiros CSS/JS externos, adicionas aqui
 ];
 
-// INSTALL – pré-carrega o “esqueleto” da app
+// INSTALL – pré-cache do “app shell”
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
+    caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE_URLS))
   );
   self.skipWaiting();
 });
 
-// ACTIVATE – limpa caches antigas
+// ACTIVATE – limpeza de caches antigos
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
         keys.map((key) => {
-          if (key !== CACHE_NAME) {
+          if (key !== STATIC_CACHE && key !== RUNTIME_CACHE) {
             return caches.delete(key);
           }
         })
@@ -37,57 +40,63 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// FETCH – navegação + ficheiros estáticos
+// FETCH – navegação + assets
 self.addEventListener("fetch", (event) => {
-  const request = event.request;
+  const { request } = event;
 
   // Só tratamos GET
   if (request.method !== "GET") return;
 
   const url = new URL(request.url);
 
-  // 1) Navegações (abrir app, clicar ícone da PWA, etc.)
-  if (request.mode === "navigate") {
-    event.respondWith(handleNavigation(request));
+  // 1) Navegações (entrar na app / abrir atalho PWA / mudar de página)
+  const isNavigation =
+    request.mode === "navigate" ||
+    (request.headers.get("accept") || "").includes("text/html");
+
+  if (isNavigation) {
+    event.respondWith(handleNavigationRequest(request));
     return;
   }
 
-  // 2) Ficheiros do mesmo domínio (imagens, JS, CSS, etc.)
+  // 2) Pedidos do mesmo origin (imagens, JS, etc.)
   if (url.origin === self.location.origin) {
-    event.respondWith(cacheFirst(request));
+    // Imagens – cache-first
+    if (url.pathname.match(/\.(png|jpg|jpeg|gif|webp|svg|ico)$/i)) {
+      event.respondWith(cacheFirst(request));
+      return;
+    }
+
+    // Outros ficheiros estáticos – stale-while-revalidate
+    event.respondWith(staleWhileRevalidate(request));
     return;
   }
 
-  // 3) Pedidos externos – seguem para a rede normalmente
+  // 3) Requests externos – deixam seguir pela rede normalmente
 });
 
-// ---------- Estratégias ----------
+// -------- Estratégias --------
 
-async function handleNavigation(request) {
+async function handleNavigationRequest(request) {
   try {
-    // Online: tenta ir à rede
+    // Tenta sempre ir primeiro à rede (versão mais recente)
     const networkResponse = await fetch(request);
+
+    // Atualiza o app shell em cache sempre que houver resposta válida
+    const cache = await caches.open(STATIC_CACHE);
+    await cache.put(APP_SHELL_URL, networkResponse.clone());
+
     return networkResponse;
   } catch (err) {
-    // Offline: devolve SEMPRE o index.html em cache
-    const cache = await caches.open(CACHE_NAME);
-    const cachedIndex =
-      (await cache.match("./index.html")) || (await cache.match("./"));
-    if (cachedIndex) return cachedIndex;
-
-    // Se não houver nada em cache
-    return new Response(
-      "Estás offline e a app ainda não foi totalmente cacheada.",
-      {
-        status: 503,
-        headers: { "Content-Type": "text/plain; charset=utf-8" }
-      }
-    );
+    // Se falhar (offline, etc.), devolve o shell em cache (./)
+    const cache = await caches.open(STATIC_CACHE);
+    const cached = await cache.match(APP_SHELL_URL);
+    return cached || Response.error();
   }
 }
 
 async function cacheFirst(request) {
-  const cache = await caches.open(CACHE_NAME);
+  const cache = await caches.open(RUNTIME_CACHE);
   const cached = await cache.match(request);
   if (cached) return cached;
 
@@ -96,10 +105,27 @@ async function cacheFirst(request) {
     cache.put(request, response.clone());
     return response;
   } catch (err) {
-    // Sem cache e sem rede
-    return new Response(
-      "",
-      { status: 504, statusText: "Offline e sem cache para este recurso." }
-    );
+    return Response.error();
   }
+}
+
+async function staleWhileRevalidate(request) {
+  const cache = await caches.open(RUNTIME_CACHE);
+
+  const cachedPromise = cache.match(request);
+  const networkPromise = fetch(request)
+    .then((response) => {
+      cache.put(request, response.clone());
+      return response;
+    })
+    .catch(() => null);
+
+  const cached = await cachedPromise;
+  if (cached) {
+    networkPromise.catch(() => {});
+    return cached;
+  }
+
+  const network = await networkPromise;
+  return network || Response.error();
 }
