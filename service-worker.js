@@ -1,19 +1,16 @@
 // service-worker.js – CrossBox PRO (offline simples e seguro)
 
-// Muda a versão se alterares este ficheiro
 const CACHE_NAME = "crossbox-pro-shell-v1";
 
-// Ficheiros essenciais da app (ajusta se tiveres mais JS/CSS)
+// Ficheiros essenciais da app
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.json",
   "./imagens/crossbox_logo.png",
   "./imagens/crossbox_logo-192.png",
-  "./imagens/crossbox_logo-512.png",
-  "./style.css",      // se tiveres ficheiro de estilos
-  "./index.js",       // JS principal (troca pelo nome real)
-  "./scripts.js"      // outro JS, se existir
+  "./imagens/crossbox_logo-512.png"
+  // se no futuro criares ficheiros CSS/JS externos, adicionas aqui
 ];
 
 // INSTALL – pré-carrega o “esqueleto” da app
@@ -49,7 +46,7 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(request.url);
 
-  // 1) Navegações (abrir app, clicar no ícone da PWA, etc.)
+  // 1) Navegações (abrir app, clicar ícone da PWA, etc.)
   if (request.mode === "navigate") {
     event.respondWith(handleNavigation(request));
     return;
@@ -61,7 +58,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // 3) Pedidos externos – deixamos seguir normalmente
+  // 3) Pedidos externos – seguem para a rede normalmente
 });
 
 // ---------- Estratégias ----------
@@ -78,11 +75,14 @@ async function handleNavigation(request) {
       (await cache.match("./index.html")) || (await cache.match("./"));
     if (cachedIndex) return cachedIndex;
 
-    // Se, por algum motivo, não houver nada em cache, pelo menos mostra mensagem
-    return new Response("Estás offline e a app ainda não foi totalmente cacheada.", {
-      status: 503,
-      headers: { "Content-Type": "text/plain; charset=utf-8" }
-    });
+    // Se não houver nada em cache
+    return new Response(
+      "Estás offline e a app ainda não foi totalmente cacheada.",
+      {
+        status: 503,
+        headers: { "Content-Type": "text/plain; charset=utf-8" }
+      }
+    );
   }
 }
 
@@ -96,7 +96,10 @@ async function cacheFirst(request) {
     cache.put(request, response.clone());
     return response;
   } catch (err) {
-    // Se falhar e não houver cache, devolve a resposta da rede (pode falhar, mas não mata a navegação)
-    return fetch(request);
+    // Sem cache e sem rede
+    return new Response(
+      "",
+      { status: 504, statusText: "Offline e sem cache para este recurso." }
+    );
   }
 }
