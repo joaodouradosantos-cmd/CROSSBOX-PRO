@@ -1,7 +1,7 @@
 // service-worker.js – CrossBox PRO (offline simples e seguro)
 
 // Muda a versão se alterares este ficheiro
-const CACHE_NAME = "crossbox-pro-shell-v1";
+const CACHE_NAME = "crossbox-pro-shell-v2";
 
 // Ficheiros essenciais da app (ajusta se tiveres mais JS/CSS)
 const APP_SHELL = [
@@ -100,3 +100,4 @@ async function cacheFirst(request) {
     return fetch(request);
   }
 }
+
