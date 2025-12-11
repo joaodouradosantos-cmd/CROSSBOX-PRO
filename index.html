@@ -916,6 +916,23 @@
             <option value="Chipper">Chipper</option>
             <option value="Carga total">Carga total</option>
           </select>
+                  </div> <!-- fim do .field Formato -->
+      </div>  <!-- fim da form-row parte/formato -->
+
+      <!-- Botões rápidos: adicionar direto à parte A/B/C/D/Outro -->
+      <div class="form-row" style="margin-top:4px;">
+        <div class="field" style="flex:1 1 100%;">
+          <label>Adicionar exercício diretamente em</label>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="btn-secondary" data-parte-btn="A">A</button>
+            <button type="button" class="btn-secondary" data-parte-btn="B">B</button>
+            <button type="button" class="btn-secondary" data-parte-btn="C">C</button>
+            <button type="button" class="btn-secondary" data-parte-btn="D">D</button>
+            <button type="button" class="btn-secondary" data-parte-btn="Outro">Outro</button>
+          </div>
+        </div>
+      </div>
+
         </div>
       </div>
 
@@ -2375,6 +2392,7 @@ const treinoExEl = document.getElementById("treinoExercicio");
 const treinoExSearchEl = document.getElementById("treinoExercicioSearch");
 const treinoParteEl = document.getElementById("treinoParte");
 const treinoFormatoEl = document.getElementById("treinoFormato");
+const quickParteBtns = document.querySelectorAll("[data-parte-btn]");
 const treinoRondasEl = document.getElementById("treinoRondas");
 const treinoRepsEl = document.getElementById("treinoReps");
 const treinoPesoEl = document.getElementById("treinoPeso");
@@ -4481,6 +4499,19 @@ function renderTreinos() {
 if (treinoAddBtn) {
   treinoAddBtn.addEventListener("click", addTreinoEntry);
 }
+  // Botões rápidos: adicionar directamente em A/B/C/D/Outro
+if (quickParteBtns && quickParteBtns.length) {
+  quickParteBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const parte = btn.getAttribute("data-parte-btn") || "";
+      if (treinoParteEl) {
+        treinoParteEl.value = parte; // define a parte automaticamente
+      }
+      addTreinoEntry(); // reutiliza a função que já grava o treino
+    });
+  });
+}
+
 
 if (treinoDataEl) {
   treinoDataEl.addEventListener("change", () => {
@@ -5341,6 +5372,7 @@ if (guardarNotaWodBtn) {
 
 </body>
 </html>
+
 
 
 
