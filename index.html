@@ -975,44 +975,24 @@
       </div>
 
       <hr style="margin:10px 0 6px; border:none; border-top:1px solid #b5b5b5;">
-
-     <h4 style="margin:0 0 4px;">Preenchimento automático com foto do quadro</h4>
-
-<div class="form-row">
-  <button class="btn-secondary" id="wodPhotoBtn" type="button">
-    📷 Tirar / escolher foto do quadro
-  </button>
-</div>
-
-<!-- Novo: um input para câmara e outro para galeria -->
-<input
-  type="file"
-  id="wodPhotoCamera"
-  accept="image/*"
-  capture="environment"
-  style="display:none;"
-/>
-<input
-  type="file"
-  id="wodPhotoGallery"
-  accept="image/*"
-  style="display:none;"
-/>
-
-<div class="helper-text" id="wodPhotoStatus">
-  Tira uma foto ao quadro com o WOD. O texto é lido automaticamente e aparece abaixo
-  para conferires e corrigires antes de converter em registos no WOD.
-</div>
+<h4 style="margin:0 0 4px;">Anotação da WOD do quadro</h4>
 
 <textarea
-  id="wodOcrPreview"
-  rows="4"
-  placeholder="Aqui vais ver o texto lido do quadro (OCR). Podes corrigir à mão antes de converter em registos no WOD."
-  style="margin-top:6px; width:100%; min-height:90px; max-height:260px; overflow-y:hidden; resize:none;"
+  id="wodNota"
+  placeholder="Escreve aqui a WOD do quadro à mão.
+Exemplo:
+A) AMRAP 7'
+- 5 Hang Clean
+- 5 Front Squat
+B) EMOM 6' @65%
+- 2 Clean
+- 2 Front Squat
+..."
+  style="margin-top:6px; width:100%; min-height:160px; resize:vertical;"
 ></textarea>
 
-<button class="btn-primary" id="wodOcrApplyBtn" style="margin-top:6px;">
-  Converter texto do quadro em WOD
+<button class="btn-primary" id="guardarNotaWod" style="margin-top:6px;">
+  Guardar anotação da WOD
 </button>
 
       <hr style="margin:12px 0; border:none; border-top:1px solid #b5b5b5;">
@@ -5338,11 +5318,30 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("service-worker.js");
   });
 }
+// === Guardar anotação da WOD ===
+const wodNotaEl = document.getElementById("wodNota");
+const guardarNotaWodBtn = document.getElementById("guardarNotaWod");
+
+function saveWodNote() {
+  if (!wodNotaEl) return;
+  const texto = wodNotaEl.value.trim();
+  if (!texto) return;
+
+  const hoje = new Date().toISOString().slice(0, 10);
+
+  localStorage.setItem("wodNota_" + hoje, texto);
+  alert("Anotação da WOD guardada!");
+}
+
+if (guardarNotaWodBtn) {
+  guardarNotaWodBtn.addEventListener("click", saveWodNote);
+}
 
 </script>
 
 </body>
 </html>
+
 
 
 
