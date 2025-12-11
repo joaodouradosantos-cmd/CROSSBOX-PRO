@@ -905,6 +905,20 @@
             </select>
           </div>
 
+        <!-- Botões rápidos para adicionar directamente em A/B/C/D/Outro -->
+        <div class="form-row" style="margin-top:4px;">
+          <div class="field" style="flex:1 1 100%;">
+            <label>Adicionar exercício directamente em</label>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button type="button" class="btn-secondary" data-parte-btn="A">A</button>
+              <button type="button" class="btn-secondary" data-parte-btn="B">B</button>
+              <button type="button" class="btn-secondary" data-parte-btn="C">C</button>
+              <button type="button" class="btn-secondary" data-parte-btn="D">D</button>
+              <button type="button" class="btn-secondary" data-parte-btn="Outro">Outro</button>
+            </div>
+          </div>
+        </div>
+
         <!-- GRELLA 3x2 DO WOD -->
         <div class="wod-grid">
           <div class="field">
@@ -2315,6 +2329,7 @@ const treinoExEl = document.getElementById("treinoExercicio");
 const treinoExSearchEl = document.getElementById("treinoExercicioSearch");
 const treinoParteEl = document.getElementById("treinoParte");
 const treinoFormatoEl = document.getElementById("treinoFormato");
+const quickParteBtns = document.querySelectorAll("[data-parte-btn]");
 const treinoRondasEl = document.getElementById("treinoRondas");
 const treinoRepsEl = document.getElementById("treinoReps");
 const treinoPesoEl = document.getElementById("treinoPeso");
@@ -3977,6 +3992,19 @@ function renderTreinos() {
 
 if (treinoAddBtn) {
   treinoAddBtn.addEventListener("click", addTreinoEntry);
+}
+
+// Botões rápidos A/B/C/D/Outro: definem a parte e reutilizam a mesma função
+if (quickParteBtns && quickParteBtns.length) {
+  quickParteBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const parte = btn.getAttribute("data-parte-btn") || "";
+      if (treinoParteEl) {
+        treinoParteEl.value = parte;
+      }
+      addTreinoEntry();
+    });
+  });
 }
 
 if (treinoDataEl) {
