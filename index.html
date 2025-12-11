@@ -905,20 +905,6 @@
             </select>
           </div>
 
-        <!-- Botões rápidos para adicionar directamente em A/B/C/D/Outro -->
-        <div class="form-row" style="margin-top:4px;">
-          <div class="field" style="flex:1 1 100%;">
-            <label>Adicionar exercício directamente em</label>
-            <div style="display:flex; gap:6px; flex-wrap:wrap;">
-              <button type="button" class="btn-secondary" data-parte-btn="A">A</button>
-              <button type="button" class="btn-secondary" data-parte-btn="B">B</button>
-              <button type="button" class="btn-secondary" data-parte-btn="C">C</button>
-              <button type="button" class="btn-secondary" data-parte-btn="D">D</button>
-              <button type="button" class="btn-secondary" data-parte-btn="Outro">Outro</button>
-            </div>
-          </div>
-        </div>
-
         <!-- GRELLA 3x2 DO WOD -->
         <div class="wod-grid">
           <div class="field">
@@ -975,38 +961,7 @@
 
 <hr style="margin:10px 0 6px; border:none; border-top:1px solid #b5b5b5;">
 
-<h4 style="margin:0 0 4px;">Preenchimento automático com foto do quadro</h4>
-
-<div class="form-row">
-  <button class="btn-secondary" id="wodPhotoBtn">📷 Tirar / escolher foto do quadro</button>
-  <input
-    type="file"
-    id="wodPhotoInput"
-    accept="image/*"
-    capture="environment"
-    style="display:none;"
-  />
-</div>
-
-<div class="helper-text" id="wodPhotoStatus">
-  Tira uma foto ao quadro com o WOD. O texto é lido automaticamente e aparece abaixo
-  para conferires e corrigires antes de converter em registos no WOD.
-</div>
-
-<textarea
-  id="wodOcrPreview"
-  rows="3"
-  placeholder="Aqui vais ver o texto lido do quadro (OCR). Podes corrigir à mão antes de converter em registos no WOD."
-  style="margin-top:6px; width:100%; resize:vertical;"
-></textarea>
-
-<button class="btn-primary" id="wodOcrApplyBtn" style="margin-top:6px;">
-  Converter texto do quadro em WOD
-</button>
-
-        
-
-        <div class="card">
+<div class="card">
          <h3 style="margin-top:0; margin-bottom:8px;">Registo e histórico</h3>
   
         <!-- Resumo rápido do dia (sempre visível) -->
@@ -2329,7 +2284,6 @@ const treinoExEl = document.getElementById("treinoExercicio");
 const treinoExSearchEl = document.getElementById("treinoExercicioSearch");
 const treinoParteEl = document.getElementById("treinoParte");
 const treinoFormatoEl = document.getElementById("treinoFormato");
-const quickParteBtns = document.querySelectorAll("[data-parte-btn]");
 const treinoRondasEl = document.getElementById("treinoRondas");
 const treinoRepsEl = document.getElementById("treinoReps");
 const treinoPesoEl = document.getElementById("treinoPeso");
@@ -3994,19 +3948,6 @@ if (treinoAddBtn) {
   treinoAddBtn.addEventListener("click", addTreinoEntry);
 }
 
-// Botões rápidos A/B/C/D/Outro: definem a parte e reutilizam a mesma função
-if (quickParteBtns && quickParteBtns.length) {
-  quickParteBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const parte = btn.getAttribute("data-parte-btn") || "";
-      if (treinoParteEl) {
-        treinoParteEl.value = parte;
-      }
-      addTreinoEntry();
-    });
-  });
-}
-
 if (treinoDataEl) {
   treinoDataEl.addEventListener("change", () => {
     renderTreinos();
@@ -4818,7 +4759,7 @@ atualizarRankingsMensais();// rankings
 ---------------------------------------------------- */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
-    navigator.serviceWorker.register("service-worker.js");
+    navigator.serviceWorker.register("./service-worker.js");
   });
 }
 
