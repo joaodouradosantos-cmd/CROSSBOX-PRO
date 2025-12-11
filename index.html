@@ -3935,19 +3935,93 @@ async function handleWodPhotoFile(file) {
   }
 }
 
-/* ===== Parser do texto do quadro → entradas de WOD ===== */
+// ===== Conversor avançado do texto do quadro → WOD (modo misto) =====
 
-function buildTreinoFromLine(line, date, parteAtual) {
+// Alcunhas / sinónimos usados no quadro → nome base do exercício
+const WOD_ALIASES = {
+  "ring row": "Ring Row",
+  "ring rows": "Ring Row",
+  "plank/pike": "Plank Pike",
+  "plank pike": "Plank Pike",
+  "plank jump": "Plank Jump",
+  "tuck roll": "Tuck Roll",
+  "push ups": "Push Up",
+  "push up": "Push Up",
+  "pull ups": "Pull Up",
+  "pull up": "Pull Up",
+  "chin ups": "Chin Up",
+  "chin up": "Chin Up",
+  "muscle ups": "Muscle Up",
+  "muscle up": "Muscle Up",
+  "wall walks": "Wall Walk",
+  "wall walk": "Wall Walk",
+  "handstand hold": "Handstand Hold",
+  "handstand push up": "Handstand Push Up",
+  "handstand push-up": "Handstand Push Up",
+  "hspu": "Handstand Push Up",
+  "box jump over": "Box Jump Over",
+  "box jump": "Box Jump",
+  "double unders": "Double Under",
+  "leg raises": "Leg Raise",
+  "leg raise": "Leg Raise",
+  "v-ups": "V-Up",
+  "v ups": "V-Up",
+  "wall balls": "Wall Ball",
+  "wall ball": "Wall Ball",
+  "pvc pass through": "PVC Pass Through",
+  "pvc overhead squat": "PVC Overhead Squat",
+  "sotts press": "Sotts Press",
+  "dynamic squat stretch": "Dynamic Squat Stretch",
+  "dinamic squat stretch": "Dynamic Squat Stretch",
+  "lock lat pull": "Lat Pulldown",
+  "lat pull": "Lat Pulldown",
+  "bar pull down": "Lat Pulldown",
+  "bar pull": "Lat Pulldown",
+  "bar transition": "Bar Muscle Up",
+  "front squat": "Front Squat",
+  "back squat": "Back Squat",
+  "overhead squat": "Overhead Squat",
+  "oh squat": "Overhead Squat",
+  "hang power snatch": "Hang Power Snatch",
+  "power snatch": "Power Snatch",
+  "hang clean": "Hang Clean",
+  "power clean": "Power Clean",
+  "snatch deadlift": "Snatch Deadlift",
+  "shoulder press": "Shoulder Press",
+  "push press": "Push Press",
+  "chest press": "Bench Press",
+  "ring dips": "Ring Dip",
+  "ring dip": "Ring Dip",
+  "thrusters": "Thruster",
+  "db/kb thrusters": "Thruster",
+  "kb overhead lunge": "Kettlebell Lunges",
+  "kb box step up": "Goblet Squat"
+};
+
+// Cria UM exercício a partir de UMA linha
+function buildTreinoFromLine(line, date, parteAtual, meta) {
   if (!line) return null;
   const texto = String(line).trim();
   if (!texto) return null;
 
+  meta = meta || {};
+
   const lower = texto.toLowerCase();
 
-  // 1) tentar encontrar exercício pelo nome em EN
+  // 1) DETETAR EXERCÍCIO
   let ex = null;
+  let isFreeText = false;
 
-  if (typeof ALL_EXERCISES !== "undefined" && Array.isArray(ALL_EXERCISES)) {
+  // 1a) pelas alcunhas
+  for (const key in WOD_ALIASES) {
+    if (lower.includes(key)) {
+      ex = WOD_ALIASES[key];
+      break;
+    }
+  }
+
+  // 1b) pelo nome EN em ALL_EXERCISES
+  if (!ex && typeof ALL_EXERCISES !== "undefined" && Array.isArray(ALL_EXERCISES)) {
     for (const nome of ALL_EXERCISES) {
       if (lower.includes(nome.toLowerCase())) {
         ex = nome;
@@ -3956,7 +4030,7 @@ function buildTreinoFromLine(line, date, parteAtual) {
     }
   }
 
-  // 2) se não encontrar em EN, tenta pela designação PT do EXER_INFO
+  // 1c) pela designação PT em EXER_INFO
   if (!ex && typeof EXER_INFO !== "undefined" && Array.isArray(EXER_INFO)) {
     for (const info of EXER_INFO) {
       if (lower.includes(info.pt.toLowerCase())) {
@@ -3966,51 +4040,92 @@ function buildTreinoFromLine(line, date, parteAtual) {
     }
   }
 
+  // 1d) se nada bater, entra como texto livre (técnica)
   if (!ex) {
-    return null;
+    const semBullet = texto.replace(/^[-•]\s*/, "");
+    if (!semBullet) return null;
+    ex = semBullet;
+    isFreeText = true;
   }
 
-  // séries / reps (5x5, 4 x 10, etc.)
-  let rondas = 1;
-  let reps = 0;
+  // 2) RONDAS E REPS
+  let rondas = (meta.defaultRondas != null) ? meta.defaultRondas : 1;
+  let reps = (meta.defaultReps != null) ? meta.defaultReps : 0;
 
+  // 2a) "5x5", "4 × 10"
   const mSeries = texto.match(/(\d+)\s*[x×]\s*(\d+)/i);
   if (mSeries) {
-    rondas = parseInt(mSeries[1], 10) || 1;
-    reps = parseInt(mSeries[2], 10) || 0;
+    const s = parseInt(mSeries[1], 10);
+    const r = parseInt(mSeries[2], 10);
+    if (!isNaN(s) && s > 0) rondas = s;
+    if (!isNaN(r) && r > 0) reps = r;
   } else {
-    const mReps = texto.match(/(\d+)\s*(reps|repetições|repeticoes|rep)/i);
+    // 2b) "... 10 reps"
+    const mReps = texto.match(/(\d+)\s*(reps?|repetições|repeticoes|rep)/i);
     if (mReps) {
-      reps = parseInt(mReps[1], 10) || 0;
+      const r = parseInt(mReps[1], 10);
+      if (!isNaN(r) && r > 0) reps = r;
     }
   }
 
-  // percentagem do 1RM ou peso direto
+  // 2c) número inicial da linha como reps (se não for segundos "20\"")
+  if (!reps) {
+    const temAspas = /["”“′’]/.test(texto);
+    if (!temAspas) {
+      const mInicio = texto.match(/^[-•]?\s*(\d+)\s+[^\d]/);
+      if (mInicio) {
+        const r = parseInt(mInicio[1], 10);
+        if (!isNaN(r) && r > 0) reps = r;
+      }
+    }
+  }
+
+  if (!reps) reps = 1;
+  if (!rondas) rondas = 1;
+
+  // 3) PERCENTAGEM / PESO
   let peso = 0;
   let perc1rm = null;
 
   const mPerc = texto.match(/(\d{1,3})\s*%/);
-  if (mPerc && dataRm[ex]) {
+  if (mPerc && typeof dataRm !== "undefined" && dataRm[ex]) {
     const p = parseFloat(mPerc[1]);
     if (!isNaN(p) && p > 0) {
       perc1rm = p / 100;
       peso = dataRm[ex] * perc1rm;
     }
   } else {
-    const mPeso = texto.match(/(\d+(?:[\.,]\d+)?)\s*(kg|kgs|quilo|quilos)\b/i);
-    if (mPeso) {
-      const val = parseFloat(mPeso[1].replace(",", "."));
-      if (!isNaN(val)) {
-        peso = val;
-        if (dataRm[ex] && dataRm[ex] > 0) {
+    // 3a) dois pesos: "40/60kg" → usa o MAIOR (masculino)
+    const mPesoDuplo = texto.match(
+      /(\d+(?:[\.,]\d+)?)\s*\/\s*(\d+(?:[\.,]\d+)?)\s*(kg|kgs|quilo|quilos)\b/i
+    );
+    if (mPesoDuplo) {
+      const v1 = parseFloat(mPesoDuplo[1].replace(",", "."));
+      const v2 = parseFloat(mPesoDuplo[2].replace(",", "."));
+      const maior = Math.max(isNaN(v1) ? 0 : v1, isNaN(v2) ? 0 : v2);
+      if (maior > 0) {
+        peso = maior;
+        if (typeof dataRm !== "undefined" && dataRm[ex] && dataRm[ex] > 0) {
           perc1rm = peso / dataRm[ex];
+        }
+      }
+    } else {
+      // 3b) peso simples "40kg"
+      const mPeso = texto.match(/(\d+(?:[\.,]\d+)?)\s*(kg|kgs|quilo|quilos)\b/i);
+      if (mPeso) {
+        const val = parseFloat(mPeso[1].replace(",", "."));
+        if (!isNaN(val)) {
+          peso = val;
+          if (typeof dataRm !== "undefined" && dataRm[ex] && dataRm[ex] > 0) {
+            perc1rm = peso / dataRm[ex];
+          }
         }
       }
     }
   }
 
-  // formato (AMRAP, EMOM, For Time...)
-  let formato = "";
+  // 4) FORMATO (AMRAP, EMOM, For Time...)
+  let formato = meta.formato || "";
   const mFormato = texto.match(/\b(AMRAP|EMOM|For Time|Chipper|For\s+time)\b/i);
   if (mFormato) {
     formato = mFormato[1]
@@ -4018,7 +4133,7 @@ function buildTreinoFromLine(line, date, parteAtual) {
       .replace(/^for time$/i, "For Time");
   }
 
-  // distância
+  // 5) DISTÂNCIA
   let distanciaKm = 0;
   const mDist = texto.match(/(\d+(?:[\.,]\d+)?)\s*(km|kilometros|quilometros|m)\b/i);
   if (mDist) {
@@ -4029,8 +4144,18 @@ function buildTreinoFromLine(line, date, parteAtual) {
     }
   }
 
-  const tipo = inferTipo(ex);
-  const carga = calcCarga({ peso, reps, rondas });
+  // 6) TIPO E CARGA
+  let tipo = "técnica";
+  if (!isFreeText && typeof inferTipo === "function") {
+    tipo = inferTipo(ex);
+  }
+
+  let carga = 0;
+  if (typeof calcCarga === "function") {
+    carga = calcCarga({ peso, reps, rondas });
+  } else {
+    carga = peso * reps * rondas;
+  }
 
   return {
     date,
@@ -4042,12 +4167,13 @@ function buildTreinoFromLine(line, date, parteAtual) {
     reps,
     peso,
     tempo: "",
+    distanciaKm,
     carga,
-    perc1rm,
-    distanciaKm
+    perc1rm
   };
 }
 
+// Converte TODO o texto do quadro em vários exercícios
 function applyOcrToWod() {
   if (!wodOcrPreviewEl) return;
   const raw = (wodOcrPreviewEl.value || "").trim();
@@ -4069,26 +4195,75 @@ function applyOcrToWod() {
 
   if (!linhas.length) {
     if (wodPhotoStatusEl) {
-      wodPhotoStatusEl.textContent = "O texto do quadro está vazio depois de limpar as linhas.";
+      wodPhotoStatusEl.textContent =
+        "O texto do quadro está vazio depois de limpar as linhas.";
     }
     return;
   }
 
   let parteAtual = "";
   let criados = 0;
+  const parteMeta = {};
 
   linhas.forEach(linha => {
+    // 1) cabeçalho de parte (A, B, C, D, E)
     const mParte =
-      linha.match(/^parte\s+([A-D])\b/i) ||
-      linha.match(/^([A-D])[\)\.\:\-]\s*/i);
+      linha.match(/^parte\s+([A-E])\b/i) ||
+      linha.match(/^([A-E])[\)\.\:\-]\s*/i);
 
     if (mParte) {
       parteAtual = mParte[1].toUpperCase();
+      if (!parteMeta[parteAtual]) parteMeta[parteAtual] = {};
+      const meta = parteMeta[parteAtual];
+      const resto = linha.slice(mParte[0].length).trim().toLowerCase();
+
+      // formato da parte
+      if (/amrap/.test(resto)) {
+        meta.formato = "AMRAP";
+      } else if (/emom/.test(resto)) {
+        meta.formato = "EMOM";
+      } else if (/time\s*cap|tc\b/.test(resto)) {
+        meta.formato = "For Time";
+      } else if (/cada|coda/.test(resto)) {
+        meta.formato = "A cada X′ × Y";
+      } else if (/on\s*\/\s*.*off/.test(resto)) {
+        meta.formato = "Intervalos";
+      }
+
+      // séries tipo "5x5"
+      const mSeriesHeader = resto.match(/(\d+)\s*[x×]\s*(\d+)/i);
+      if (mSeriesHeader) {
+        const ser = parseInt(mSeriesHeader[1], 10);
+        const rep = parseInt(mSeriesHeader[2], 10);
+        if (!isNaN(ser)) parteMeta[parteAtual].defaultRondas = ser;
+        if (!isNaN(rep)) parteMeta[parteAtual].defaultReps = rep;
+      }
+
+      // "x 3", "×4" no fim → rondas
+      const mRondasX = resto.match(/[x×]\s*(\d+)\b/i);
+      if (mRondasX) {
+        const r = parseInt(mRondasX[1], 10);
+        if (!isNaN(r)) parteMeta[parteAtual].defaultRondas = r;
+      }
+
+      // "3 rondas"
+      const mRondasPalavra = resto.match(/(\d+)\s*(rondas?|rounds?|rds?)/i);
+      if (mRondasPalavra) {
+        const r = parseInt(mRondasPalavra[1], 10);
+        if (!isNaN(r)) parteMeta[parteAtual].defaultRondas = r;
+      }
+
       return;
     }
 
-    const entry = buildTreinoFromLine(linha, date, parteAtual);
+    // 2) linha de exercício
+    const meta = parteAtual ? (parteMeta[parteAtual] || {}) : {};
+    const entry = buildTreinoFromLine(linha, date, parteAtual, meta);
+
     if (entry) {
+      if (!Array.isArray(treinos)) {
+        treinos = [];
+      }
       treinos.unshift(entry);
       criados++;
     }
@@ -4097,18 +4272,21 @@ function applyOcrToWod() {
   if (!criados) {
     if (wodPhotoStatusEl) {
       wodPhotoStatusEl.textContent =
-        "O texto do quadro foi lido, mas não foi possível identificar exercícios conhecidos. Ajusta o texto à mão e tenta de novo.";
+        "O texto do quadro foi lido, mas não foi possível identificar exercícios úteis. Ajusta o texto à mão e tenta de novo.";
     }
     return;
   }
 
-  saveTreinos();
-  registerBackupMeta("WOD criado a partir de foto do quadro");
-  renderTreinos();
+  if (typeof saveTreinos === "function") saveTreinos();
+  if (typeof registerBackupMeta === "function") {
+    registerBackupMeta("WOD criado a partir de foto do quadro");
+  }
+  if (typeof renderTreinos === "function") renderTreinos();
 
   if (wodPhotoStatusEl) {
     wodPhotoStatusEl.textContent =
-      "Foram criados " + criados + " blocos no WOD a partir do quadro. Confere e ajusta manualmente se necessário.";
+      "Foram criados " + criados +
+      " blocos no WOD a partir do quadro. Confere e ajusta manualmente se necessário.";
   }
 }
 
@@ -5165,6 +5343,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
