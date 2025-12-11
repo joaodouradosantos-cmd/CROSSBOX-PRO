@@ -1,7 +1,9 @@
-// service-worker.js – CrossBox PRO (offline simples e seguro)
+// service-worker.js – CrossBox PRO (offline seguro, sem páginas brancas)
 
-// Muda a versão se alterares este ficheiro
-const CACHE_NAME = "crossbox-pro-shell-v2";
+// Sempre que fizeres alterações importantes ao index.html ou à estrutura,
+// incrementa esta versão (ex.: v1 → v2 → v3...)
+const CACHE_VERSION = "v2";
+const CACHE_NAME = `crossbox-pro-shell-${CACHE_VERSION}`;
 
 // Ficheiros essenciais da app (ajusta se tiveres mais JS/CSS)
 const APP_SHELL = [
@@ -11,9 +13,9 @@ const APP_SHELL = [
   "./imagens/crossbox_logo.png",
   "./imagens/crossbox_logo-192.png",
   "./imagens/crossbox_logo-512.png",
-  "./style.css",      // se tiveres ficheiro de estilos
-  "./index.js",       // JS principal (troca pelo nome real)
-  "./scripts.js"      // outro JS, se existir
+  "./style.css",   // se existir
+  "./index.js",    // se existir
+  "./scripts.js"   // se existir
 ];
 
 // INSTALL – pré-carrega o “esqueleto” da app
@@ -30,7 +32,8 @@ self.addEventListener("activate", (event) => {
     caches.keys().then((keys) =>
       Promise.all(
         keys.map((key) => {
-          if (key !== CACHE_NAME) {
+          // Apaga qualquer cache antiga de versões anteriores
+          if (key !== CACHE_NAME && key.startsWith("crossbox-pro-shell-")) {
             return caches.delete(key);
           }
         })
@@ -66,26 +69,36 @@ self.addEventListener("fetch", (event) => {
 
 // ---------- Estratégias ----------
 
+// Navegação: tenta SEMPRE rede primeiro; se falhar, usa index.html em cache
 async function handleNavigation(request) {
   try {
-    // Online: tenta ir à rede
     const networkResponse = await fetch(request);
+
+    // Se correu bem, atualiza o cache do index.html em background
+    const cache = await caches.open(CACHE_NAME);
+    cache.put("./index.html", networkResponse.clone());
+
     return networkResponse;
   } catch (err) {
-    // Offline: devolve SEMPRE o index.html em cache
+    // Offline ou falha de rede → usa index.html em cache
     const cache = await caches.open(CACHE_NAME);
     const cachedIndex =
       (await cache.match("./index.html")) || (await cache.match("./"));
     if (cachedIndex) return cachedIndex;
 
-    // Se, por algum motivo, não houver nada em cache, pelo menos mostra mensagem
-    return new Response("Estás offline e a app ainda não foi totalmente cacheada.", {
-      status: 503,
-      headers: { "Content-Type": "text/plain; charset=utf-8" }
-    });
+    // Se, por algum motivo, não houver nada em cache,
+    // devolve uma mensagem simples em vez de ficar tudo em branco
+    return new Response(
+      "Estás offline e a app ainda não foi totalmente cacheada.",
+      {
+        status: 503,
+        headers: { "Content-Type": "text/plain; charset=utf-8" }
+      }
+    );
   }
 }
 
+// Ficheiros estáticos: cache primeiro, rede depois
 async function cacheFirst(request) {
   const cache = await caches.open(CACHE_NAME);
   const cached = await cache.match(request);
@@ -100,4 +113,3 @@ async function cacheFirst(request) {
     return fetch(request);
   }
 }
-
