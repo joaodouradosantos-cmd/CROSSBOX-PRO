@@ -4756,16 +4756,16 @@ atualizarRankingsMensais();// rankings
 /* ---------------------------------------------------
    SERVICE WORKER
 ---------------------------------------------------- */
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", function () {
-    navigator.serviceWorker.register("./service-worker.js?v=3");
-  });
-}
-
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./service-worker.js?v=4", { scope: "./" });
+  }
 </script>
+
 
 </body>
 </html>
+
 
 
 
