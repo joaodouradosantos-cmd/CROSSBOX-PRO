@@ -1,6 +1,6 @@
 // service-worker.js – CrossBox PRO (offline seguro, sem páginas brancas)
 // Versão do cache: incrementa sempre que alterares o index/manifest/estrutura
-const CACHE_VERSION = "v3";
+const CACHE_VERSION = "v5";
 const CACHE_NAME = `crossbox-pro-shell-${CACHE_VERSION}`;
 
 // “Esqueleto” mínimo (não metas ficheiros que possam não existir, para evitar falhas no install)
@@ -124,4 +124,5 @@ async function cacheFirst(request) {
     });
   }
 }
+
 
