@@ -4752,20 +4752,19 @@ renderPerformance();       // desempenho
 renderReservas();          // reservas
 atualizarRankingsMensais();// rankings
 
-
 /* ---------------------------------------------------
    SERVICE WORKER
 ---------------------------------------------------- */
-<script>
+
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function () {
       navigator.serviceWorker.register("./service-worker.js?v=4", { scope: "./" });
     });
   }
-</script>
-
+        
 </body>
 </html>
+
 
 
 
