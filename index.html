@@ -4720,6 +4720,7 @@ if (reservasBtn && reservasSection) {
 }
 
 
+<script>
 /* ---------------------------------------------------
    ARRANQUE DA APP (sequência segura)
 ---------------------------------------------------- */
@@ -4730,7 +4731,6 @@ if (!Array.isArray(treinosTmp)) {
   treinosTmp = [];
   localStorage.setItem(STORAGE_TREINO, JSON.stringify(treinosTmp));
 }
-// NOTA: o teu código original usa "treinos" acima — preserva-o
 
 // iniciar selects e dados
 initSelects();
@@ -4748,23 +4748,23 @@ if (treinoDataEl && !treinoDataEl.value) {
 renderTreinos();          // mostra WOD do dia
 updateBackupInfo();       // estado do backup
 renderGuiaExercicios();   // guia
-renderPerformance();       // desempenho
-renderReservas();          // reservas
+renderPerformance();      // desempenho
+renderReservas();         // reservas
 atualizarRankingsMensais();// rankings
 
 /* ---------------------------------------------------
    SERVICE WORKER
 ---------------------------------------------------- */
 
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function () {
-      navigator.serviceWorker.register("./service-worker.js?v=4", { scope: "./" });
-    });
-  }
- </script>     
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./service-worker.js?v=4", { scope: "./" });
+  });
+}
+</script>
+
 </body>
 </html>
-
 
 
 
