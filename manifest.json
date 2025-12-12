@@ -1,7 +1,8 @@
 {
   "name": "CrossBox PRO",
-  "start_url": "/CROSSBOX-PRO/?v=4",
-  "scope": "/CROSSBOX-PRO/",
+  "short_name": "CrossBox PRO",
+  "start_url": "./?v=4",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#141710",
   "theme_color": "#262f1c",
@@ -18,7 +19,5 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "scope": "./"
+  ]
 }
-
