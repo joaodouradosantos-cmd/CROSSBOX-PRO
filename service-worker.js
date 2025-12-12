@@ -7,7 +7,8 @@ const CACHE_NAME = `crossbox-pro-shell-${CACHE_VERSION}`;
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./manifest.json"
+  "./manifest.json",
+  "./imagens/crossbox"
 ];
 
 // Recursos opcionais (se existirem, cacheamos; se não existirem, ignoramos sem rebentar a app)
@@ -123,3 +124,4 @@ async function cacheFirst(request) {
     });
   }
 }
+
