@@ -1,12 +1,12 @@
-/* CrossBox PRO – Service Worker (v5)
+/* CrossBox PRO – Service Worker (v6)
    Cache simples + Network-first para navegação
 */
-const CACHE_NAME = "crossbox-pro-v5";
+const CACHE_NAME = "crossbox-pro-v6";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./app.js?v=5",
-  "./manifest.json?v=5",
+  "./manifest.json?v=6",
   "./imagens/crossbox_logo-192.png",
   "./imagens/crossbox_logo-512.png"
 ];
@@ -69,3 +69,4 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
