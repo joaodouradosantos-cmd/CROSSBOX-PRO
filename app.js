@@ -1041,6 +1041,8 @@ const wodPhotoInput = document.getElementById("wodPhotoInput");
 const wodPhotoStatusEl = document.getElementById("wodPhotoStatus");
 const wodOcrPreviewEl = document.getElementById("wodOcrPreview");
 const wodOcrApplyBtn = document.getElementById("wodOcrApplyBtn");
+renderQuadroWodDia(treinoData.value);
+
   
 
 /* Chips de resumo do dia */
@@ -3585,4 +3587,78 @@ if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
     navigator.serviceWorker.register("./service-worker.js?v=5", { scope: "./" });
   });
+}
+function renderQuadroWodDia(dataSelecionada) {
+  const card = document.getElementById("wodQuadroCard");
+  const dataDiv = document.getElementById("wodQuadroData");
+  const conteudo = document.getElementById("wodQuadroConteudo");
+
+  const treinos = JSON.parse(localStorage.getItem("treinos")) || [];
+  const doDia = treinos.filter(t => t.data === dataSelecionada);
+
+  if (doDia.length === 0) {
+    card.style.display = "none";
+    return;
+  }
+
+  card.style.display = "block";
+  conteudo.innerHTML = "";
+
+  dataDiv.textContent = `WOD — ${new Date(dataSelecionada).toLocaleDateString("pt-PT")}`;
+
+  const grupos = {};
+
+  doDia.forEach(t => {
+    if (!grupos[t.parte]) grupos[t.parte] = [];
+    grupos[t.parte].push(t);
+  });
+
+  Object.keys(grupos).sort().forEach(parte => {
+    const bloco = document.createElement("div");
+    bloco.style.marginBottom = "10px";
+
+    const titulo = document.createElement("strong");
+    titulo.textContent = `${parte})`;
+    bloco.appendChild(titulo);
+
+    grupos[parte].forEach(item => {
+      const linha = document.createElement("div");
+      linha.textContent =
+        `• ${item.formato || ""} ${item.rondas ? item.rondas + "×" : ""}${item.reps || ""} ` +
+        `${item.exercicio}${item.peso ? " @ " + item.peso + " kg" : ""}`;
+
+      linha.style.padding = "4px 6px";
+      linha.style.borderRadius = "6px";
+      linha.style.marginTop = "4px";
+
+      // long press
+      let pressTimer;
+      linha.addEventListener("touchstart", () => {
+        pressTimer = setTimeout(() => abrirEdicaoWod(item.id), 2000);
+      });
+      linha.addEventListener("touchend", () => clearTimeout(pressTimer));
+
+      bloco.appendChild(linha);
+    });
+
+    conteudo.appendChild(bloco);
+  });
+}
+function abrirEdicaoWod(id) {
+  const treinos = JSON.parse(localStorage.getItem("treinos")) || [];
+  const treino = treinos.find(t => t.id === id);
+  if (!treino) return;
+
+  if (confirm("Queres apagar este registo?\nOK = apagar\nCancelar = editar")) {
+    const novos = treinos.filter(t => t.id !== id);
+    localStorage.setItem("treinos", JSON.stringify(novos));
+  } else {
+    document.getElementById("treinoParte").value = treino.parte;
+    document.getElementById("treinoFormato").value = treino.formato;
+    document.getElementById("treinoRondas").value = treino.rondas;
+    document.getElementById("treinoReps").value = treino.reps;
+    document.getElementById("treinoPeso").value = treino.peso;
+  }
+
+  renderQuadroWodDia(treino.data);
 }
