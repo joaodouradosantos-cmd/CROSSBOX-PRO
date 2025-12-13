@@ -1624,7 +1624,24 @@ function addTreinoEntry() {
   const formato = treinoFormatoEl ? (treinoFormatoEl.value || "") : "";
 
   const ex = treinoExEl.value;
-  const tipo = inferTipo(ex);
+
+// tipo base pela lista (força/técnica/metcon)
+let tipo = inferTipo(ex);
+
+// se o formato é típico de metcon, forçar "metcon"
+const formatosMetcon = [
+  "For Time",
+  "AMRAP",
+  "EMOM",
+  "Chipper",
+  "Intervalos 2′ on / 2′ off",
+  "A cada X′ × Y"
+];
+
+if (formato && formatosMetcon.includes(formato)) {
+  tipo = "metcon";
+}
+
   const rondas = parseInt(treinoRondasEl.value || "1", 10);
   const reps = parseInt(treinoRepsEl.value || "0", 10);
   const peso = parseFloat(treinoPesoEl.value || "0");
@@ -1729,6 +1746,56 @@ function addTreinoEntry() {
   renderTreinos();
 }
 
+function editTreinoEntry(index) {
+  if (index < 0 || index >= treinos.length) return;
+
+  const e = treinos[index];
+
+  // prompts simples e rápidos (sem UI extra)
+  const novoParte = prompt("Parte (A/B/C/D/Outro):", e.parte || "") ?? (e.parte || "");
+  const novoFormato = prompt("Formato (For Time/AMRAP/EMOM/...):", e.formato || "") ?? (e.formato || "");
+
+  const novoRondasStr = prompt("Séries/Rondas:", String(e.rondas ?? 1));
+  const novoRepsStr = prompt("Repetições:", String(e.reps ?? 0));
+  const novoPesoStr = prompt("Peso (kg):", String(e.peso ?? 0));
+  const novoTempo = prompt("Tempo (ex: 12:35 ou 20'):", e.tempo || "") ?? (e.tempo || "");
+  const novaDistStr = prompt("Distância (km):", String(e.distanciaKm ?? 0));
+
+  const novoRondas = Math.max(1, parseInt(novoRondasStr || "1", 10));
+  const novoReps = Math.max(0, parseInt(novoRepsStr || "0", 10));
+  const novoPeso = Math.max(0, parseFloat((novoPesoStr || "0").replace(",", ".")));
+  const novaDist = Math.max(0, parseFloat((novaDistStr || "0").replace(",", ".")));
+
+  // atualizar
+  e.parte = novoParte;
+  e.formato = novoFormato;
+  e.rondas = novoRondas;
+  e.reps = novoReps;
+  e.peso = novoPeso;
+  e.tempo = novoTempo;
+  e.distanciaKm = novaDist;
+
+  // recalcular tipo/carga/%1RM
+  // (tipo ajustado pelo formato, como no add)
+  let tipo = inferTipo(e.ex);
+  const formatosMetcon = ["For Time","AMRAP","EMOM","Chipper","Intervalos 2′ on / 2′ off","A cada X′ × Y"];
+  if (e.formato && formatosMetcon.includes(e.formato)) tipo = "metcon";
+  e.tipo = tipo;
+
+  e.carga = calcCarga({ peso: e.peso, reps: e.reps, rondas: e.rondas });
+
+  if (dataRm[e.ex] && dataRm[e.ex] > 0 && e.peso > 0) {
+    e.perc1rm = e.peso / dataRm[e.ex];
+  } else {
+    e.perc1rm = null;
+  }
+
+  saveTreinos();
+  registerBackupMeta("WOD editado");
+  renderTreinos();
+}
+
+
 function renderDailyHistory() {
   if (!dailyHistoryBody) return;
   dailyHistoryBody.innerHTML = "";
@@ -1742,6 +1809,29 @@ function renderDailyHistory() {
 
   sorted.forEach(t => {
     const tr = document.createElement("tr");
+    // long-press 2s para editar (mobile e desktop)
+let pressTimer = null;
+
+const startPress = () => {
+  pressTimer = setTimeout(() => {
+    // abrir editor deste registo
+    const idx = treinos.indexOf(e);
+    if (idx !== -1) editTreinoEntry(idx);
+  }, 2000);
+};
+
+const cancelPress = () => {
+  if (pressTimer) clearTimeout(pressTimer);
+  pressTimer = null;
+};
+
+tr.addEventListener("touchstart", startPress, { passive: true });
+tr.addEventListener("touchend", cancelPress);
+tr.addEventListener("touchmove", cancelPress);
+
+tr.addEventListener("mousedown", startPress);
+tr.addEventListener("mouseup", cancelPress);
+tr.addEventListener("mouseleave", cancelPress);
 
     const tdDate = document.createElement("td");
     tdDate.textContent = t.date || "";
@@ -3459,11 +3549,11 @@ if (reservasBtn && reservasSection) {
    ARRANQUE DA APP (sequência segura)
 ---------------------------------------------------- */
 
-// impedir crashes se o localStorage tiver dados corrompidos
-let treinosTmp = JSON.parse(localStorage.getItem(STORAGE_TREINO) || "[]");
-if (!Array.isArray(treinosTmp)) {
-  treinosTmp = [];
-  localStorage.setItem(STORAGE_TREINO, JSON.stringify(treinosTmp));
+// impedir crashes se o localStorage tiver dados corrompidos (versão correta)
+treinos = JSON.parse(localStorage.getItem(STORAGE_TREINO) || "[]");
+if (!Array.isArray(treinos)) {
+  treinos = [];
+  localStorage.setItem(STORAGE_TREINO, JSON.stringify(treinos));
 }
 
 // iniciar selects e dados
