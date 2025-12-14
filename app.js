@@ -1,4 +1,3 @@
-
 const STORAGE_PROFILE = "crossfit_profile";
 const STORAGE_RM = "crossfit_1rm";
 const STORAGE_RM_HISTORY = "crossfit_1rm_history";
@@ -1007,10 +1006,6 @@ const quickPercResultEl = document.getElementById("quickPercResult");
 
 /* WOD */
 let treinos = JSON.parse(localStorage.getItem(STORAGE_TREINO) || "[]");
-
-// --- WOD (ecrã) modo quadro: edição por long-press ---
-let editingTreinoIdx = null;
-
   if (!Array.isArray(treinos)) {
   treinos = [];
   localStorage.setItem(STORAGE_TREINO, JSON.stringify(treinos));
@@ -1612,10 +1607,9 @@ function saveTreinos() {
 }
 
 function calcCarga(entry) {
-  const peso = Number(entry.peso) || 0;
-  const reps = Number(entry.reps) || 0;
-  const rondas = Number(entry.rondas) || 1;
-  if (peso <= 0 || reps <= 0 || rondas <= 0) return 0;
+  const peso = entry.peso || 0;
+  const reps = entry.reps || 0;
+  const rondas = entry.rondas || 1;
   return peso * reps * rondas;
 }
 
@@ -1668,18 +1662,12 @@ function addTreinoEntry() {
   };
 
   // 1) guardar sempre o WOD primeiro
-  if (editingTreinoIdx !== null) {
-  treinos[editingTreinoIdx] = entry;
-  editingTreinoIdx = null;
-  if (treinoAddBtn) treinoAddBtn.textContent = "Adicionar ao WOD";
-  registerBackupMeta("WOD editado");
-} else {
   treinos.unshift(entry);
+  saveTreinos();
   registerBackupMeta("WOD registado");
-}
-saveTreinos();
-renderTreinos();
-// 2) MODO ASSISTIDO DE 1RM – só corre se fizer sentido
+  renderTreinos();
+
+  // 2) MODO ASSISTIDO DE 1RM – só corre se fizer sentido
   const current1rm = dataRm[ex];
   if (!current1rm || current1rm <= 0) return;
   if (!peso || peso <= 0) return;
@@ -2494,12 +2482,14 @@ function renderTreinos() {
 
   const hoje = new Date().toISOString().slice(0,10);
   const dia = (treinoDataEl && treinoDataEl.value) ? treinoDataEl.value : hoje;
-  const lista = treinos.map((t,i)=>({ ...t, idx:i })).filter(t => t.date === dia);
+  const lista = treinos.filter(t => t.date === dia);
+
+  // WOD: modo memória visual (quadro branco)
+  renderWodBoard(dia, lista);
+  hideWodExtrasInWodScreen();
   updateResultadoUIForDate(dia);
 
-  
-  renderWodBoard(dia, lista);
-// Se não houver WOD nesse dia
+  // Se não houver WOD nesse dia
   if (!lista.length) {
     if (treinoResumoEl) {
       treinoResumoEl.textContent = "Sem WOD registado para " + dia + ".";
@@ -3517,11 +3507,9 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-
-
-// ===============================
-// QUADRO DO WOD DO DIA (ECRÃ WOD)
-// ===============================
+/* ---------------------------------------------------
+   WOD – QUADRO (memória visual) + LONG-PRESS
+---------------------------------------------------- */
 function ensureWodBoardEls() {
   return {
     board: document.getElementById("wodBoard"),
@@ -3530,69 +3518,60 @@ function ensureWodBoardEls() {
   };
 }
 
-function cleanTextLine(s) { return (s || "").toString().trim(); }
+function isoToPt(iso) {
+  // aceita "YYYY-MM-DD" e devolve "DD/MM/YYYY"
+  if (!iso) return "";
+  const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return String(iso);
+  return `${m[3]}/${m[2]}/${m[1]}`;
+}
 
-function entryToLines(e) {
+function hideWodExtrasInWodScreen() {
+  // no ecrã WOD não queremos: resumo, chips, tabela, estatísticas
+  const ids = ["treinoResumo", "treinoStatsRow", "treinoScroll"];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = "none";
+  });
+}
+
+function entryToLines(t) {
+  // saída limpa e “de quadro”
+  // Formato + exercício na primeira linha (se existir)
   const lines = [];
-  const formato = cleanTextLine(e.formato);
-  const exRaw = (e.ex || "").toString().replace(/\r\n/g, "\n").trim();
+  const parte = (t.parte || "").toString().trim();
+  const formato = (t.formato || "").toString().trim();
+  const ex = (t.exercise || "").toString().trim();
 
-  // suporta listas multi-linha no campo "Exercício"
-  const exLines = exRaw
-    .split("\n")
-    .map(s => s.trim())
-    .filter(Boolean);
-
-  const looksLikeListItem = (s) => /^([•\-*]|\d+\s)/.test(s);
-
-  // Cabeçalho: prioriza o "Formato"; o "Exercício" pode ser título OU lista
-  let head = "";
-  if (formato && exLines.length) {
-    // Se a 1ª linha parecer item de lista, não a colamos ao head
-    head = looksLikeListItem(exLines[0]) ? formato : [formato, cleanTextLine(exLines[0])].filter(Boolean).join(" — ");
-  } else if (formato) {
-    head = formato;
-  } else if (exLines.length) {
-    head = cleanTextLine(exLines[0]);
-  }
-
+  const head = [formato, ex].filter(Boolean).join(" — ").trim();
   if (head) lines.push(head);
 
-  // Se houver várias linhas no exercício, transformá-las em bullets (quadro "da box")
-  if (exLines.length > 1) {
-    const startIdx = (formato && !looksLikeListItem(exLines[0])) ? 1 : 0;
-    for (let i = startIdx; i < exLines.length; i++) {
-      const l = exLines[i];
-      const clean = l.replace(/^([•\-*]\s*)/, "").trim();
-      if (clean) lines.push(`• ${clean}`);
-    }
-  } else if (exLines.length === 1 && formato && !looksLikeListItem(exLines[0])) {
-    // se só há uma linha e já foi usada como título no head, não repetimos
-  } else if (exLines.length === 1 && !head) {
-    lines.push(exLines[0]);
-  }
+  // depois bullets com o que faz sentido
+  const rondas = t.rounds ? Number(t.rounds) : null;
+  const reps = t.reps ? Number(t.reps) : null;
+  const peso = t.weight ? Number(t.weight) : null;
+  const tempo = (t.time || "").toString().trim();
+  const dist = t.distance ? Number(t.distance) : null;
 
-  // Metadados (discretos) — sem totais/estatísticas
-  const extras = [];
-  if (e.tipo === "metcon") {
-    if (cleanTextLine(e.tempo)) extras.push(cleanTextLine(e.tempo));
-    if (e.distanciaKm && Number(e.distanciaKm) > 0) extras.push(`${Number(e.distanciaKm).toFixed(2)} km`);
-  } else {
-    if (e.rondas && Number(e.rondas) > 1) extras.push(`${e.rondas} rondas`);
-    if (e.reps && Number(e.reps) > 0) extras.push(`${e.reps} reps`);
-    if (e.peso && Number(e.peso) > 0) extras.push(`${formatKg(Number(e.peso))}`);
-    if (e.perc1rm) extras.push(`${Math.round(e.perc1rm * 100)}% 1RM`);
-  }
-  extras.forEach(x => lines.push(`• ${x}`));
+  // Se houver reps/peso/tempo/dist, mete numa linha curta, sem cálculos
+  const meta = [];
+  if (rondas && rondas > 1) meta.push(`${rondas} rondas`);
+  if (reps && reps > 0) meta.push(`${reps} reps`);
+  if (peso && peso > 0) meta.push(`${peso} kg`);
+  if (tempo) meta.push(`tempo ${tempo}`);
+  if (dist && dist > 0) meta.push(`${dist} km`);
+  if (meta.length) lines.push(`• ${meta.join(" · ")}`);
 
   return lines;
 }
+
+let editingTreinoIdx = null;
 
 function renderWodBoard(diaISO, lista) {
   const { board, title, body } = ensureWodBoardEls();
   if (!board || !title || !body) return;
 
-  title.textContent = `WOD — ${diaISO}`;
+  title.textContent = `WOD — ${isoToPt(diaISO)}`;
   body.innerHTML = "";
 
   if (!lista || !lista.length) {
@@ -3604,14 +3583,14 @@ function renderWodBoard(diaISO, lista) {
   }
 
   const order = ["A","B","C","D"];
-  const groups = { A: [], B: [], C: [], D: [] };
-  lista.forEach(e => {
-    const p = (e.parte || "").toString().trim().toUpperCase();
-    if (groups[p]) groups[p].push(e);
+  const grouped = { A: [], B: [], C: [], D: [] };
+  lista.forEach((t, idx) => {
+    const parte = ((t.parte || "") + "").toUpperCase();
+    if (grouped[parte]) grouped[parte].push({ t, idxInLista: idx });
   });
 
   order.forEach(parte => {
-    const arr = groups[parte];
+    const arr = grouped[parte];
     if (!arr.length) return;
 
     const sec = document.createElement("div");
@@ -3622,68 +3601,93 @@ function renderWodBoard(diaISO, lista) {
     h.textContent = `${parte})`;
     sec.appendChild(h);
 
-    arr.forEach(e => {
+    arr.forEach(obj => {
+      const treino = obj.t;
+
       const wrap = document.createElement("div");
       wrap.className = "wod-line-wrap";
-      wrap.dataset.treinoIdx = String(e.idx);
+      // idx real no array treinos: procuramos pelo id/posição
+      // aqui o 'lista' vem de filter, então usamos findIndex
+      const realIdx = treinos.findIndex(x => x === treino);
+      wrap.dataset.treinoIdx = String(realIdx);
 
-      entryToLines(e).forEach((line, iLine) => {
+      entryToLines(treino).forEach(line => {
         const d = document.createElement("div");
-        d.className = "wod-line" + ((iLine === 0 && !/^•\s/.test(line)) ? " is-head" : "");
+        d.className = "wod-line";
         d.textContent = line;
         wrap.appendChild(d);
       });
-attachLongPress(wrap, () => openWodLineMenu(e.idx));
+
       sec.appendChild(wrap);
     });
 
     body.appendChild(sec);
   });
+
+  attachLongPressOnWodBoard();
 }
 
-function attachLongPress(el, onHold) {
+function attachLongPressOnWodBoard() {
+  const { body } = ensureWodBoardEls();
+  if (!body) return;
+
   let timer = null;
-  const start = (ev) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => onHold && onHold(), 550);
-  };
-  const cancel = () => { clearTimeout(timer); timer = null; };
 
-  el.addEventListener("pointerdown", start);
-  el.addEventListener("pointerup", cancel);
-  el.addEventListener("pointercancel", cancel);
-  el.addEventListener("pointerleave", cancel);
+  body.querySelectorAll(".wod-line-wrap[data-treino-idx]").forEach(el => {
+    const start = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        const idx = parseInt(el.dataset.treinoIdx || "-1", 10);
+        if (Number.isFinite(idx) && idx >= 0) openWodEditDelete(idx);
+      }, 550);
+    };
+    const cancel = () => {
+      clearTimeout(timer);
+      timer = null;
+    };
+
+    el.addEventListener("mousedown", start);
+    el.addEventListener("touchstart", start, { passive: true });
+    el.addEventListener("mouseup", cancel);
+    el.addEventListener("mouseleave", cancel);
+    el.addEventListener("touchend", cancel);
+    el.addEventListener("touchcancel", cancel);
+  });
 }
 
-function openWodLineMenu(idx) {
-  idx = Number(idx);
-  if (Number.isNaN(idx) || idx < 0 || idx >= treinos.length) return;
+function openWodEditDelete(idx) {
+  const t = treinos[idx];
+  if (!t) return;
 
-  const choice = prompt("WOD: E=Editar | A=Apagar", "E");
+  const choice = prompt("Escreve: E para editar | A para apagar", "E");
   if (!choice) return;
 
   if (choice.toUpperCase() === "A") {
-    deleteTreinoEntry(idx);
+    if (confirm("Apagar esta linha do WOD?")) {
+      treinos.splice(idx, 1);
+      saveTreinos();
+      renderTreinos();
+    }
     return;
   }
 
   if (choice.toUpperCase() === "E") {
-    const t = treinos[idx];
+    // preencher o formulário com os valores existentes
+    editingTreinoIdx = idx;
 
-    if (treinoDataEl) treinoDataEl.value = t.date || new Date().toISOString().slice(0,10);
-    if (treinoExEl) treinoExEl.value = t.ex || "";
+    if (treinoDataEl) treinoDataEl.value = t.date || treinoDataEl.value;
     if (treinoParteEl) treinoParteEl.value = t.parte || "";
     if (treinoFormatoEl) treinoFormatoEl.value = t.formato || "";
-    if (treinoRondasEl) treinoRondasEl.value = t.rondas ?? 1;
-    if (treinoRepsEl) treinoRepsEl.value = t.reps ?? 0;
-    if (treinoPesoEl) treinoPesoEl.value = t.peso ?? 0;
-    if (treinoPercentEl) treinoPercentEl.value = t.perc1rm ? Math.round(t.perc1rm*100) : "";
-    if (treinoTempoEl) treinoTempoEl.value = t.tempo || "";
-    if (treinoDistEl) treinoDistEl.value = t.distanciaKm ?? 0;
 
-    editingTreinoIdx = idx;
+    if (treinoExEl) treinoExEl.value = t.exercise || treinoExEl.value;
+
+    if (treinoRondasEl) treinoRondasEl.value = t.rounds || "1";
+    if (treinoRepsEl) treinoRepsEl.value = t.reps || "";
+    if (treinoPesoEl) treinoPesoEl.value = t.weight || "";
+    if (treinoTempoEl) treinoTempoEl.value = t.time || "";
+    if (treinoDistEl) treinoDistEl.value = t.distance || "";
+
     if (treinoAddBtn) treinoAddBtn.textContent = "Guardar alterações";
-    renderTreinos();
   }
 }
 
