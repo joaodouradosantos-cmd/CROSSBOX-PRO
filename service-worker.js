@@ -1,3 +1,4 @@
+
 /* CrossBox PRO – Service Worker (v6)
    Cache simples + Network-first para navegação
 */
@@ -69,4 +70,3 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
-
