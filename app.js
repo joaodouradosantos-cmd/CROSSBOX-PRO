@@ -1612,9 +1612,10 @@ function saveTreinos() {
 }
 
 function calcCarga(entry) {
-  const peso = entry.peso || 0;
-  const reps = entry.reps || 0;
-  const rondas = entry.rondas || 1;
+  const peso = Number(entry.peso) || 0;
+  const reps = Number(entry.reps) || 0;
+  const rondas = Number(entry.rondas) || 1;
+  if (peso <= 0 || reps <= 0 || rondas <= 0) return 0;
   return peso * reps * rondas;
 }
 
@@ -1634,8 +1635,16 @@ function addTreinoEntry() {
   const tempo = treinoTempoEl.value.trim();
   const distKmVal = parseFloat(treinoDistEl.value || "0");
 
-  // validações básicas do WOD
-  if (!ex || !reps || reps <= 0) return;
+  // validações básicas do WOD (WOD = memória visual)
+  // Permite registar mesmo sem reps, desde que exista pelo menos algum conteúdo útil
+  // (exercício + tempo OU distância OU peso OU reps)
+  const hasUsefulData =
+    (Number.isFinite(reps) && reps > 0) ||
+    (Number.isFinite(peso) && peso > 0) ||
+    (tempo && tempo.length > 0) ||
+    (!isNaN(distKmVal) && distKmVal > 0);
+
+  if (!ex || !hasUsefulData) return;
 
   const carga = calcCarga({ peso, reps, rondas });
   let perc1rm = null;
@@ -3642,3 +3651,4 @@ function openWodLineMenu(idx) {
     renderTreinos();
   }
 }
+
