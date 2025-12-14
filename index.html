@@ -6,7 +6,7 @@
   <title>CrossBox</title>
 
   <meta name="theme-color" content="#f2f2f2" />
-  <link rel="manifest" href="manifest.json?v=2" />
+  <link rel="manifest" href="manifest.json" />
 
   <link rel="apple-touch-icon" sizes="180x180" href="imagens/crossbox_logo-512.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -637,15 +637,42 @@
 
 
 /* --- Quadro branco do WOD (ecrã WOD) --- */
-.wod-board{border:2px solid #111;border-radius:14px;padding:12px 14px;margin-top:12px;background:#fff}
-.wod-board-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:8px}
-.wod-board-title{font-weight:800}
-.wod-board-hint{font-size:12px;opacity:.6}
-.wod-sec{margin-top:10px}
-.wod-sec-title{font-weight:800;margin-bottom:6px}
-.wod-line-wrap{padding:6px 0;border-top:1px dashed rgba(0,0,0,.15)}
-.wod-line{padding-left:14px;margin:2px 0;white-space:pre-wrap}
-.wod-empty{opacity:.6;font-style:italic;padding:6px 0}
+.wod-board{
+  border:2px solid #111;
+  border-radius:14px;
+  padding:12px 14px;
+  margin-top:12px;
+  background:#fff;
+}
+.wod-board-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap:12px;
+  margin-bottom:10px;
+}
+.wod-board-title{font-weight:900; letter-spacing:.2px}
+.wod-board-hint{font-size:12px; opacity:.6}
+
+.wod-sec{margin-top:12px}
+.wod-sec:first-child{margin-top:6px}
+.wod-sec-title{font-weight:900; margin-bottom:8px}
+
+.wod-line-wrap{
+  padding:8px 0;
+  border-top:1px dashed rgba(0,0,0,.18);
+}
+.wod-sec .wod-line-wrap:first-of-type{border-top:none; padding-top:0}
+
+.wod-line{
+  padding-left:14px;
+  margin:3px 0;
+  white-space:pre-wrap;
+  line-height:1.35;
+}
+.wod-line.is-head{padding-left:0; font-weight:700}
+
+.wod-empty{opacity:.6; font-style:italic; padding:6px 0}
 
 </style>
 </head>
@@ -963,7 +990,7 @@
           <div id="wodBoardBody" class="wod-board-body"></div>
         </div>
 
-        <div class="helper-text">
+        <div class="helper-text" id="wodHelperText" style="display:none;">
         A carga de cada exercício (kg) é calculada como: peso × repetições × rondas.
         A distância em metcon é somada à parte, em km.
         </div>
