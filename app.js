@@ -3534,10 +3534,45 @@ function cleanTextLine(s) { return (s || "").toString().trim(); }
 
 function entryToLines(e) {
   const lines = [];
-  const head = [cleanTextLine(e.formato), cleanTextLine(e.ex)].filter(Boolean).join(" — ");
+  const formato = cleanTextLine(e.formato);
+  const exRaw = (e.ex || "").toString().replace(/\r\n/g, "\n").trim();
+
+  // suporta listas multi-linha no campo "Exercício"
+  const exLines = exRaw
+    .split("\n")
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  const looksLikeListItem = (s) => /^([•\-*]|\d+\s)/.test(s);
+
+  // Cabeçalho: prioriza o "Formato"; o "Exercício" pode ser título OU lista
+  let head = "";
+  if (formato && exLines.length) {
+    // Se a 1ª linha parecer item de lista, não a colamos ao head
+    head = looksLikeListItem(exLines[0]) ? formato : [formato, cleanTextLine(exLines[0])].filter(Boolean).join(" — ");
+  } else if (formato) {
+    head = formato;
+  } else if (exLines.length) {
+    head = cleanTextLine(exLines[0]);
+  }
+
   if (head) lines.push(head);
 
-  // linhas simples (sem totais/estatísticas)
+  // Se houver várias linhas no exercício, transformá-las em bullets (quadro "da box")
+  if (exLines.length > 1) {
+    const startIdx = (formato && !looksLikeListItem(exLines[0])) ? 1 : 0;
+    for (let i = startIdx; i < exLines.length; i++) {
+      const l = exLines[i];
+      const clean = l.replace(/^([•\-*]\s*)/, "").trim();
+      if (clean) lines.push(`• ${clean}`);
+    }
+  } else if (exLines.length === 1 && formato && !looksLikeListItem(exLines[0])) {
+    // se só há uma linha e já foi usada como título no head, não repetimos
+  } else if (exLines.length === 1 && !head) {
+    lines.push(exLines[0]);
+  }
+
+  // Metadados (discretos) — sem totais/estatísticas
   const extras = [];
   if (e.tipo === "metcon") {
     if (cleanTextLine(e.tempo)) extras.push(cleanTextLine(e.tempo));
@@ -3549,6 +3584,7 @@ function entryToLines(e) {
     if (e.perc1rm) extras.push(`${Math.round(e.perc1rm * 100)}% 1RM`);
   }
   extras.forEach(x => lines.push(`• ${x}`));
+
   return lines;
 }
 
@@ -3591,14 +3627,13 @@ function renderWodBoard(diaISO, lista) {
       wrap.className = "wod-line-wrap";
       wrap.dataset.treinoIdx = String(e.idx);
 
-      entryToLines(e).forEach(line => {
+      entryToLines(e).forEach((line, iLine) => {
         const d = document.createElement("div");
-        d.className = "wod-line";
+        d.className = "wod-line" + ((iLine === 0 && !/^•\s/.test(line)) ? " is-head" : "");
         d.textContent = line;
         wrap.appendChild(d);
       });
-
-      attachLongPress(wrap, () => openWodLineMenu(e.idx));
+attachLongPress(wrap, () => openWodLineMenu(e.idx));
       sec.appendChild(wrap);
     });
 
