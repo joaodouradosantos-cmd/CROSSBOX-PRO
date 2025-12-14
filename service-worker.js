@@ -1,17 +1,23 @@
+// service-worker.js – CrossBox PRO (offline seguro, sem páginas brancas)
 
-/* CrossBox PRO – Service Worker (v6)
-   Cache simples + Network-first para navegação
-*/
-const CACHE_NAME = "crossbox-pro-v6";
+// Sempre que fizeres alterações importantes ao index.html ou à estrutura,
+// incrementa esta versão (ex.: v1 → v2 → v3...)
+const CACHE_VERSION = "v3";
+const CACHE_NAME = `crossbox-pro-shell-${CACHE_VERSION}`;
+
+// Ficheiros essenciais da app (ajusta se tiveres mais JS/CSS)
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./app.js?v=5",
-  "./manifest.json?v=6",
+  "./app.js",
+  "./manifest.json",
+  "./imagens/crossbox_logo.png",
   "./imagens/crossbox_logo-192.png",
-  "./imagens/crossbox_logo-512.png"
-];
+  "./imagens/crossbox_logo-512.png",
+  "./index.js",    // se existir
+  "./scripts.js"   // se existir];
 
+// INSTALL – pré-carrega o “esqueleto” da app
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
@@ -19,95 +25,91 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
+// ACTIVATE – limpa caches antigas
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
-        keys
-          .filter((k) => k.startsWith("crossbox-pro-") && k !== CACHE_NAME)
-          .map((k) => caches.delete(k))
+        keys.map((key) => {
+          // Apaga qualquer cache antiga de versões anteriores
+          if (key !== CACHE_NAME && key.startsWith("crossbox-pro-shell-")) {
+            return caches.delete(key);
+          }
+        })
       )
     )
   );
   self.clients.claim();
 });
 
-// Network-first para HTML (evita ecrã branco por cache antiga)
-// Cache-first para restantes (rápido/offline)
+// FETCH – navegação + ficheiros estáticos
 self.addEventListener("fetch", (event) => {
-  const req = event.request;
-  const url = new URL(req.url);
+  const request = event.request;
 
-  if (req.method !== "GET") return;
+  // Só tratamos GET
+  if (request.method !== "GET") return;
 
-  const isSameOrigin = url.origin === self.location.origin;
-  if (!isSameOrigin) return;
+  const url = new URL(request.url);
 
-  const accept = req.headers.get("accept") || "";
-  const isHTML = accept.includes("text/html") || url.pathname.endsWith("/") || url.pathname.endsWith(".html");
-
-  if (isHTML) {
-    event.respondWith(
-      fetch(req)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
-          return res;
-        })
-        .catch(() => caches.match(req).then((r) => r || caches.match("./")))
-    );
+  // 1) Navegações (abrir app, clicar no ícone da PWA, etc.)
+  if (request.mode === "navigate") {
+    event.respondWith(handleNavigation(request));
     return;
   }
 
-  event.respondWith(
-en((keys) =>
-      Promise.all(
-        keys
-          .filter((k) => k.startsWith("crossbox-pro-") && k !== CACHE_NAME)
-          .map((k) => caches.delete(k))
-      )
-    )
-  );
-  self.clients.claim();
-});
-
-// Network-first para HTML (evita ecrã branco por cache antiga)
-// Cache-first para restantes (rápido/offline)
-self.addEventListener("fetch", (event) => {
-  const req = event.request;
-  const url = new URL(req.url);
-
-  if (req.method !== "GET") return;
-
-  const isSameOrigin = url.origin === self.location.origin;
-  if (!isSameOrigin) return;
-
-  const accept = req.headers.get("accept") || "";
-  const isHTML = accept.includes("text/html") || url.pathname.endsWith("/") || url.pathname.endsWith(".html");
-
-  if (isHTML) {
-    event.respondWith(
-      fetch(req)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
-          return res;
-        })
-        .catch(() => caches.match(req).then((r) => r || caches.match("./")))
-    );
+  // 2) Ficheiros do mesmo domínio (imagens, JS, CSS, etc.)
+  if (url.origin === self.location.origin) {
+    event.respondWith(cacheFirst(request));
     return;
   }
 
-  event.respondWith(
-    caches.match(req).then((cached) => {
-      if (cached) return cached;
-      return fetch(req).then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
-        return res;
-      });
-    })
-  );
+  // 3) Pedidos externos – deixamos seguir normalmente
 });
 
+// ---------- Estratégias ----------
+
+// Navegação: tenta SEMPRE rede primeiro; se falhar, usa index.html em cache
+async function handleNavigation(request) {
+  try {
+    const networkResponse = await fetch(request);
+
+    // Se correu bem, atualiza o cache do index.html em background
+    const cache = await caches.open(CACHE_NAME);
+    cache.put("./index.html", networkResponse.clone());
+
+    return networkResponse;
+  } catch (err) {
+    // Offline ou falha de rede → usa index.html em cache
+    const cache = await caches.open(CACHE_NAME);
+    const cachedIndex =
+      (await cache.match("./index.html")) || (await cache.match("./"));
+    if (cachedIndex) return cachedIndex;
+
+    // Se, por algum motivo, não houver nada em cache,
+    // devolve uma mensagem simples em vez de ficar tudo em branco
+    return new Response(
+      "Estás offline e a app ainda não foi totalmente cacheada.",
+      {
+        status: 503,
+        headers: { "Content-Type": "text/plain; charset=utf-8" }
+      }
+    );
+  }
+}
+
+// Ficheiros estáticos: cache primeiro, rede depois
+async function cacheFirst(request) {
+  const cache = await caches.open(CACHE_NAME);
+  const cached = await cache.match(request);
+  if (cached) return cached;
+
+  try {
+    const response = await fetch(request);
+    cache.put(request, response.clone());
+    return response;
+  } catch (err) {
+    // Se falhar e não houver cache, devolve a resposta da rede (pode falhar, mas não mata a navegação)
+    return fetch(request);
+  }
+}
 
