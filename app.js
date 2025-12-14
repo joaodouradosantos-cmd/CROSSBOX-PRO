@@ -955,7 +955,6 @@ const treinoSugestaoEl = document.getElementById("treinoSugestao");
 const weeklyHistoryEl = document.getElementById("weeklyHistory");
 const printHistoryBtn = document.getElementById("printHistoryBtn");
 const dailyHistoryBody = document.getElementById("dailyHistoryBody");
-const printHistoryBtn = document.getElementById("printHistoryBtn");
 const treinoScrollEl = document.getElementById("treinoScroll");
 
 /* Resultado global do WOD + OCR do quadro */
@@ -1888,106 +1887,6 @@ function renderDailyHistory() {
   });
 }
 
-/* ===== IMPRIMIR / EXPORTAR HISTÓRICO ===== */
-function printTreinosPdf() {
-  try {
-    const hoje = new Date().toISOString().slice(0, 10);
-    const dia = (treinoDataEl && treinoDataEl.value) ? treinoDataEl.value : hoje;
-
-    const listaDia = (treinos || []).filter(t => t.date === dia);
-    const listaFull = (treinos || []).slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
-
-    const esc = (s) => String(s ?? "")
-      .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;").replaceAll("'", "&#039;");
-
-    const labelEx = (ex) => (ex && MOVES_PT[ex]) ? `${ex} – ${MOVES_PT[ex]}` : (ex || "");
-
-    const rowHtml = (t) => {
-      const pesoTxt = t.peso ? formatKg(t.peso) : "";
-      const percTxt = t.perc1rm ? (t.perc1rm * 100).toFixed(0) + "%" : "";
-      const distTxt = t.distanciaKm ? formatKm(t.distanciaKm) : "";
-      const cargaTxt = t.carga ? formatKg(t.carga) : "";
-      return `
-<tr>
-  <td>${esc(t.date || "")}</td>
-  <td>${esc(t.parte || "")}</td>
-  <td>${esc(t.formato || "")}</td>
-  <td style="text-align:left; white-space:normal;">${esc(labelEx(t.ex))}</td>
-  <td>${esc(t.tipo || "")}</td>
-  <td>${esc(t.rondas || "")}</td>
-  <td>${esc(t.reps || "")}</td>
-  <td>${esc(pesoTxt)}</td>
-  <td>${esc(percTxt)}</td>
-  <td>${esc(t.tempo || "")}</td>
-  <td>${esc(distTxt)}</td>
-  <td>${esc(cargaTxt)}</td>
-</tr>`;
-    };
-
-    let html = `<!DOCTYPE html><html lang="pt-PT"><head><meta charset="UTF-8">
-<title>CrossBox – Histórico</title>
-<style>
-body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;font-size:12px;color:#111;margin:16px;}
-h1{font-size:18px;margin:0 0 6px 0;} h2{font-size:14px;margin:14px 0 6px 0;}
-p{margin:4px 0;} .small{font-size:10px;color:#444;}
-table{width:100%;border-collapse:collapse;margin-top:6px;font-size:11px;}
-th,td{border:1px solid #ccc;padding:4px;text-align:center;white-space:nowrap;}
-th{background:#eee;}
-</style></head><body>
-<h1>CrossBox – Histórico de treinos</h1>`;
-
-    if (profile && profile.nome) html += `<p><strong>Atleta:</strong> ${esc(profile.nome)}</p>`;
-    html += `<p class="small">Gerado em: ${esc(new Date().toLocaleString("pt-PT"))}</p>`;
-
-    html += `<h2>Resumo do dia ${esc(dia)}</h2>`;
-    if (treinoResumoEl && treinoResumoEl.textContent) html += `<p><strong>Resumo:</strong> ${esc(treinoResumoEl.textContent)}</p>`;
-    if (treinoSugestaoEl && treinoSugestaoEl.textContent) html += `<p><strong>Sugestão:</strong> ${esc(treinoSugestaoEl.textContent)}</p>`;
-    if (weeklyHistoryEl && weeklyHistoryEl.innerHTML) html += `<h2>Histórico semanal</h2><div class="small">${weeklyHistoryEl.innerHTML}</div>`;
-
-    html += `<h2>WOD do dia (${esc(dia)})</h2>`;
-    if (!listaDia.length) {
-      html += `<p>Sem WOD registado para este dia.</p>`;
-    } else {
-      html += `<table><thead><tr>
-<th>Data</th><th>Parte</th><th>Formato</th><th>Exercício</th><th>Tipo</th>
-<th>Rondas</th><th>Reps</th><th>Peso</th><th>% 1RM</th><th>Tempo</th><th>Distância</th><th>Carga</th>
-</tr></thead><tbody>`;
-      listaDia.forEach(t => { html += rowHtml(t); });
-      html += `</tbody></table>`;
-    }
-
-    html += `<h2>Histórico completo</h2>`;
-    if (!listaFull.length) {
-      html += `<p>Sem registos.</p>`;
-    } else {
-      html += `<table><thead><tr>
-<th>Data</th><th>Parte</th><th>Formato</th><th>Exercício</th><th>Tipo</th>
-<th>Rondas</th><th>Reps</th><th>Peso</th><th>% 1RM</th><th>Tempo</th><th>Distância</th><th>Carga</th>
-</tr></thead><tbody>`;
-      listaFull.forEach(t => { html += rowHtml(t); });
-      html += `</tbody></table>`;
-    }
-
-    html += `</body></html>`;
-
-    const win = window.open("", "_blank");
-    if (!win) {
-      alert("O navegador bloqueou a janela de impressão. Permite pop-ups para guardar PDF.");
-      return;
-    }
-    win.document.open();
-    win.document.write(html);
-    win.document.close();
-    win.focus();
-    win.print();
-  } catch (e) {
-    console.error("Erro ao imprimir histórico:", e);
-    alert("Ocorreu um erro ao gerar o PDF do histórico.");
-  }
-}
-
-
 /* =========================
    TREINOS UI + RESUMOS
 ========================= */
@@ -2805,5 +2704,4 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("./service-worker.js?v=5", { scope: "./" });
   });
 }
-
 
