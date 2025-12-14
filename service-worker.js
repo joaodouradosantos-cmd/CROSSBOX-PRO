@@ -2,7 +2,7 @@
 /* CrossBox PRO – Service Worker (v6)
    Cache simples + Network-first para navegação
 */
-const CACHE_NAME = "crossbox-pro-v6";
+const CACHE_NAME = "crossbox-pro-v7";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -70,3 +70,4 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
