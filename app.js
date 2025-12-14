@@ -3709,3 +3709,32 @@ function openWodEditDelete(idx) {
     if (treinoAddBtn) treinoAddBtn.textContent = "Guardar alterações";
   }
 }
+function setRegistoHistoricoVisible(isVisible) {
+  // Procura qualquer card/caixa que tenha o título "Registo e histórico"
+  const headers = Array.from(document.querySelectorAll("h1,h2,h3,h4,div,span,p"));
+  const targetHeader = headers.find(el =>
+    (el.textContent || "").trim().toLowerCase() === "registo e histórico"
+  );
+
+  if (!targetHeader) return;
+
+  // Sobe até um contentor "grande" (card/box)
+  let box = targetHeader;
+  for (let i = 0; i < 6; i++) {
+    if (!box.parentElement) break;
+    box = box.parentElement;
+
+    const cls = (box.className || "").toString().toLowerCase();
+    const tag = (box.tagName || "").toLowerCase();
+
+    // tenta apanhar o "card/box/modal"
+    if (tag === "section" || tag === "article" || tag === "div") {
+      if (cls.includes("card") || cls.includes("modal") || cls.includes("panel") || cls.includes("box")) {
+        break;
+      }
+    }
+  }
+
+  box.style.display = isVisible ? "" : "none";
+}
+
