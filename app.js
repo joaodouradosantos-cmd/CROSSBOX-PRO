@@ -2489,6 +2489,9 @@ function renderTreinos() {
   hideWodExtrasInWodScreen();
   updateResultadoUIForDate(dia);
 
+  // No ecrã WOD queremos APENAS o quadro (memória visual)
+  if (isWodScreenActive()) return;
+
   // Se não houver WOD nesse dia
   if (!lista.length) {
     if (treinoResumoEl) {
@@ -3526,12 +3529,28 @@ function isoToPt(iso) {
   return `${m[3]}/${m[2]}/${m[1]}`;
 }
 
+function isWodScreenActive() {
+  const sec = document.getElementById("opt-wod");
+  // a tua navegação usa classList 'active' nas option-sections
+  return !!(sec && sec.classList.contains("active"));
+}
+
 function hideWodExtrasInWodScreen() {
-  // no ecrã WOD não queremos: resumo, chips, tabela, estatísticas
-  const ids = ["treinoResumo", "treinoStatsRow", "treinoScroll"];
+  // No ecrã WOD não queremos: resumo, chips, tabela, estatísticas, "registo e histórico"
+  const ids = ["treinoResumo", "treinoStatsRow", "treinoScroll", "resultadoWod", "resultadoWOD"];
   ids.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = "none";
+  });
+
+  // Fallback: esconder o cartão/painel que tenha o título "Registo e histórico"
+  document.querySelectorAll(".card, section, div").forEach(el => {
+    const h = el.querySelector ? el.querySelector("h3, h2") : null;
+    if (!h) return;
+    const title = (h.textContent || "").trim().toLowerCase();
+    if (title === "registo e histórico" || title === "registo e historico") {
+      el.style.display = "none";
+    }
   });
 }
 
@@ -3690,4 +3709,3 @@ function openWodEditDelete(idx) {
     if (treinoAddBtn) treinoAddBtn.textContent = "Guardar alterações";
   }
 }
-
