@@ -6,7 +6,7 @@
   <title>CrossBox</title>
 
   <meta name="theme-color" content="#f2f2f2" />
-  <link rel="manifest" href="manifest.json" />
+  <link rel="manifest" href="manifest.json?v=2" />
 
   <link rel="apple-touch-icon" sizes="180x180" href="imagens/crossbox_logo-512.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -636,7 +636,7 @@
 }
 
 
-/* --- Quadro branco do WOD (ecrã WOD) --- */
+/* --- WOD: Quadro branco (memória visual) --- */
 .wod-board{
   border:2px solid #111;
   border-radius:14px;
@@ -649,30 +649,14 @@
   justify-content:space-between;
   align-items:baseline;
   gap:12px;
-  margin-bottom:10px;
+  margin-bottom:8px;
 }
-.wod-board-title{font-weight:900; letter-spacing:.2px}
-.wod-board-hint{font-size:12px; opacity:.6}
-
-.wod-sec{margin-top:12px}
-.wod-sec:first-child{margin-top:6px}
-.wod-sec-title{font-weight:900; margin-bottom:8px}
-
-.wod-line-wrap{
-  padding:8px 0;
-  border-top:1px dashed rgba(0,0,0,.18);
-}
-.wod-sec .wod-line-wrap:first-of-type{border-top:none; padding-top:0}
-
-.wod-line{
-  padding-left:14px;
-  margin:3px 0;
-  white-space:pre-wrap;
-  line-height:1.35;
-}
-.wod-line.is-head{padding-left:0; font-weight:700}
-
-.wod-empty{opacity:.6; font-style:italic; padding:6px 0}
+.wod-board-title{font-weight:800}
+.wod-board-hint{font-size:12px;opacity:.6}
+.wod-sec{margin-top:10px}
+.wod-sec-title{font-weight:800;margin-bottom:6px}
+.wod-line{padding-left:14px;margin:2px 0;white-space:pre-wrap}
+.wod-empty{opacity:.6;font-style:italic;padding:6px 0}
 
 </style>
 </head>
@@ -980,8 +964,7 @@
         </div>
 
         <button class="btn-primary" id="treinoAdd">Adicionar ao WOD</button>
-
-        <!-- QUADRO DO WOD DO DIA (novo) -->
+        <!-- QUADRO DO WOD DO DIA (memória visual) -->
         <div id="wodBoard" class="wod-board">
           <div class="wod-board-head">
             <div id="wodBoardTitle" class="wod-board-title">WOD —</div>
@@ -990,11 +973,10 @@
           <div id="wodBoardBody" class="wod-board-body"></div>
         </div>
 
-        <div class="helper-text" id="wodHelperText" style="display:none;">
+        <div class="helper-text">
         A carga de cada exercício (kg) é calculada como: peso × repetições × rondas.
         A distância em metcon é somada à parte, em km.
         </div>
-<div id="wodExtras" style="display:none;">
 <!-- Resultado global do WOD -->
 <div class="form-row" style="margin-top:10px;">
   <div class="field">
@@ -1064,9 +1046,7 @@
           </table>
         </div>
        </div>
-      
-</div>
-</section>
+      </section>
     <!-- HISTÓRICO WOD – NOVA SECÇÃO -->
 <section id="opt-historico" class="option-section">
   <div class="card">
@@ -1278,46 +1258,44 @@
               <option value="Mobilidade">Mobilidade</option>
               <option value="Competição">Competição</option>
             </select>
+          </div>
+
+          <div class="field">
+            <label>Nota (opcional)</label>
+            <input id="reservaNota" type="text" placeholder="Ex.: parceiro, foco, objetivo do dia..." />
+          </div>
+        </div>
+
+        <button class="btn-primary" id="reservaAddBtn">Guardar reserva</button>
+
+        <div class="helper-text" style="margin-top:6px;">
+          Estas reservas e presenças são pessoais e ficam apenas guardadas neste dispositivo.
+        </div>
+
+        <div class="scroll" style="margin-top:10px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Hora</th>
+                <th>Aula</th>
+                <th>Nota</th>
+                <th>Presença</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="reservasBody"></tbody>
+          </table>
+        </div>
+
+        <div class="helper-text" id="reservasResumo" style="margin-top:6px;"></div>
+      </div>
+    </section>
+
+  </section>
+
+</div>
   <script src="app.js"></script>
-) || "[]");
-if (!Array.isArray(treinosTmp)) {
-  treinosTmp = [];
-  localStorage.setItem(STORAGE_TREINO, JSON.stringify(treinosTmp));
-}
-// NOTA: o teu código original usa "treinos" acima — preserva-o
-
-// iniciar selects e dados
-initSelects();
-loadProfile();
-renderRm();
-
-refreshCalcExOptions();
-refreshGraphExerciseOptions();
-
-// definir automaticamente a data do WOD se vazio
-if (treinoDataEl && !treinoDataEl.value) {
-  treinoDataEl.value = new Date().toISOString().slice(0, 10);
-}
-
-renderTreinos();          // mostra WOD do dia
-updateBackupInfo();       // estado do backup
-renderGuiaExercicios();   // guia
-renderPerformance();       // desempenho
-renderReservas();          // reservas
-atualizarRankingsMensais();// rankings
-
-
-/* ---------------------------------------------------
-   SERVICE WORKER
----------------------------------------------------- */
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", function () {
-    navigator.serviceWorker.register("./service-worker.js");
-  });
-}
-
-</script>
-
 </body>
 </html>
 
