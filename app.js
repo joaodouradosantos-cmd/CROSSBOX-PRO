@@ -1289,6 +1289,7 @@ function deleteEx(name) {
 }
 
 function renderRm() {
+  if (!bodyTable) return;
   bodyTable.innerHTML = "";
   Object.keys(dataRm).sort().forEach(name => {
     const tr = document.createElement("tr");
@@ -1341,7 +1342,8 @@ function renderRm() {
   renderPerformance();
 }
 
-document.getElementById("addBtn").addEventListener("click", () => {
+const addBtnEl = document.getElementById("addBtn");
+if (addBtnEl) addBtnEl.addEventListener("click", () => {
   const ex = sel.value;
   const val = parseFloat(rm.value);
   if (!ex || !val || val <= 0) return;
@@ -1662,12 +1664,18 @@ function addTreinoEntry() {
   };
 
   // 1) guardar sempre o WOD primeiro
-  treinos.unshift(entry);
+  if (editingTreinoIdx != null && Number.isFinite(Number(editingTreinoIdx)) && treinos[editingTreinoIdx]) {
+    treinos[editingTreinoIdx] = entry;
+    editingTreinoIdx = null;
+    if (treinoAddBtn) treinoAddBtn.textContent = "Adicionar";
+    registerBackupMeta("WOD editado");
+  } else {
+    treinos.unshift(entry);
+    registerBackupMeta("WOD registado");
+  }
   saveTreinos();
-  registerBackupMeta("WOD registado");
   renderTreinos();
-
-  // 2) MODO ASSISTIDO DE 1RM – só corre se fizer sentido
+// 2) MODO ASSISTIDO DE 1RM – só corre se fizer sentido
   const current1rm = dataRm[ex];
   if (!current1rm || current1rm <= 0) return;
   if (!peso || peso <= 0) return;
@@ -3537,7 +3545,7 @@ function isWodScreenActive() {
 
 function hideWodExtrasInWodScreen() {
   // No ecrã WOD não queremos: resumo, chips, tabela, estatísticas, "registo e histórico"
-  const ids = ["treinoResumo", "treinoStatsRow", "treinoScroll", "resultadoWod", "resultadoWOD"];
+  const ids = ["treinoResumo", "treinoStats", "treinoScroll", "resultadoWod", "resultadoWOD"];
   ids.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = "none";
@@ -3556,29 +3564,28 @@ function hideWodExtrasInWodScreen() {
 
 function entryToLines(t) {
   // saída limpa e “de quadro”
-  // Formato + exercício na primeira linha (se existir)
   const lines = [];
+  if (!t) return lines;
+
   const parte = (t.parte || "").toString().trim();
   const formato = (t.formato || "").toString().trim();
-  const ex = (t.exercise || "").toString().trim();
+  const ex = (t.ex || "").toString().trim();
 
   const head = [formato, ex].filter(Boolean).join(" — ").trim();
   if (head) lines.push(head);
 
-  // depois bullets com o que faz sentido
-  const rondas = t.rounds ? Number(t.rounds) : null;
-  const reps = t.reps ? Number(t.reps) : null;
-  const peso = t.weight ? Number(t.weight) : null;
-  const tempo = (t.time || "").toString().trim();
-  const dist = t.distance ? Number(t.distance) : null;
+  const rondas = Number.isFinite(Number(t.rondas)) ? Number(t.rondas) : null;
+  const reps = Number.isFinite(Number(t.reps)) ? Number(t.reps) : null;
+  const peso = Number.isFinite(Number(t.peso)) ? Number(t.peso) : null;
+  const tempo = (t.tempo || "").toString().trim();
+  const dist = Number.isFinite(Number(t.distanciaKm)) ? Number(t.distanciaKm) : null;
 
-  // Se houver reps/peso/tempo/dist, mete numa linha curta, sem cálculos
   const meta = [];
   if (rondas && rondas > 1) meta.push(`${rondas} rondas`);
   if (reps && reps > 0) meta.push(`${reps} reps`);
-  if (peso && peso > 0) meta.push(`${peso} kg`);
+  if (peso && peso > 0) meta.push(`${peso.toFixed(1).replace(".", ",")} kg`);
   if (tempo) meta.push(`tempo ${tempo}`);
-  if (dist && dist > 0) meta.push(`${dist} km`);
+  if (dist && dist > 0) meta.push(`${dist.toFixed(2).replace(".", ",")} km`);
   if (meta.length) lines.push(`• ${meta.join(" · ")}`);
 
   return lines;
@@ -3698,13 +3705,13 @@ function openWodEditDelete(idx) {
     if (treinoParteEl) treinoParteEl.value = t.parte || "";
     if (treinoFormatoEl) treinoFormatoEl.value = t.formato || "";
 
-    if (treinoExEl) treinoExEl.value = t.exercise || treinoExEl.value;
+    if (treinoExEl) treinoExEl.value = t.ex || treinoExEl.value;
 
-    if (treinoRondasEl) treinoRondasEl.value = t.rounds || "1";
+    if (treinoRondasEl) treinoRondasEl.value = (t.rondas != null ? String(t.rondas) : "1");
     if (treinoRepsEl) treinoRepsEl.value = t.reps || "";
-    if (treinoPesoEl) treinoPesoEl.value = t.weight || "";
-    if (treinoTempoEl) treinoTempoEl.value = t.time || "";
-    if (treinoDistEl) treinoDistEl.value = t.distance || "";
+    if (treinoPesoEl) treinoPesoEl.value = (t.peso != null ? String(t.peso) : "");
+    if (treinoTempoEl) treinoTempoEl.value = t.tempo || "";
+    if (treinoDistEl) treinoDistEl.value = (t.distanciaKm != null ? String(t.distanciaKm) : "");
 
     if (treinoAddBtn) treinoAddBtn.textContent = "Guardar alterações";
   }
