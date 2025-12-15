@@ -1039,6 +1039,8 @@ const wodPhotoInput = document.getElementById("wodPhotoInput");
 const wodPhotoStatusEl = document.getElementById("wodPhotoStatus");
 const wodOcrPreviewEl = document.getElementById("wodOcrPreview");
 const wodOcrApplyBtn = document.getElementById("wodOcrApplyBtn");
+renderQuadroWodDia(treinoData.value);
+
   
 
 /* Chips de resumo do dia */
@@ -1289,7 +1291,6 @@ function deleteEx(name) {
 }
 
 function renderRm() {
-  if (!bodyTable) return;
   bodyTable.innerHTML = "";
   Object.keys(dataRm).sort().forEach(name => {
     const tr = document.createElement("tr");
@@ -1342,8 +1343,7 @@ function renderRm() {
   renderPerformance();
 }
 
-const addBtnEl = document.getElementById("addBtn");
-if (addBtnEl) addBtnEl.addEventListener("click", () => {
+document.getElementById("addBtn").addEventListener("click", () => {
   const ex = sel.value;
   const val = parseFloat(rm.value);
   if (!ex || !val || val <= 0) return;
@@ -1624,23 +1624,32 @@ function addTreinoEntry() {
   const formato = treinoFormatoEl ? (treinoFormatoEl.value || "") : "";
 
   const ex = treinoExEl.value;
-  const tipo = inferTipo(ex);
+
+// tipo base pela lista (força/técnica/metcon)
+let tipo = inferTipo(ex);
+
+// se o formato é típico de metcon, forçar "metcon"
+const formatosMetcon = [
+  "For Time",
+  "AMRAP",
+  "EMOM",
+  "Chipper",
+  "Intervalos 2′ on / 2′ off",
+  "A cada X′ × Y"
+];
+
+if (formato && formatosMetcon.includes(formato)) {
+  tipo = "metcon";
+}
+
   const rondas = parseInt(treinoRondasEl.value || "1", 10);
   const reps = parseInt(treinoRepsEl.value || "0", 10);
   const peso = parseFloat(treinoPesoEl.value || "0");
   const tempo = treinoTempoEl.value.trim();
   const distKmVal = parseFloat(treinoDistEl.value || "0");
 
-  // validações básicas do WOD (WOD = memória visual)
-  // Permite registar mesmo sem reps, desde que exista pelo menos algum conteúdo útil
-  // (exercício + tempo OU distância OU peso OU reps)
-  const hasUsefulData =
-    (Number.isFinite(reps) && reps > 0) ||
-    (Number.isFinite(peso) && peso > 0) ||
-    (tempo && tempo.length > 0) ||
-    (!isNaN(distKmVal) && distKmVal > 0);
-
-  if (!ex || !hasUsefulData) return;
+  // validações básicas do WOD
+  if (!ex || !reps || reps <= 0) return;
 
   const carga = calcCarga({ peso, reps, rondas });
   let perc1rm = null;
@@ -1664,18 +1673,12 @@ function addTreinoEntry() {
   };
 
   // 1) guardar sempre o WOD primeiro
-  if (editingTreinoIdx != null && Number.isFinite(Number(editingTreinoIdx)) && treinos[editingTreinoIdx]) {
-    treinos[editingTreinoIdx] = entry;
-    editingTreinoIdx = null;
-    if (treinoAddBtn) treinoAddBtn.textContent = "Adicionar";
-    registerBackupMeta("WOD editado");
-  } else {
-    treinos.unshift(entry);
-    registerBackupMeta("WOD registado");
-  }
+  treinos.unshift(entry);
   saveTreinos();
+  registerBackupMeta("WOD registado");
   renderTreinos();
-// 2) MODO ASSISTIDO DE 1RM – só corre se fizer sentido
+
+  // 2) MODO ASSISTIDO DE 1RM – só corre se fizer sentido
   const current1rm = dataRm[ex];
   if (!current1rm || current1rm <= 0) return;
   if (!peso || peso <= 0) return;
@@ -1743,6 +1746,56 @@ function addTreinoEntry() {
   renderTreinos();
 }
 
+function editTreinoEntry(index) {
+  if (index < 0 || index >= treinos.length) return;
+
+  const e = treinos[index];
+
+  // prompts simples e rápidos (sem UI extra)
+  const novoParte = prompt("Parte (A/B/C/D/Outro):", e.parte || "") ?? (e.parte || "");
+  const novoFormato = prompt("Formato (For Time/AMRAP/EMOM/...):", e.formato || "") ?? (e.formato || "");
+
+  const novoRondasStr = prompt("Séries/Rondas:", String(e.rondas ?? 1));
+  const novoRepsStr = prompt("Repetições:", String(e.reps ?? 0));
+  const novoPesoStr = prompt("Peso (kg):", String(e.peso ?? 0));
+  const novoTempo = prompt("Tempo (ex: 12:35 ou 20'):", e.tempo || "") ?? (e.tempo || "");
+  const novaDistStr = prompt("Distância (km):", String(e.distanciaKm ?? 0));
+
+  const novoRondas = Math.max(1, parseInt(novoRondasStr || "1", 10));
+  const novoReps = Math.max(0, parseInt(novoRepsStr || "0", 10));
+  const novoPeso = Math.max(0, parseFloat((novoPesoStr || "0").replace(",", ".")));
+  const novaDist = Math.max(0, parseFloat((novaDistStr || "0").replace(",", ".")));
+
+  // atualizar
+  e.parte = novoParte;
+  e.formato = novoFormato;
+  e.rondas = novoRondas;
+  e.reps = novoReps;
+  e.peso = novoPeso;
+  e.tempo = novoTempo;
+  e.distanciaKm = novaDist;
+
+  // recalcular tipo/carga/%1RM
+  // (tipo ajustado pelo formato, como no add)
+  let tipo = inferTipo(e.ex);
+  const formatosMetcon = ["For Time","AMRAP","EMOM","Chipper","Intervalos 2′ on / 2′ off","A cada X′ × Y"];
+  if (e.formato && formatosMetcon.includes(e.formato)) tipo = "metcon";
+  e.tipo = tipo;
+
+  e.carga = calcCarga({ peso: e.peso, reps: e.reps, rondas: e.rondas });
+
+  if (dataRm[e.ex] && dataRm[e.ex] > 0 && e.peso > 0) {
+    e.perc1rm = e.peso / dataRm[e.ex];
+  } else {
+    e.perc1rm = null;
+  }
+
+  saveTreinos();
+  registerBackupMeta("WOD editado");
+  renderTreinos();
+}
+
+
 function renderDailyHistory() {
   if (!dailyHistoryBody) return;
   dailyHistoryBody.innerHTML = "";
@@ -1756,6 +1809,29 @@ function renderDailyHistory() {
 
   sorted.forEach(t => {
     const tr = document.createElement("tr");
+    // long-press 2s para editar (mobile e desktop)
+let pressTimer = null;
+
+const startPress = () => {
+  pressTimer = setTimeout(() => {
+    // abrir editor deste registo
+    const idx = treinos.indexOf(e);
+    if (idx !== -1) editTreinoEntry(idx);
+  }, 2000);
+};
+
+const cancelPress = () => {
+  if (pressTimer) clearTimeout(pressTimer);
+  pressTimer = null;
+};
+
+tr.addEventListener("touchstart", startPress, { passive: true });
+tr.addEventListener("touchend", cancelPress);
+tr.addEventListener("touchmove", cancelPress);
+
+tr.addEventListener("mousedown", startPress);
+tr.addEventListener("mouseup", cancelPress);
+tr.addEventListener("mouseleave", cancelPress);
 
     const tdDate = document.createElement("td");
     tdDate.textContent = t.date || "";
@@ -2491,14 +2567,7 @@ function renderTreinos() {
   const hoje = new Date().toISOString().slice(0,10);
   const dia = (treinoDataEl && treinoDataEl.value) ? treinoDataEl.value : hoje;
   const lista = treinos.filter(t => t.date === dia);
-
-  // WOD: modo memória visual (quadro branco)
-  renderWodBoard(dia, lista);
-  hideWodExtrasInWodScreen();
   updateResultadoUIForDate(dia);
-
-  // No ecrã WOD queremos APENAS o quadro (memória visual)
-  if (isWodScreenActive()) return;
 
   // Se não houver WOD nesse dia
   if (!lista.length) {
@@ -3480,13 +3549,12 @@ if (reservasBtn && reservasSection) {
    ARRANQUE DA APP (sequência segura)
 ---------------------------------------------------- */
 
-// impedir crashes se o localStorage tiver dados corrompidos
-let treinosTmp = JSON.parse(localStorage.getItem(STORAGE_TREINO) || "[]");
-if (!Array.isArray(treinosTmp)) {
-  treinosTmp = [];
-  localStorage.setItem(STORAGE_TREINO, JSON.stringify(treinosTmp));
+// impedir crashes se o localStorage tiver dados corrompidos (versão correta)
+treinos = JSON.parse(localStorage.getItem(STORAGE_TREINO) || "[]");
+if (!Array.isArray(treinos)) {
+  treinos = [];
+  localStorage.setItem(STORAGE_TREINO, JSON.stringify(treinos));
 }
-// NOTA: o teu código original usa "treinos" acima — preserva-o
 
 // iniciar selects e dados
 initSelects();
@@ -3504,244 +3572,91 @@ if (treinoDataEl && !treinoDataEl.value) {
 renderTreinos();          // mostra WOD do dia
 updateBackupInfo();       // estado do backup
 renderGuiaExercicios();   // guia
-renderPerformance();       // desempenho
-renderReservas();          // reservas
+renderPerformance();      // desempenho
+renderReservas();         // reservas
 atualizarRankingsMensais();// rankings
 
 
 /* ---------------------------------------------------
    SERVICE WORKER
 ---------------------------------------------------- */
+
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
-    navigator.serviceWorker.register("./service-worker.js");
+    navigator.serviceWorker.register("./service-worker.js?v=5", { scope: "./" });
   });
 }
+function renderQuadroWodDia(dataSelecionada) {
+  const card = document.getElementById("wodQuadroCard");
+  const dataDiv = document.getElementById("wodQuadroData");
+  const conteudo = document.getElementById("wodQuadroConteudo");
 
-/* ---------------------------------------------------
-   WOD – QUADRO (memória visual) + LONG-PRESS
----------------------------------------------------- */
-function ensureWodBoardEls() {
-  return {
-    board: document.getElementById("wodBoard"),
-    title: document.getElementById("wodBoardTitle"),
-    body: document.getElementById("wodBoardBody")
-  };
-}
+  const treinos = JSON.parse(localStorage.getItem("treinos")) || [];
+  const doDia = treinos.filter(t => t.data === dataSelecionada);
 
-function isoToPt(iso) {
-  // aceita "YYYY-MM-DD" e devolve "DD/MM/YYYY"
-  if (!iso) return "";
-  const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (!m) return String(iso);
-  return `${m[3]}/${m[2]}/${m[1]}`;
-}
-
-function isWodScreenActive() {
-  const sec = document.getElementById("opt-wod");
-  // a tua navegação usa classList 'active' nas option-sections
-  return !!(sec && sec.classList.contains("active"));
-}
-
-function hideWodExtrasInWodScreen() {
-  // No ecrã WOD não queremos: resumo, chips, tabela, estatísticas, "registo e histórico"
-  const ids = ["treinoResumo", "treinoStats", "treinoScroll", "resultadoWod", "resultadoWOD"];
-  ids.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = "none";
-  });
-
-  // Fallback: esconder o cartão/painel que tenha o título "Registo e histórico"
-  document.querySelectorAll(".card, section, div").forEach(el => {
-    const h = el.querySelector ? el.querySelector("h3, h2") : null;
-    if (!h) return;
-    const title = (h.textContent || "").trim().toLowerCase();
-    if (title === "registo e histórico" || title === "registo e historico") {
-      el.style.display = "none";
-    }
-  });
-}
-
-function entryToLines(t) {
-  // saída limpa e “de quadro”
-  const lines = [];
-  if (!t) return lines;
-
-  const parte = (t.parte || "").toString().trim();
-  const formato = (t.formato || "").toString().trim();
-  const ex = (t.ex || "").toString().trim();
-
-  const head = [formato, ex].filter(Boolean).join(" — ").trim();
-  if (head) lines.push(head);
-
-  const rondas = Number.isFinite(Number(t.rondas)) ? Number(t.rondas) : null;
-  const reps = Number.isFinite(Number(t.reps)) ? Number(t.reps) : null;
-  const peso = Number.isFinite(Number(t.peso)) ? Number(t.peso) : null;
-  const tempo = (t.tempo || "").toString().trim();
-  const dist = Number.isFinite(Number(t.distanciaKm)) ? Number(t.distanciaKm) : null;
-
-  const meta = [];
-  if (rondas && rondas > 1) meta.push(`${rondas} rondas`);
-  if (reps && reps > 0) meta.push(`${reps} reps`);
-  if (peso && peso > 0) meta.push(`${peso.toFixed(1).replace(".", ",")} kg`);
-  if (tempo) meta.push(`tempo ${tempo}`);
-  if (dist && dist > 0) meta.push(`${dist.toFixed(2).replace(".", ",")} km`);
-  if (meta.length) lines.push(`• ${meta.join(" · ")}`);
-
-  return lines;
-}
-
-let editingTreinoIdx = null;
-
-function renderWodBoard(diaISO, lista) {
-  const { board, title, body } = ensureWodBoardEls();
-  if (!board || !title || !body) return;
-
-  title.textContent = `WOD — ${isoToPt(diaISO)}`;
-  body.innerHTML = "";
-
-  if (!lista || !lista.length) {
-    const p = document.createElement("div");
-    p.className = "wod-empty";
-    p.textContent = "Sem WOD registado para este dia.";
-    body.appendChild(p);
+  if (doDia.length === 0) {
+    card.style.display = "none";
     return;
   }
 
-  const order = ["A","B","C","D"];
-  const grouped = { A: [], B: [], C: [], D: [] };
-  lista.forEach((t, idx) => {
-    const parte = ((t.parte || "") + "").toUpperCase();
-    if (grouped[parte]) grouped[parte].push({ t, idxInLista: idx });
+  card.style.display = "block";
+  conteudo.innerHTML = "";
+
+  dataDiv.textContent = `WOD — ${new Date(dataSelecionada).toLocaleDateString("pt-PT")}`;
+
+  const grupos = {};
+
+  doDia.forEach(t => {
+    if (!grupos[t.parte]) grupos[t.parte] = [];
+    grupos[t.parte].push(t);
   });
 
-  order.forEach(parte => {
-    const arr = grouped[parte];
-    if (!arr.length) return;
+  Object.keys(grupos).sort().forEach(parte => {
+    const bloco = document.createElement("div");
+    bloco.style.marginBottom = "10px";
 
-    const sec = document.createElement("div");
-    sec.className = "wod-sec";
+    const titulo = document.createElement("strong");
+    titulo.textContent = `${parte})`;
+    bloco.appendChild(titulo);
 
-    const h = document.createElement("div");
-    h.className = "wod-sec-title";
-    h.textContent = `${parte})`;
-    sec.appendChild(h);
+    grupos[parte].forEach(item => {
+      const linha = document.createElement("div");
+      linha.textContent =
+        `• ${item.formato || ""} ${item.rondas ? item.rondas + "×" : ""}${item.reps || ""} ` +
+        `${item.exercicio}${item.peso ? " @ " + item.peso + " kg" : ""}`;
 
-    arr.forEach(obj => {
-      const treino = obj.t;
+      linha.style.padding = "4px 6px";
+      linha.style.borderRadius = "6px";
+      linha.style.marginTop = "4px";
 
-      const wrap = document.createElement("div");
-      wrap.className = "wod-line-wrap";
-      // idx real no array treinos: procuramos pelo id/posição
-      // aqui o 'lista' vem de filter, então usamos findIndex
-      const realIdx = treinos.findIndex(x => x === treino);
-      wrap.dataset.treinoIdx = String(realIdx);
-
-      entryToLines(treino).forEach(line => {
-        const d = document.createElement("div");
-        d.className = "wod-line";
-        d.textContent = line;
-        wrap.appendChild(d);
+      // long press
+      let pressTimer;
+      linha.addEventListener("touchstart", () => {
+        pressTimer = setTimeout(() => abrirEdicaoWod(item.id), 2000);
       });
+      linha.addEventListener("touchend", () => clearTimeout(pressTimer));
 
-      sec.appendChild(wrap);
+      bloco.appendChild(linha);
     });
 
-    body.appendChild(sec);
-  });
-
-  attachLongPressOnWodBoard();
-}
-
-function attachLongPressOnWodBoard() {
-  const { body } = ensureWodBoardEls();
-  if (!body) return;
-
-  let timer = null;
-
-  body.querySelectorAll(".wod-line-wrap[data-treino-idx]").forEach(el => {
-    const start = () => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        const idx = parseInt(el.dataset.treinoIdx || "-1", 10);
-        if (Number.isFinite(idx) && idx >= 0) openWodEditDelete(idx);
-      }, 550);
-    };
-    const cancel = () => {
-      clearTimeout(timer);
-      timer = null;
-    };
-
-    el.addEventListener("mousedown", start);
-    el.addEventListener("touchstart", start, { passive: true });
-    el.addEventListener("mouseup", cancel);
-    el.addEventListener("mouseleave", cancel);
-    el.addEventListener("touchend", cancel);
-    el.addEventListener("touchcancel", cancel);
+    conteudo.appendChild(bloco);
   });
 }
+function abrirEdicaoWod(id) {
+  const treinos = JSON.parse(localStorage.getItem("treinos")) || [];
+  const treino = treinos.find(t => t.id === id);
+  if (!treino) return;
 
-function openWodEditDelete(idx) {
-  const t = treinos[idx];
-  if (!t) return;
-
-  const choice = prompt("Escreve: E para editar | A para apagar", "E");
-  if (!choice) return;
-
-  if (choice.toUpperCase() === "A") {
-    if (confirm("Apagar esta linha do WOD?")) {
-      treinos.splice(idx, 1);
-      saveTreinos();
-      renderTreinos();
-    }
-    return;
+  if (confirm("Queres apagar este registo?\nOK = apagar\nCancelar = editar")) {
+    const novos = treinos.filter(t => t.id !== id);
+    localStorage.setItem("treinos", JSON.stringify(novos));
+  } else {
+    document.getElementById("treinoParte").value = treino.parte;
+    document.getElementById("treinoFormato").value = treino.formato;
+    document.getElementById("treinoRondas").value = treino.rondas;
+    document.getElementById("treinoReps").value = treino.reps;
+    document.getElementById("treinoPeso").value = treino.peso;
   }
 
-  if (choice.toUpperCase() === "E") {
-    // preencher o formulário com os valores existentes
-    editingTreinoIdx = idx;
-
-    if (treinoDataEl) treinoDataEl.value = t.date || treinoDataEl.value;
-    if (treinoParteEl) treinoParteEl.value = t.parte || "";
-    if (treinoFormatoEl) treinoFormatoEl.value = t.formato || "";
-
-    if (treinoExEl) treinoExEl.value = t.ex || treinoExEl.value;
-
-    if (treinoRondasEl) treinoRondasEl.value = (t.rondas != null ? String(t.rondas) : "1");
-    if (treinoRepsEl) treinoRepsEl.value = t.reps || "";
-    if (treinoPesoEl) treinoPesoEl.value = (t.peso != null ? String(t.peso) : "");
-    if (treinoTempoEl) treinoTempoEl.value = t.tempo || "";
-    if (treinoDistEl) treinoDistEl.value = (t.distanciaKm != null ? String(t.distanciaKm) : "");
-
-    if (treinoAddBtn) treinoAddBtn.textContent = "Guardar alterações";
-  }
+  renderQuadroWodDia(treino.data);
 }
-function setRegistoHistoricoVisible(isVisible) {
-  // Procura qualquer card/caixa que tenha o título "Registo e histórico"
-  const headers = Array.from(document.querySelectorAll("h1,h2,h3,h4,div,span,p"));
-  const targetHeader = headers.find(el =>
-    (el.textContent || "").trim().toLowerCase() === "registo e histórico"
-  );
-
-  if (!targetHeader) return;
-
-  // Sobe até um contentor "grande" (card/box)
-  let box = targetHeader;
-  for (let i = 0; i < 6; i++) {
-    if (!box.parentElement) break;
-    box = box.parentElement;
-
-    const cls = (box.className || "").toString().toLowerCase();
-    const tag = (box.tagName || "").toLowerCase();
-
-    // tenta apanhar o "card/box/modal"
-    if (tag === "section" || tag === "article" || tag === "div") {
-      if (cls.includes("card") || cls.includes("modal") || cls.includes("panel") || cls.includes("box")) {
-        break;
-      }
-    }
-  }
-
-  box.style.display = isVisible ? "" : "none";
-}
-
