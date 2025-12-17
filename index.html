@@ -1,25 +1,15 @@
-<!DOCTYPE html>
-<html lang="pt">
+<!doctype html>
+<html lang="pt-PT">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#262f1c" />
+
   <title>CrossBox</title>
 
-  <meta name="theme-color" content="#f2f2f2" />
-  <link rel="manifest" href="manifest.json" />
-
-  <link rel="apple-touch-icon" sizes="180x180" href="imagens/crossbox_logo-512.png" />
+  <link rel="manifest" href="./manifest.json?v=5" />
+  <link rel="apple-touch-icon" href="./imagens/crossbox_logo-192.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="CrossBox">
-  <meta name="application-name" content="CrossBox">
-
-  <!-- Fonte militar -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Stardos+Stencil:wght@400;700&display=swap" rel="stylesheet">
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     :root {
@@ -29,7 +19,6 @@
 
     body {
       background:
-        /* RISCOS ESCUROS TIPO ARRANHÕES */
         repeating-linear-gradient(
           145deg,
           rgba(18, 22, 15, 0.95) 0px,
@@ -37,12 +26,9 @@
           rgba(12, 13, 10, 1) 121px,
           rgba(12, 13, 10, 1) 132px
         ),
-        /* MANCHAS OLIVA / LAMA */
         radial-gradient(circle at 12% 0%, rgba(116, 128, 76, 0.55) 0, transparent 55%),
         radial-gradient(circle at 85% 100%, rgba(140, 110, 60, 0.45) 0, transparent 60%),
-        /* FUNDO PRINCIPAL VERDE TROPA ESCURO */
         linear-gradient(to bottom, #4f5b32 0%, #262f1c 40%, #141710 100%);
-
       color: #111;
       display: flex;
       justify-content: center;
@@ -57,7 +43,7 @@
       box-sizing: border-box;
     }
 
-    /* HEADER SEM CAIXA PRETA */
+    /* HEADER */
     header {
       position: sticky;
       top: 0;
@@ -81,40 +67,39 @@
       display: block;
     }
 
-/* BLOCO DO TÍTULO EM 2 LINHAS */
-.subtitle-block {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;   /* CENTRA as duas linhas */
-  text-align: center;    /* texto centrado */
-  cursor: pointer;
-  font-family: "Stardos Stencil", system-ui, sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.7);
-  transform-origin: center center;
-  transition: transform 0.1s ease;
-}
+    .subtitle-block {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      font-family: "Stardos Stencil", system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      text-shadow: 0 2px 3px rgba(0, 0, 0, 0.7);
+      transform-origin: center center;
+      transition: transform 0.1s ease;
+    }
 
-.subtitle-block:hover {
-  transform: translateY(-1px);
-}
+    .subtitle-block:hover {
+      transform: translateY(-1px);
+    }
 
-.subtitle-line-1 {
-  font-size: 0.85rem;
-  color: #e0e5d8;
-}
+    .subtitle-line-1 {
+      font-size: 0.85rem;
+      color: #e0e5d8;
+    }
 
-.subtitle-line-2 {
-  font-size: 1.1rem;
-  color: #fefce8;
-  margin-top: -1px;
-  border-bottom: 2px solid rgba(254, 252, 232, 0.85);
-  padding-bottom: 0px;
-  /* removido o align-self para não empurrar a 2.ª linha para a esquerda */
-}
+    .subtitle-line-2 {
+      font-size: 1.1rem;
+      color: #fefce8;
+      margin-top: -1px;
+      border-bottom: 2px solid rgba(254, 252, 232, 0.85);
+      padding-bottom: 0px;
+    }
 
+    /* CARDS */
     .card {
       background: #e1e1e1;
       background-image:
@@ -135,7 +120,7 @@
         inset 0 0 0 1px rgba(255, 255, 255, 0.06);
     }
 
-    /* PERFIL SEM “CARTÃO” VISÍVEL */
+    /* PERFIL SEM CARTÃO */
     #perfil.card {
       background: transparent;
       border: none;
@@ -164,18 +149,17 @@
       gap: 4px;
     }
 
-     label {
-     font-size: 0.8rem;
-     color: #2b2b2b;
-     text-transform: uppercase;
-     letter-spacing: 0.05em;
-   }
+    label {
+      font-size: 0.8rem;
+      color: #2b2b2b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
 
-    /* Labels mais claros só no formulário de perfil */
     #perfilForm label {
-     color: #fefce8;
-   }
-    
+      color: #fefce8;
+    }
+
     input,
     select,
     textarea,
@@ -198,19 +182,16 @@
       box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.25);
     }
 
-    /* BOTÃO PRINCIPAL – ESTILO GUERRA SUJA */
+    /* BOTÕES */
     .btn-primary {
-      background:
-        linear-gradient(145deg, #1f7b3a, #0f4220);
+      background: linear-gradient(145deg, #1f7b3a, #0f4220);
       border: 1px solid #050806;
       color: #f4f4f4;
       font-weight: 700;
       cursor: pointer;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      box-shadow:
-        0 3px 0 #050806,
-        inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+      box-shadow: 0 3px 0 #050806, inset 0 0 0 1px rgba(255, 255, 255, 0.04);
       position: relative;
       overflow: hidden;
     }
@@ -219,14 +200,13 @@
       content: "";
       position: absolute;
       inset: 0;
-      background-image:
-        repeating-linear-gradient(
-          135deg,
-          rgba(255, 255, 255, 0.08) 0px,
-          rgba(255, 255, 255, 0.08) 1px,
-          transparent 1px,
-          transparent 4px
-        );
+      background-image: repeating-linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.08) 0px,
+        rgba(255, 255, 255, 0.08) 1px,
+        transparent 1px,
+        transparent 4px
+      );
       mix-blend-mode: soft-light;
       opacity: 0.32;
       pointer-events: none;
@@ -234,27 +214,21 @@
 
     .btn-primary:active {
       transform: translateY(1px);
-      box-shadow:
-        0 1px 0 #050806,
-        inset 0 0 0 1px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 1px 0 #050806, inset 0 0 0 1px rgba(0, 0, 0, 0.3);
     }
 
-    /* BOTÕES SECUNDÁRIOS – RISCADOS / BATTLE WORN */
     .btn-secondary {
       padding: 8px 10px;
       border-radius: 999px;
       border: 1px solid #303030;
-      background:
-        linear-gradient(145deg, #3b3f3a, #202320);
+      background: linear-gradient(145deg, #3b3f3a, #202320);
       color: #f2f2f2;
       font-size: 0.8rem;
       cursor: pointer;
       white-space: nowrap;
       text-transform: uppercase;
       letter-spacing: 0.07em;
-      box-shadow:
-        0 3px 0 #050807,
-        inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+      box-shadow: 0 3px 0 #050807, inset 0 0 0 1px rgba(255, 255, 255, 0.03);
       position: relative;
       overflow: hidden;
     }
@@ -263,14 +237,13 @@
       content: "";
       position: absolute;
       inset: 0;
-      background-image:
-        repeating-linear-gradient(
-          135deg,
-          rgba(255, 255, 255, 0.07) 0px,
-          rgba(255, 255, 255, 0.07) 1px,
-          transparent 1px,
-          transparent 5px
-        );
+      background-image: repeating-linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.07) 0px,
+        rgba(255, 255, 255, 0.07) 1px,
+        transparent 1px,
+        transparent 5px
+      );
       mix-blend-mode: soft-light;
       opacity: 0.28;
       pointer-events: none;
@@ -281,13 +254,11 @@
       box-shadow: 0 1px 0 #050807;
     }
 
-    /* BOTÃO APAGAR – MANTIDO MAS MAIS “BRUTO” */
     .btn-delete {
       padding: 2px 4px;
       border-radius: 999px;
       border: 1px solid #3b0505;
-      background:
-        linear-gradient(145deg, #b93333, #7a1515);
+      background: linear-gradient(145deg, #b93333, #7a1515);
       color: #ffffff;
       font-size: 0.75rem;
       cursor: pointer;
@@ -303,38 +274,40 @@
       font-size: 0.8rem;
       color: #222;
     }
-    /* Resumo rápido do WOD (chips) */
-.stats-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 6px 0 4px;
-}
 
-.stat-chip {
-  flex: 1 1 calc(50% - 6px);
-  min-width: 140px;
-  padding: 6px 8px;
-  border-radius: 999px;
-  background: #d7d7d7;
-  border: 1px solid #b5b5b5;
-  font-size: 0.75rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-sizing: border-box;
-}
+    /* CHIPS RESUMO WOD */
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 6px 0 4px;
+    }
 
-.stat-chip span:first-child {
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
+    .stat-chip {
+      flex: 1 1 calc(50% - 6px);
+      min-width: 140px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: #d7d7d7;
+      border: 1px solid #b5b5b5;
+      font-size: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box;
+    }
 
-.stat-chip span:last-child {
-  font-weight: 500;
-}
+    .stat-chip span:first-child {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
 
+    .stat-chip span:last-child {
+      font-weight: 500;
+    }
+
+    /* TABS */
     .tabs {
       display: flex;
       gap: 8px;
@@ -346,20 +319,12 @@
       padding: 10px 0;
       border-radius: 999px;
       border: 1px solid #202320;
-      background:
-        linear-gradient(145deg, #32372f, #21241f);
+      background: linear-gradient(145deg, #32372f, #21241f);
       color: #f1f1f1;
       cursor: pointer;
       font-size: 0.9rem;
-      box-shadow:
-        0 4px 0 #050806,
-        inset 0 0 0 1px rgba(255, 255, 255, 0.04);
-      transition:
-        transform 0.1s ease,
-        box-shadow 0.1s ease,
-        background 0.1s ease,
-        border-color 0.1s ease,
-        color 0.1s ease;
+      box-shadow: 0 4px 0 #050806, inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease, border-color 0.1s ease, color 0.1s ease;
       text-transform: uppercase;
       letter-spacing: 0.09em;
       position: relative;
@@ -370,14 +335,13 @@
       content: "";
       position: absolute;
       inset: 0;
-      background-image:
-        repeating-linear-gradient(
-          135deg,
-          rgba(255, 255, 255, 0.08) 0px,
-          rgba(255, 255, 255, 0.08) 1px,
-          transparent 1px,
-          transparent 4px
-        );
+      background-image: repeating-linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.08) 0px,
+        rgba(255, 255, 255, 0.08) 1px,
+        transparent 1px,
+        transparent 4px
+      );
       mix-blend-mode: soft-light;
       opacity: 0.3;
       pointer-events: none;
@@ -389,8 +353,7 @@
     }
 
     .tab-btn.active {
-      background:
-        linear-gradient(145deg, #1f7b3a, #0f4220);
+      background: linear-gradient(145deg, #1f7b3a, #0f4220);
       border-color: #0b2614;
       color: #ffffff;
       font-weight: 700;
@@ -401,6 +364,7 @@
     .section { display: none; }
     .section.active { display: block; }
 
+    /* OPÇÕES */
     .options-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -416,18 +380,12 @@
       font-size: 0.9rem;
     }
 
-    .opt-emoji {
-      font-size: 1.4rem;
-    }
+    .opt-emoji { font-size: 1.4rem; }
 
-    .option-section {
-      display: none;
-    }
+    .option-section { display: none; }
+    .option-section.active { display: block; }
 
-    .option-section.active {
-      display: block;
-    }
-
+    /* TABELAS */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -435,8 +393,7 @@
       color: #111;
     }
 
-    th,
-    td {
+    th, td {
       padding: 6px;
       text-align: center;
       border-bottom: 1px solid #d9d9d9;
@@ -465,862 +422,679 @@
       color: #222;
     }
 
-    /* REMOVER RISCOS APENAS NO CARD "REGISTO E HISTÓRICO" */
+    /* REMOVER RISCOS NO CARD "REGISTO E HISTÓRICO" (WOD) */
     #opt-wod .card:nth-of-type(2) {
       background-image: none !important;
       background-color: #e1e1e1 !important;
     }
-    /* ============================
-   MELHORIA DO ECRÃ DO GUIA DE EXERCÍCIOS
-   (só mexe no aspecto dentro do #opt-guia)
-   ============================ */
 
-/* Aumentar a altura útil do guia – usa quase o ecrã todo */
-/* WOD do dia – mais alto */
-#opt-wod #treinoScroll {
-  max-height: calc(100vh - 260px);
-}
+    /* GUIA DE EXERCÍCIOS */
+    #opt-wod #treinoScroll { max-height: calc(100vh - 260px); }
+    #opt-historico #dailyHistoryScroll { max-height: calc(100vh - 220px); }
 
-/* Histórico WOD – aproveitar o ecrã quase todo */
-#opt-historico #dailyHistoryScroll {
-  max-height: calc(100vh - 220px);
-}
+    #opt-guia table { font-size: 0.85rem; }
+    #opt-guia th, #opt-guia td {
+      text-align: left;
+      white-space: normal;
+      vertical-align: top;
+    }
 
-/* Texto mais legível na tabela do guia */
-#opt-guia table {
-  font-size: 0.85rem;
-}
+    /* QUICK 1RM */
+    .quick-1rm-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
 
-#opt-guia th,
-#opt-guia td {
-  text-align: left;      /* deixa de estar tudo centrado */
-  white-space: normal;   /* permite que o texto parta linha */
-  vertical-align: top;
-}
-    
- /* ============================
-   FERRAMENTA RÁPIDA 1RM – VISUAL PRO
-   ============================ */
+    .quick-1rm-row .field-mini {
+      flex: 1 1 0;
+      min-width: 90px;
+    }
 
-.quick-1rm-card {
-  background: #dadada;
-  padding-top: 10px;
-}
+    @media (max-width: 600px) {
+      .quick-1rm-row .field-mini label { font-size: 0.75rem; }
+      .quick-1rm-row .field-mini input { padding: 6px 8px; }
+    }
 
-.quick-1rm-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 4px;
-}
+    #quickPercResult {
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
 
-.quick-1rm-header h3 {
-  margin: 0;
-  font-size: 0.95rem;
-}
+    #sec-1rm .card:nth-of-type(3) th,
+    #sec-1rm .card:nth-of-type(3) td {
+      text-align: left !important;
+    }
 
-.quick-1rm-tag {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 4px 8px;
-  border-radius: 999px;
-  border: 1px solid #166534;
-  background: linear-gradient(145deg, #16a34a, #166534);
-  color: #f9fafb;
-  white-space: nowrap;
-}
+    #sec-1rm .card:nth-of-type(3) td:last-child {
+      text-align: center !important;
+      width: 40px;
+    }
 
-.quick-1rm-text {
-  margin-top: 2px;
-  margin-bottom: 8px;
-  font-size: 0.8rem;
-}
+    #sec-1rm .card:nth-of-type(2) td:last-child {
+      text-align: center !important;
+    }
 
-.quick-1rm-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
+    /* WOD compact no telemóvel */
+    #opt-wod .field label {
+      font-size: 0.7rem;
+      line-height: 1.1;
+    }
 
-.quick-1rm-col {
-  flex: 1 1 220px;
-}
-    /* Linha com 3 colunas no cálculo rápido 1RM */
-.quick-1rm-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
-}
+    #opt-wod .wod-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px 10px;
+      margin-top: 8px;
+    }
 
-.quick-1rm-row .field-mini {
-  flex: 1 1 0;
-  min-width: 90px;
-}
+    #opt-wod .wod-grid .field { min-width: 0; }
+    #opt-wod .field input { padding: 6px 8px; }
 
-/* Fica mais compacto no telemóvel */
-@media (max-width: 600px) {
-  .quick-1rm-row .field-mini label {
-    font-size: 0.75rem;
-  }
+    #opt-wod .field input::placeholder { font-size: 0.75rem; }
 
-  .quick-1rm-row .field-mini input {
-    padding: 6px 8px;
-  }
-}
-
-/* Peso sugerido em destaque */
-.quick-1rm-output {
-  font-size: 1.4rem;
-  font-weight: 700;
-  text-align: center;
-  background: #fefce8;
-  border: 1px solid #a3a3a3;
-}
-
-/* Texto da percentagem inversa mais discreto */
-#quickPercResult {
-  font-size: 0.8rem;
-  margin-top: 4px;
-}
-
-/* Alinhamento à esquerda total na tabela 1RM */
-#sec-1rm .card:nth-of-type(3) th,
-#sec-1rm .card:nth-of-type(3) td {
-  text-align: left !important;
-}
-
-/* Botão 🗑 centrado na sua coluna */
-#sec-1rm .card:nth-of-type(3) td:last-child {
-  text-align: center !important;
-  width: 40px;
-}
-
-/* Botão 🗑 continua centrado na própria célula */
-#sec-1rm .card:nth-of-type(2) td:last-child {
-  text-align: center !important;
-}
-/* Campos do WOD mais compactos no telemóvel */
-#opt-wod .field label {
-  font-size: 0.7rem;
-  line-height: 1.1;
-}
-/* ===== GRELLA 3x2 PARA O WOD ===== */
-#opt-wod .wod-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px 10px;
-  margin-top: 8px;
-}
-
-#opt-wod .wod-grid .field {
-  min-width: 0;
-}
-
-#opt-wod .field input {
-  padding: 6px 8px;      /* em vez de 10px – ficam mais baixinhos */
-}
-
-/* Placeholder um pouco mais pequeno */
-#opt-wod .field input::placeholder {
-  font-size: 0.75rem;
-}
-
-/* Em ecrãs pequenos, garantir que as colunas não ficam gigantes */
-@media (max-width: 600px) {
-  #opt-wod .field {
-    min-width: 110px;
-  }
-}
-
-
-/* --- Quadro branco do WOD (ecrã WOD) --- */
-.wod-board{
-  border:2px solid #111;
-  border-radius:14px;
-  padding:12px 14px;
-  margin-top:12px;
-  background:#fff;
-}
-.wod-board-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:baseline;
-  gap:12px;
-  margin-bottom:10px;
-}
-.wod-board-title{font-weight:900; letter-spacing:.2px}
-.wod-board-hint{font-size:12px; opacity:.6}
-
-.wod-sec{margin-top:12px}
-.wod-sec:first-child{margin-top:6px}
-.wod-sec-title{font-weight:900; margin-bottom:8px}
-
-.wod-line-wrap{
-  padding:8px 0;
-  border-top:1px dashed rgba(0,0,0,.18);
-}
-.wod-sec .wod-line-wrap:first-of-type{border-top:none; padding-top:0}
-
-.wod-line{
-  padding-left:14px;
-  margin:3px 0;
-  white-space:pre-wrap;
-  line-height:1.35;
-}
-.wod-line.is-head{padding-left:0; font-weight:700}
-
-.wod-empty{opacity:.6; font-style:italic; padding:6px 0}
-
-</style>
+    @media (max-width: 600px) {
+      #opt-wod .field { min-width: 110px; }
+    }
+  </style>
 </head>
+
 <body>
-<div class="app">
-
-  <header>
-    <div class="header-row">
-      <img id="appLogo" src="imagens/crossbox_logo.png" alt="CrossBox logo">
-      <div class="subtitle-block" id="appSubtitle">
-        <span class="subtitle-line-1" id="appSubtitleLine1">Registo de treinos</span>
-        <span class="subtitle-line-2" id="appSubtitleLine2">Toca para configurar o teu perfil</span>
-      </div>
-    </div>
-  </header>
-
-  <!-- PERFIL -->
-  <section class="card" id="perfil">
-    <div id="perfilForm">
-      <div class="form-row">
-        <div class="field">
-          <label>Nome</label>
-          <input id="nome" type="text" />
-        </div>
-        <div class="field">
-          <label>Nível</label>
-          <select id="nivel">
-            <option value="">Selecionar</option>
-            <option value="iniciante">Iniciante</option>
-            <option value="intermedio">Intermédio</option>
-            <option value="avancado">Avançado</option>
-          </select>
+  <div class="app">
+    <header>
+      <div class="header-row">
+        <img id="appLogo" src="imagens/crossbox_logo.png" alt="CrossBox logo" />
+        <div class="subtitle-block" id="appSubtitle">
+          <span class="subtitle-line-1" id="appSubtitleLine1">Registo de treinos</span>
+          <span class="subtitle-line-2" id="appSubtitleLine2">Toca para configurar o teu perfil</span>
         </div>
       </div>
+    </header>
 
-      <div class="form-row">
-        <div class="field">
-          <label>Sexo</label>
-          <select id="sexo">
-            <option value="">Selecionar</option>
-            <option value="homem">Homem</option>
-            <option value="mulher">Mulher</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Idade</label>
-          <input id="idade" type="number" min="10" max="100" />
-        </div>
-      </div>
-
-        <div class="form-row">
-        <div class="field">
-          <label>Altura (cm)</label>
-          <input id="altura" type="number" min="100" max="230" />
-        </div>
-        <div class="field">
-          <label>Peso (kg)</label>
-          <input id="peso" type="number" step="0.1" min="30" max="250" />
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="field">
-          <label>Objetivo principal</label>
-          <select id="objetivo">
-  <option value="">Selecionar</option>
-  <option value="condicionamento">Melhorar condicionamento</option>
-  <option value="forca_absoluta">Aumentar força absoluta</option>
-  <option value="potencia">Desenvolver potência / explosão</option>
-  <option value="resistencia_muscular">Melhorar resistência muscular</option>
-  <option value="recomposicao">Perder massa gorda / recomposição</option>
-  <option value="massa_funcional">Ganho de massa magra funcional</option>
-  <option value="longevidade">Manter forma e longevidade</option>
-  <option value="competicao">Preparação para competição / RX</option>
-</select>
-
-        </div>
-      </div>
-
-      <button class="btn-primary" id="saveProfile">Guardar perfil</button>
-
-    </div>
-  </section>
-
-  <!-- TABS PRINCIPAIS -->
-  <div class="tabs">
-    <button class="tab-btn active" data-target="sec-1rm">1RM</button>
-    <button class="tab-btn" data-target="sec-opcoes">WOD & Tools</button>
-  </div>
-
-  <!-- SECÇÃO 1: 1RM -->
-<section id="sec-1rm" class="section active">
-
-  <!-- CARD 1: REGISTO / ATUALIZAÇÃO DO 1RM -->
-  <div class="card">
-    <h3 style="margin-top:0; margin-bottom:8px;">1RM – Registo</h3>
-
-    <div class="form-row">
-      <div class="field">
-        <label>Exercício</label>
-        <select id="exercise"></select>
-      </div>
-
-      <div class="field">
-        <label>1RM (kg) – peso máximo numa repetição</label>
-        <input id="oneRm" type="number" step="0.5" />
-      </div>
-    </div>
-
-    <button class="btn-primary" id="addBtn">Guardar / Atualizar</button>
-
-    <div class="helper-text" style="margin-top:6px;">
-      Aqui registas apenas o teu 1RM por exercício. As percentagens e cálculos rápidos passam a ser usados diretamente no WOD.
-    </div>
-  </div>
-        <!-- FERRAMENTA RÁPIDA 1RM (estilo GUIA, tudo vertical e estável) -->
-        <div class="card">
-    <h3 style="margin-top:0; margin-bottom:8px;">Cálculo rápido (% ↔ kg)</h3>
-
-    <div class="helper-text" style="margin-bottom:8px;">
-      Introduz a percentagem ou o peso, e vê o valor correspondente com base no teu 1RM.
-    </div>
-
-    <!-- 1.ª linha: exercício (igual) -->
-    <div class="field">
-      <label>Exercício</label>
-      <select id="quickExercise"></select>
-    </div>
-
-    <!-- 2.ª linha: 3 colunas -->
-    <div class="quick-1rm-row">
-      <div class="field field-mini">
-        <label>% 1RM</label>
-        <input id="quickPercent" type="number" min="10" max="130" step="1" />
-      </div>
-
-      <div class="field field-mini">
-        <label>Peso (kg)</label>
-        <input id="quickPeso" type="text" readonly />
-      </div>
-
-      <div class="field field-mini">
-        <label>Peso (kg)</label>
-        <input id="quickPesoInput" type="number" step="0.5" min="0" />
-      </div>
-    </div>
-
-    <!-- Texto que explica a percentagem ↔ peso -->
-    <div class="helper-text" id="quickPercResult"></div>
-  </div>
-
-  <!-- CARD 2: TABELA COMPLETA DO 1RM -->
-  <div class="card">
-    <div class="scroll">
-      <table>
-        <thead>
-  <tr>
-    <th style="width:55%; text-align:left;">Exercício</th>
-    <th style="width:40%; text-align:left;">1RM &amp; histórico</th>
-    <th style="width:5%;"></th>
-  </tr>
-</thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-    </div>
-  </div>
-
-</section>
-
-  <!-- SECÇÃO 2: OPÇÕES -->
-  <section id="sec-opcoes" class="section">
-
-    <div class="card">
-    <div class="options-grid">
-
-  <button class="btn-secondary opt-btn" data-target="opt-wod">
-    <span class="opt-emoji">🟩</span>
-    <span>WOD</span>
-  </button>
-
-  <!-- OBJETIVO → opt-calc -->
-  <button class="btn-secondary opt-btn" data-target="opt-calc">
-    <span class="opt-emoji">📊</span>
-    <span>OBJETIVO</span>
-  </button>
-
-  <!-- GRÁFICO → opt-graficos -->
-  <button class="btn-secondary opt-btn" data-target="opt-graficos">
-    <span class="opt-emoji">📉</span>
-    <span>GRÁFICO</span>
-  </button>
-
-  <!-- DESEMPENHO → opt-performance -->
-  <button class="btn-secondary opt-btn" data-target="opt-performance">
-    <span class="opt-emoji">🥇</span>
-    <span>DESEMPENHO</span>
-  </button>
-
-  <button class="btn-secondary opt-btn" data-target="opt-guia">
-    <span class="opt-emoji">📚</span>
-    <span>EXERCÍCIOS</span>
-  </button>
-
-  <button class="btn-secondary opt-btn" data-target="opt-backup">
-    <span class="opt-emoji">💾</span>
-    <span>BACKUP</span>
-  </button>
-
-  <!-- RESERVAS → sec-reservas -->
-  <button class="btn-secondary opt-btn" data-target="sec-reservas">
-    <span class="opt-emoji">📅</span>
-    <span>RESERVAS</span>
-  </button>
-
-  <button class="btn-secondary opt-btn" data-target="opt-historico">
-    <span class="opt-emoji">📜</span>
-    <span>HISTÓRICO</span>
-  </button>
-
-</div>
-           
-           <!-- WOD -->
-    <section id="opt-wod" class="option-section active">
-      <div class="card">
-        <h3 style="margin-top:0; margin-bottom:8px;">🟩 WOD</h3>
-
-              <!-- LINHA 1: data / procura / exercício -->
+    <!-- PERFIL -->
+    <section class="card" id="perfil">
+      <div id="perfilForm">
         <div class="form-row">
           <div class="field">
-            <label>Data</label>
-            <input id="treinoData" type="date" />
+            <label>Nome</label>
+            <input id="nome" type="text" />
           </div>
           <div class="field">
-            <label>Procurar exercício</label>
-            <input id="treinoExercicioSearch" type="text" placeholder="Nome EN/PT." />
-          </div>
-          <div class="field">
-            <label>Exercício</label>
-            <select id="treinoExercicio"></select>
-          </div>
-        </div>
-
-                <!-- LINHA 2: parte / formato / estrutura do bloco -->
-        <div class="form-row">
-          <div class="field">
-            <label>Parte</label>
-            <select id="treinoParte">
-              <option value="">—</option>
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="C">C</option>
-              <option value="D">D</option>
-              <option value="Outro">Outro</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label>Formato</label>
-            <select id="treinoFormato">
-              <option value="">—</option>
-              <option value="For Time">For Time</option>
-              <option value="AMRAP">AMRAP</option>
-              <option value="EMOM">EMOM</option>
-              <option value="A cada X′ × Y">A cada X′ × Y</option>
-              <option value="Intervalos 2′ on / 2′ off">2′ on / 2′ off</option>
-              <option value="Chipper">Chipper</option>
-              <option value="Carga total">Carga total</option>
-            </select>
-          </div>
-
-        <!-- GRELLA 3x2 DO WOD -->
-        <div class="wod-grid">
-          <div class="field">
-            <label>Séries</label>
-            <input id="treinoRondas" type="number" min="1" />
-          </div>
-
-          <div class="field">
-            <label>Repetições</label>
-            <input id="treinoReps" type="number" min="1" />
-          </div>
-
-          <div class="field">
-            <label>Peso kg</label>
-            <input id="treinoPeso" type="number" step="0.5" min="0" />
-          </div>
-
-          <div class="field">
-            <label>%1RM</label>
-            <input id="treinoPercent" type="number" min="10" max="130" step="1" />
-          </div>
-
-          <div class="field">
-            <label>Tempo</label>
-            <input id="treinoTempo" type="text" placeholder="Ex.: 12:35, 20', AMRAP 10'..." />
-          </div>
-
-          <div class="field">
-            <label>Distância (km)</label>
-            <input id="treinoDist" type="number" step="0.01" min="0" />
-          </div>
-        </div>
-
-          <div class="helper-text" id="treinoPercentInfo" style="margin-top:-4px; margin-bottom:4px;">
-        </div>
-
-        <button class="btn-primary" id="treinoAdd">Adicionar ao WOD</button>
-
-        <!-- QUADRO DO WOD DO DIA (novo) -->
-        <div id="wodBoard" class="wod-board">
-          <div class="wod-board-head">
-            <div id="wodBoardTitle" class="wod-board-title">WOD —</div>
-            <div class="wod-board-hint">Long-press para editar/apagar</div>
-          </div>
-          <div id="wodBoardBody" class="wod-board-body"></div>
-        </div>
-
-        <div class="helper-text" id="wodHelperText" style="display:none;">
-        A carga de cada exercício (kg) é calculada como: peso × repetições × rondas.
-        A distância em metcon é somada à parte, em km.
-        </div>
-<div id="wodExtras" style="display:none;">
-<!-- Resultado global do WOD -->
-<div class="form-row" style="margin-top:10px;">
-  <div class="field">
-    <label>Resultado do WOD</label>
-    <select id="treinoResultado">
-      <option value="">— Selecionar —</option>
-      <option value="rx">Fiz tudo conforme o quadro (RX)</option>
-      <option value="adaptado">Fiz tudo mas adaptei cargas/skills</option>
-      <option value="incompleto">Não concluí todos os exercícios</option>
-    </select>
-  </div>
-</div>
-
-<hr style="margin:10px 0 6px; border:none; border-top:1px solid #b5b5b5;">
-
-<div class="card">
-         <h3 style="margin-top:0; margin-bottom:8px;">Registo e histórico</h3>
-  
-        <!-- Resumo rápido do dia (sempre visível) -->
-        <div class="helper-text" id="treinoResumo" style="margin-bottom:4px;"></div>
-        <div class="helper-text" id="treinoSugestao" style="margin-top:0; font-weight:500;"></div>
-        <div class="helper-text" id="weeklyHistory" style="margin-top:4px;"></div>
-
-        <!-- Resumo rápido em chips -->
-        <div id="treinoStats" class="stats-row" style="display:none;">
-          <div class="stat-chip">
-            <span>Carga total</span>
-            <span id="statCarga">0 kg</span>
-          </div>
-          <div class="stat-chip">
-            <span>Exercícios</span>
-            <span id="statExercicios">0</span>
-          </div>
-          <div class="stat-chip" id="statTempoChip">
-            <span>Melhor tempo</span>
-            <span id="statTempo">–</span>
-          </div>
-          <div class="stat-chip">
-            <span>Volume</span>
-            <span id="statVolume">0 reps</span>
-          </div>
-        </div>
-
-            
-        <!-- WOD do dia – compacto e fácil de ler -->
-        <h4 style="margin-top:10px; margin-bottom:4px;">WOD do dia</h4>
-        <div class="scroll" id="treinoScroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Parte</th>
-                <th>Formato</th>
-                <th>Exercício</th>
-                <th>Tipo</th>
-                <th>Rondas</th>
-                <th>Reps</th>
-                <th>Peso</th>
-                <th>% 1RM</th>
-                <th>Tempo</th>
-                <th>Distância (km)</th>
-                <th>Carga (kg)</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="treinoBody"></tbody>
-          </table>
-        </div>
-       </div>
-      
-</div>
-</section>
-    <!-- HISTÓRICO WOD – NOVA SECÇÃO -->
-<section id="opt-historico" class="option-section">
-  <div class="card">
-    <h3 style="margin-top:0; margin-bottom:8px;">📜 Histórico WOD</h3>
-    <p class="helper-text">
-      Lista completa de todos os treinos registados, ordenados da data mais recente para a mais antiga.
-    </p>
-
-    <div class="scroll" id="dailyHistoryScroll">
-      <table>
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Parte</th>
-            <th>Formato</th>
-            <th>Exercício</th>
-            <th>Tipo</th>
-            <th>Rondas</th>
-            <th>Reps</th>
-            <th>Peso</th>
-            <th>% 1RM</th>
-            <th>Tempo</th>
-            <th>Distância (km)</th>
-            <th>Carga (kg)</th>
-            <th></th> <!-- lixo -->
-          </tr>
-        </thead>
-        <tbody id="dailyHistoryBody"></tbody>
-      </table>
-    </div>
-  </div>
-</section>
-
-    <!-- OBJETIVO -->
-    <section id="opt-calc" class="option-section">
-      <div class="card">
-        <h3 style="margin-top:0; margin-bottom:8px;">🧮 Objetivo</h3>
-
-        <div class="form-row">
-          <div class="field">
-            <label>Exercício</label>
-            <select id="calcExercicio"></select>
-          </div>
-          <div class="field">
-            <label>N.º de repetições planeadas</label>
-            <input id="calcReps" type="number" min="1" />
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="field">
-            <label>Objetivo</label>
-            <select id="calcObjetivo">
-              <option value="">Automático</option>
-              <option value="forca">Força</option>
-              <option value="hipertrofia">Hipertrofia</option>
-              <option value="tecnica">Técnica / Volume leve</option>
+            <label>Nível</label>
+            <select id="nivel">
+              <option value="">Selecionar</option>
+              <option value="iniciante">Iniciante</option>
+              <option value="intermedio">Intermédio</option>
+              <option value="avancado">Avançado</option>
             </select>
           </div>
         </div>
 
         <div class="form-row">
           <div class="field">
-            <label>Peso objetivo (kg – opcional)</label>
-            <input id="calcTargetKg" type="number" step="0.5" min="0" />
+            <label>Sexo</label>
+            <select id="sexo">
+              <option value="">Selecionar</option>
+              <option value="homem">Homem</option>
+              <option value="mulher">Mulher</option>
+            </select>
           </div>
           <div class="field">
-            <label>Prazo (semanas – opcional)</label>
-            <input id="calcWeeks" type="number" min="1" />
+            <label>Idade</label>
+            <input id="idade" type="number" min="10" max="100" />
           </div>
         </div>
 
-        <button class="btn-primary" id="calcBtn">Calcular</button>
-        <div class="helper-text" id="calcResultado" style="margin-top:6px;">
-          Escolhe um exercício, indica o nº de repetições e, se quiseres, o objetivo (força / hipertrofia / técnica).
+        <div class="form-row">
+          <div class="field">
+            <label>Altura (cm)</label>
+            <input id="altura" type="number" min="100" max="230" />
+          </div>
+          <div class="field">
+            <label>Peso (kg)</label>
+            <input id="peso" type="number" min="30" max="250" step="0.1" />
+          </div>
         </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label>Objetivo principal</label>
+            <select id="objetivo">
+              <option value="">Selecionar</option>
+              <option value="condicionamento">Melhorar condicionamento</option>
+              <option value="forca_absoluta">Aumentar força absoluta</option>
+              <option value="potencia">Desenvolver potência / explosão</option>
+              <option value="resistencia_muscular">Melhorar resistência muscular</option>
+              <option value="recomposicao">Perder massa gorda / recomposição</option>
+              <option value="massa_funcional">Ganho de massa magra funcional</option>
+              <option value="longevidade">Manter forma e longevidade</option>
+              <option value="competicao">Preparação para competição / RX</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="saveProfile">Guardar perfil</button>
       </div>
     </section>
 
-    <!-- GRÁFICOS -->
-    <section id="opt-graficos" class="option-section">
+    <!-- TABS PRINCIPAIS -->
+    <div class="tabs">
+      <button class="tab-btn active" data-target="sec-1rm">1RM</button>
+      <button class="tab-btn" data-target="sec-opcoes">WOD &amp; Tools</button>
+    </div>
+
+    <!-- SECÇÃO 1: 1RM -->
+    <section class="section active" id="sec-1rm">
       <div class="card">
-        <h3 style="margin-top:0; margin-bottom:8px;">📈 Gráfico de evolução do 1RM</h3>
+        <h3 style="margin-top:0; margin-bottom:8px;">1RM – Registo</h3>
+
+        <div class="form-row">
+          <div class="field">
+            <label>Exercício</label>
+            <select id="exercise"></select>
+          </div>
+          <div class="field">
+            <label>1RM (kg) – peso máximo numa repetição</label>
+            <input id="oneRm" type="number" step="0.5" />
+          </div>
+        </div>
+
+        <button class="btn-primary" id="addBtn">Guardar / Atualizar</button>
+
+        <div class="helper-text" style="margin-top:6px;">
+          Aqui registas apenas o teu 1RM por exercício. As percentagens e cálculos rápidos passam a ser usados diretamente no WOD.
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0; margin-bottom:8px;">Cálculo rápido (% ↔ kg)</h3>
+        <div class="helper-text" style="margin-bottom:8px;">
+          Introduz a percentagem ou o peso, e vê o valor correspondente com base no teu 1RM.
+        </div>
+
         <div class="field">
           <label>Exercício</label>
-          <select id="graphExercise"></select>
-        </div>
-        <div style="margin-top:8px;">
-          <canvas id="rmChart" style="width:100%; max-height:260px;"></canvas>
-        </div>
-      </div>
-    </section>
-
-    <!-- PERFORMANCE -->
-    <section id="opt-performance" class="option-section">
-      <div class="card">
-        <h3 style="margin-top:0; margin-bottom:8px;">🏅 Performance física</h3>
-        <p class="helper-text">
-          Resumo automático com base nos teus registos de WOD, 1RM e metcons (carga em kg e distância em km).
-        </p>
-
-        <h4 style="margin-top:10px; margin-bottom:4px;">WOD – dias com mais carga</h4>
-        <div class="scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Carga total (kg)</th>
-                <th>Distância total (km)</th>
-                <th>N.º exercícios</th>
-                <th>Melhor tempo metcon</th>
-              </tr>
-            </thead>
-            <tbody id="perfWodBody"></tbody>
-          </table>
+          <select id="quickExercise"></select>
         </div>
 
-        <h4 style="margin-top:12px; margin-bottom:4px;">Top 1RM</h4>
-        <div class="scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Exercício</th>
-                <th>1RM</th>
-                <th>Rel. peso corporal</th>
-              </tr>
-            </thead>
-            <tbody id="perf1rmBody"></tbody>
-          </table>
-        </div>
-
-        <h4 style="margin-top:12px; margin-bottom:4px;">Metcon – melhores tempos</h4>
-        <div class="scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Exercício</th>
-                <th>Melhor tempo</th>
-                <th>Data</th>
-                <th>Carga / distância</th>
-              </tr>
-            </thead>
-            <tbody id="perfMetconBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- GUIA EXERCÍCIOS -->
-    <section id="opt-guia" class="option-section">
-      <div class="card">
-        <h3 style="margin-top:0; margin-bottom:8px;">📚 Guia de exercícios</h3>
-        <input id="guiaSearch" type="text" placeholder="Procurar por nome (EN/PT) ou descrição..." />
-        <div class="scroll" style="margin-top:8px;">
-          <table>
-            <thead>
-              <tr>
-                <th>Exercício</th>
-                <th>Descrição</th>
-              </tr>
-            </thead>
-            <tbody id="guiaBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- BACKUP -->
-    <section id="opt-backup" class="option-section">
-      <div class="card">
-        <h3 style="margin-top:0; margin-bottom:8px;">💾 Backup de dados</h3>
-        <p class="helper-text">
-          Exporta um ficheiro com o teu perfil, 1RM, histórico de WOD e restante informação.
-          Podes guardar em Google Drive, iCloud, Ficheiros, etc. Para restaurar noutro telemóvel, basta importar o ficheiro.
-        </p>
-        <div class="form-row">
-          <button class="btn-primary" id="exportBackupBtn">Exportar backup</button>
-          <button class="btn-secondary" id="importBackupBtn">Importar backup</button>
-          <input type="file" id="backupFileInput" accept="application/json" style="display:none;" />
-        </div>
-        <div id="backupInfo"></div>
-      </div>
-    </section>
-
-    <!-- RESERVAS & PRESENÇAS (AGORA DENTRO DO WOD & TOOLS) -->
-    <section id="sec-reservas" class="option-section">
-      <div class="card">
-        <h3 style="margin-top:0; margin-bottom:8px;">📆 Reservas & Presenças</h3>
-
-        <div class="form-row">
-          <div class="field">
-            <label>Data da aula</label>
-            <input id="reservaData" type="date" />
+        <div class="quick-1rm-row">
+          <div class="field field-mini">
+            <label>% 1RM</label>
+            <input id="quickPercent" type="number" min="10" max="130" step="1" />
           </div>
-          <div class="field">
-            <label>Hora</label>
-            <input id="reservaHora" type="time" />
+          <div class="field field-mini">
+            <label>Peso (kg)</label>
+            <input id="quickPeso" type="text" readonly />
+          </div>
+          <div class="field field-mini">
+            <label>Peso (kg)</label>
+            <input id="quickPesoInput" type="number" min="0" step="0.5" />
           </div>
         </div>
 
-        <div class="form-row">
-          <div class="field">
-            <label>Tipo de aula</label>
-            <select id="reservaTipo">
-              <option value="">Selecionar</option>
-              <option value="WOD">WOD</option>
-              <option value="Open Box">Open Box</option>
-              <option value="Halterofilismo">Halterofilismo</option>
-              <option value="Mobilidade">Mobilidade</option>
-              <option value="Competição">Competição</option>
-            </select>
-  <script src="app.js"></script>
-) || "[]");
-if (!Array.isArray(treinosTmp)) {
-  treinosTmp = [];
-  localStorage.setItem(STORAGE_TREINO, JSON.stringify(treinosTmp));
-}
-// NOTA: o teu código original usa "treinos" acima — preserva-o
+        <div class="helper-text" id="quickPercResult"></div>
+      </div>
 
-// iniciar selects e dados
-initSelects();
-loadProfile();
-renderRm();
+      <div class="card">
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:55%; text-align:left;">Exercício</th>
+                <th style="width:40%; text-align:left;">1RM &amp; histórico</th>
+                <th style="width:5%;"></th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
 
-refreshCalcExOptions();
-refreshGraphExerciseOptions();
+    <!-- SECÇÃO 2: OPÇÕES -->
+    <section class="section" id="sec-opcoes">
+      <div class="card">
+        <div class="options-grid">
+          <button class="btn-secondary opt-btn" data-target="opt-wod">
+            <span class="opt-emoji">🟩</span><span>WOD</span>
+          </button>
 
-// definir automaticamente a data do WOD se vazio
-if (treinoDataEl && !treinoDataEl.value) {
-  treinoDataEl.value = new Date().toISOString().slice(0, 10);
-}
+          <button class="btn-secondary opt-btn" data-target="opt-calc">
+            <span class="opt-emoji">📊</span><span>OBJETIVO</span>
+          </button>
 
-renderTreinos();          // mostra WOD do dia
-updateBackupInfo();       // estado do backup
-renderGuiaExercicios();   // guia
-renderPerformance();       // desempenho
-renderReservas();          // reservas
-atualizarRankingsMensais();// rankings
+          <button class="btn-secondary opt-btn" data-target="opt-graficos">
+            <span class="opt-emoji">📉</span><span>GRÁFICO</span>
+          </button>
 
+          <button class="btn-secondary opt-btn" data-target="opt-performance">
+            <span class="opt-emoji">🥇</span><span>DESEMPENHO</span>
+          </button>
 
-/* ---------------------------------------------------
-   SERVICE WORKER
----------------------------------------------------- */
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", function () {
-    navigator.serviceWorker.register("./service-worker.js");
-  });
-}
+          <button class="btn-secondary opt-btn" data-target="opt-guia">
+            <span class="opt-emoji">📚</span><span>EXERCÍCIOS</span>
+          </button>
 
-</script>
+          <button class="btn-secondary opt-btn" data-target="opt-backup">
+            <span class="opt-emoji">💾</span><span>BACKUP</span>
+          </button>
 
+          <button class="btn-secondary opt-btn" data-target="sec-reservas">
+            <span class="opt-emoji">📅</span><span>RESERVAS</span>
+          </button>
+
+          <button class="btn-secondary opt-btn" data-target="opt-historico">
+            <span class="opt-emoji">📜</span><span>HISTÓRICO</span>
+          </button>
+        </div>
+
+        <!-- WOD -->
+        <section class="option-section active" id="opt-wod">
+          <div class="card">
+            <h3 style="margin-top:0; margin-bottom:8px;">🟩 WOD</h3>
+
+            <div class="form-row">
+              <div class="field">
+                <label>Data</label>
+                <input id="treinoData" type="date" />
+              </div>
+              <div class="field">
+                <label>Procurar exercício</label>
+                <input id="treinoExercicioSearch" type="text" placeholder="Nome EN/PT." />
+              </div>
+              <div class="field">
+                <label>Exercício</label>
+                <select id="treinoExercicio"></select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label>Parte</label>
+                <select id="treinoParte">
+                  <option value="">—</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="Outro">Outro</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Formato</label>
+                <select id="treinoFormato">
+                  <option value="">—</option>
+                  <option value="For Time">For Time</option>
+                  <option value="AMRAP">AMRAP</option>
+                  <option value="EMOM">EMOM</option>
+                  <option value="A cada X′ × Y">A cada X′ × Y</option>
+                  <option value="Intervalos 2′ on / 2′ off">2′ on / 2′ off</option>
+                  <option value="Chipper">Chipper</option>
+                  <option value="Carga total">Carga total</option>
+                </select>
+              </div>
+
+              <div class="wod-grid">
+                <div class="field">
+                  <label>Séries</label>
+                  <input id="treinoRondas" type="number" min="1" />
+                </div>
+                <div class="field">
+                  <label>Repetições</label>
+                  <input id="treinoReps" type="number" min="1" />
+                </div>
+                <div class="field">
+                  <label>Peso kg</label>
+                  <input id="treinoPeso" type="number" min="0" step="0.5" />
+                </div>
+                <div class="field">
+                  <label>%1RM</label>
+                  <input id="treinoPercent" type="number" min="10" max="130" step="1" />
+                </div>
+                <div class="field">
+                  <label>Tempo</label>
+                  <input id="treinoTempo" type="text" placeholder="Ex.: 12:35, 20', AMRAP 10'..." />
+                </div>
+                <div class="field">
+                  <label>Distância (km)</label>
+                  <input id="treinoDist" type="number" min="0" step="0.01" />
+                </div>
+              </div>
+            </div>
+
+            <div class="helper-text" id="treinoPercentInfo" style="margin-top:-4px; margin-bottom:4px;"></div>
+
+            <button class="btn-primary" id="treinoAdd">Adicionar ao WOD</button>
+
+            <div class="helper-text">
+              A carga de cada exercício (kg) é calculada como: peso × repetições × rondas.
+              A distância em metcon é somada à parte, em km.
+            </div>
+
+            <div class="form-row" style="margin-top:10px;">
+              <div class="field">
+                <label>Resultado do WOD</label>
+                <select id="treinoResultado">
+                  <option value="">— Selecionar —</option>
+                  <option value="rx">Fiz tudo conforme o quadro (RX)</option>
+                  <option value="adaptado">Fiz tudo mas adaptei cargas/skills</option>
+                  <option value="incompleto">Não concluí todos os exercícios</option>
+                </select>
+              </div>
+            </div>
+
+            <hr style="margin:10px 0 6px; border:none; border-top:1px solid #b5b5b5;" />
+
+            <!-- REGISTO E HISTÓRICO -->
+            <div class="card">
+              <h3 style="margin-top:0; margin-bottom:8px;">Registo e histórico</h3>
+
+              <div class="helper-text" id="treinoResumo" style="margin-bottom:4px;"></div>
+              <div class="helper-text" id="treinoSugestao" style="margin-top:0; font-weight:500;"></div>
+              <div class="helper-text" id="weeklyHistory" style="margin-top:4px;"></div>
+
+              <div class="stats-row" id="treinoStats" style="display:none;">
+                <div class="stat-chip">
+                  <span>Carga total</span><span id="statCarga">0 kg</span>
+                </div>
+                <div class="stat-chip">
+                  <span>Exercícios</span><span id="statExercicios">0</span>
+                </div>
+                <div class="stat-chip" id="statTempoChip">
+                  <span>Melhor tempo</span><span id="statTempo">–</span>
+                </div>
+                <div class="stat-chip">
+                  <span>Volume</span><span id="statVolume">0 reps</span>
+                </div>
+              </div>
+
+              <h4 style="margin-top:10px; margin-bottom:4px;">WOD do dia</h4>
+
+              <div class="scroll" id="treinoScroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th>Parte</th>
+                      <th>Formato</th>
+                      <th>Exercício</th>
+                      <th>Tipo</th>
+                      <th>Rondas</th>
+                      <th>Reps</th>
+                      <th>Peso</th>
+                      <th>% 1RM</th>
+                      <th>Tempo</th>
+                      <th>Distância (km)</th>
+                      <th>Carga (kg)</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="treinoBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- HISTÓRICO WOD -->
+        <section class="option-section" id="opt-historico">
+          <div class="card">
+            <h3 style="margin-top:0; margin-bottom:8px;">📜 Histórico WOD</h3>
+            <p class="helper-text">
+              Lista completa de todos os treinos registados, ordenados da data mais recente para a mais antiga.
+            </p>
+
+            <div class="scroll" id="dailyHistoryScroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Parte</th>
+                    <th>Formato</th>
+                    <th>Exercício</th>
+                    <th>Tipo</th>
+                    <th>Rondas</th>
+                    <th>Reps</th>
+                    <th>Peso</th>
+                    <th>% 1RM</th>
+                    <th>Tempo</th>
+                    <th>Distância (km)</th>
+                    <th>Carga (kg)</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="dailyHistoryBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- OBJETIVO -->
+        <section class="option-section" id="opt-calc">
+          <div class="card">
+            <h3 style="margin-top:0; margin-bottom:8px;">🧮 Objetivo</h3>
+
+            <div class="form-row">
+              <div class="field">
+                <label>Exercício</label>
+                <select id="calcExercicio"></select>
+              </div>
+              <div class="field">
+                <label>N.º de repetições planeadas</label>
+                <input id="calcReps" type="number" min="1" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label>Objetivo</label>
+                <select id="calcObjetivo">
+                  <option value="">Automático</option>
+                  <option value="forca">Força</option>
+                  <option value="hipertrofia">Hipertrofia</option>
+                  <option value="tecnica">Técnica / Volume leve</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label>Peso objetivo (kg – opcional)</label>
+                <input id="calcTargetKg" type="number" min="0" step="0.5" />
+              </div>
+              <div class="field">
+                <label>Prazo (semanas – opcional)</label>
+                <input id="calcWeeks" type="number" min="1" />
+              </div>
+            </div>
+
+            <button class="btn-primary" id="calcBtn">Calcular</button>
+
+            <div class="helper-text" id="calcResultado" style="margin-top:6px;">
+              Escolhe um exercício, indica o nº de repetições e, se quiseres, o objetivo (força / hipertrofia / técnica).
+            </div>
+          </div>
+        </section>
+
+        <!-- GRÁFICOS -->
+        <section class="option-section" id="opt-graficos">
+          <div class="card">
+            <h3 style="margin-top:0; margin-bottom:8px;">📈 Gráfico de evolução do 1RM</h3>
+            <div class="field">
+              <label>Exercício</label>
+              <select id="graphExercise"></select>
+            </div>
+
+            <div style="margin-top:8px;">
+              <canvas id="rmChart" style="width:100%; max-height:260px;"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- PERFORMANCE -->
+        <section class="option-section" id="opt-performance">
+          <div class="card">
+            <h3 style="margin-top:0; margin-bottom:8px;">🏅 Performance física</h3>
+
+            <p class="helper-text">
+              Resumo automático com base nos teus registos de WOD, 1RM e metcons (carga em kg e distância em km).
+            </p>
+
+            <h4 style="margin-top:10px; margin-bottom:4px;">WOD – dias com mais carga</h4>
+            <div class="scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Carga total (kg)</th>
+                    <th>Distância total (km)</th>
+                    <th>N.º exercícios</th>
+                    <th>Melhor tempo metcon</th>
+                  </tr>
+                </thead>
+                <tbody id="perfWodBody"></tbody>
+              </table>
+            </div>
+
+            <h4 style="margin-top:12px; margin-bottom:4px;">Top 1RM</h4>
+            <div class="scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Exercício</th>
+                    <th>1RM</th>
+                    <th>Rel. peso corporal</th>
+                  </tr>
+                </thead>
+                <tbody id="perf1rmBody"></tbody>
+              </table>
+            </div>
+
+            <h4 style="margin-top:12px; margin-bottom:4px;">Metcon – melhores tempos</h4>
+            <div class="scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Exercício</th>
+                    <th>Melhor tempo</th>
+                    <th>Data</th>
+                    <th>Carga / distância</th>
+                  </tr>
+                </thead>
+                <tbody id="perfMetconBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- GUIA EXERCÍCIOS -->
+        <section class="option-section" id="opt-guia">
+          <div class="card">
+            <h3 style="margin-top:0; margin-bottom:8px;">📚 Guia de exercícios</h3>
+            <input id="guiaSearch" type="text" placeholder="Procurar por nome (EN/PT) ou descrição..." />
+
+            <div class="scroll" style="margin-top:8px;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Exercício</th>
+                    <th>Descrição</th>
+                  </tr>
+                </thead>
+                <tbody id="guiaBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- BACKUP -->
+        <section class="option-section" id="opt-backup">
+          <div class="card">
+            <h3 style="margin-top:0; margin-bottom:8px;">💾 Backup de dados</h3>
+            <p class="helper-text">
+              Exporta um ficheiro com o teu perfil, 1RM, histórico de WOD e restante informação.
+              Podes guardar em Google Drive, iCloud, Ficheiros, etc. Para restaurar noutro telemóvel, basta importar o ficheiro.
+            </p>
+
+            <div class="form-row">
+              <button class="btn-primary" id="exportBackupBtn">Exportar backup</button>
+              <button class="btn-secondary" id="importBackupBtn">Importar backup</button>
+              <input id="backupFileInput" type="file" accept="application/json" style="display:none;" />
+            </div>
+
+            <div id="backupInfo"></div>
+          </div>
+        </section>
+
+        <!-- RESERVAS -->
+        <section class="option-section" id="sec-reservas">
+          <div class="card">
+            <h3 style="margin-top:0; margin-bottom:8px;">📆 Reservas &amp; Presenças</h3>
+
+            <div class="form-row">
+              <div class="field">
+                <label>Data da aula</label>
+                <input id="reservaData" type="date" />
+              </div>
+              <div class="field">
+                <label>Hora</label>
+                <input id="reservaHora" type="time" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label>Tipo de aula</label>
+                <select id="reservaTipo">
+                  <option value="">Selecionar</option>
+                  <option value="WOD">WOD</option>
+                  <option value="Open Box">Open Box</option>
+                  <option value="Halterofilismo">Halterofilismo</option>
+                  <option value="Mobilidade">Mobilidade</option>
+                  <option value="Competição">Competição</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Nota (opcional)</label>
+                <input id="reservaNota" type="text" placeholder="Ex.: parceiro, foco, objetivo do dia..." />
+              </div>
+            </div>
+
+            <button class="btn-primary" id="reservaAddBtn">Guardar reserva</button>
+
+            <div class="helper-text" style="margin-top:6px;">
+              Estas reservas e presenças são pessoais e ficam apenas guardadas neste dispositivo.
+            </div>
+
+            <div class="scroll" style="margin-top:10px;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Aula</th>
+                    <th>Nota</th>
+                    <th>Presença</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="reservasBody"></tbody>
+              </table>
+            </div>
+
+            <div class="helper-text" id="reservasResumo" style="margin-top:6px;"></div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </div>
+
+  <!-- libs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+
+  <!-- app -->
+  <script src="./app.js?v=5" defer></script>
 </body>
 </html>
-
-
-
-
