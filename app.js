@@ -1907,7 +1907,15 @@ function escapeHtml(s) {
   
 function exportHistoricoPdf() {
   try {
-    const listaFull = treinos.slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+    if (!Array.isArray(treinos) || treinos.length === 0) {
+      alert("Sem treinos registados.");
+      return;
+    }
+
+    const listaFull = treinos
+      .slice()
+      .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+
     let html = `<!DOCTYPE html><html lang="pt"><head><meta charset="UTF-8" />
 <title>CrossBox - Histórico WOD</title>
 <style>
@@ -1918,104 +1926,82 @@ function exportHistoricoPdf() {
   th,td{border:1px solid #bbb;padding:6px;vertical-align:top;}
   th{background:#f2f2f2;text-align:left;}
 </style></head><body>`;
+
     html += `<h1>Histórico WOD</h1>`;
     html += `<p class="muted">Gerado em ${new Date().toLocaleString("pt-PT")}</p>`;
 
-    if (!listaFull.length) {
-      html += `<p>Sem treinos registados.</p>`;
-    } else {
-      html += `<table><thead><tr>
-        <th>Data</th><th>Parte</th><th>Formato</th><th>Exercício</th><th>Tipo</th>
-        <th>Rondas</th><th>Reps</th><th>Peso</th><th>% 1RM</th><th>Tempo</th>
-        <th>Distância (km)</th><th>Carga (kg)</th>
-      </tr></thead><tbody>`;
+    html += `<table><thead><tr>
+      <th>Data</th><th>Parte</th><th>Formato</th><th>Exercício</th><th>Tipo</th>
+      <th>Rondas</th><th>Reps</th><th>Peso</th><th>% 1RM</th><th>Tempo</th>
+      <th>Distância (km)</th><th>Carga (kg)</th>
+    </tr></thead><tbody>`;
 
-      listaFull.forEach(t => {
-        const peso = (t.peso!=null && t.peso!=="" && !isNaN(Number(t.peso))) ? Number(t.peso) : "";
-        const reps = (t.reps!=null && t.reps!=="" && !isNaN(Number(t.reps))) ? Number(t.reps) : "";
-        const rondas = (t.rondas!=null && t.rondas!=="" && !isNaN(Number(t.rondas))) ? Number(t.rondas) : "";
-        const perc = (t.perc1rm!=null && t.perc1rm!=="" && !isNaN(Number(t.perc1rm))) ? Number(t.perc1rm) : "";
-        const dist = (t.distanciaKm!=null && t.distanciaKm!=="" && !isNaN(Number(t.distanciaKm))) ? Number(t.distanciaKm) : "";
-        const carga = (t.carga!=null && t.carga!=="" && !isNaN(Number(t.carga))) ? Number(t.carga) : "";
+    listaFull.forEach(t => {
+      if (!t || typeof t !== "object") return;
 
-        html += `<tr>`
-          + `<td>${escapeHtml(t.date || "")}</td>`
-          + `<td>${escapeHtml(t.parte || "")}</td>`
-          + `<td>${escapeHtml(t.formato || "")}</td>`
-          + `<td>${escapeHtml(t.exercicio || "")}</td>`
-          + `<td>${escapeHtml(t.tipo || "")}</td>`
-          + `<td>${rondas===""?"":rondas}</td>`
-          + `<td>${reps===""?"":reps}</td>`
-          + `<td>${peso===""?"":peso}</td>`
-          + `<td>${perc===""?"":perc}</td>`
-          + `<td>${escapeHtml(t.tempo || "")}</td>`
-          + `<td>${dist===""?"":dist}</td>`
-          + `<td>${carga===""?"":carga}</td>`
-          + `</tr>`;
-      });
+      const peso  = (t.peso!=null && t.peso!=="" && !isNaN(Number(t.peso))) ? Number(t.peso) : "";
+      const reps  = (t.reps!=null && t.reps!=="" && !isNaN(Number(t.reps))) ? Number(t.reps) : "";
+      const rond  = (t.rondas!=null && t.rondas!=="" && !isNaN(Number(t.rondas))) ? Number(t.rondas) : "";
+      const perc  = (t.perc1rm!=null && t.perc1rm!=="" && !isNaN(Number(t.perc1rm))) ? Number(t.perc1rm) : "";
+      const dist  = (t.distanciaKm!=null && t.distanciaKm!=="" && !isNaN(Number(t.distanciaKm))) ? Number(t.distanciaKm) : "";
+      const carga = (t.carga!=null && t.carga!=="" && !isNaN(Number(t.carga))) ? Number(t.carga) : "";
 
-      html += `</tbody></table>`;
-    }
+      html += `<tr>`
+        + `<td>${escapeHtml(t.date || "")}</td>`
+        + `<td>${escapeHtml(t.parte || "")}</td>`
+        + `<td>${escapeHtml(t.formato || "")}</td>`
+        + `<td>${escapeHtml(t.exercicio || "")}</td>`
+        + `<td>${escapeHtml(t.tipo || "")}</td>`
+        + `<td>${rond===""?"":rond}</td>`
+        + `<td>${reps===""?"":reps}</td>`
+        + `<td>${peso===""?"":peso}</td>`
+        + `<td>${perc===""?"":perc}</td>`
+        + `<td>${escapeHtml(t.tempo || "")}</td>`
+        + `<td>${dist===""?"":dist}</td>`
+        + `<td>${carga===""?"":carga}</td>`
+        + `</tr>`;
+    });
 
-    html += `</body></html>`;
+    html += `</tbody></table></body></html>`;
 
-    // Impressão sem pop-ups (mais fiável em Android/iPhone)
-const iframe = document.createElement("iframe");
-iframe.style.position = "fixed";
-iframe.style.right = "0";
-iframe.style.bottom = "0";
-iframe.style.width = "0";
-iframe.style.height = "0";
-iframe.style.border = "0";
-iframe.setAttribute("aria-hidden", "true");
-// srcdoc mantém tudo offline e evita bloqueio de pop-ups
-iframe.srcdoc = html;
-document.body.appendChild(iframe);
+    // Impressão sem pop-ups: iframe invisível
+    const iframe = document.createElement("iframe");
+    iframe.style.position = "fixed";
+    iframe.style.right = "0";
+    iframe.style.bottom = "0";
+    iframe.style.width = "0";
+    iframe.style.height = "0";
+    iframe.style.border = "0";
+    iframe.setAttribute("aria-hidden", "true");
+    iframe.srcdoc = html;
+    document.body.appendChild(iframe);
 
-const doPrint = () => {
-  try {
-    const w = iframe.contentWindow;
-    if (!w) throw new Error("Sem contentWindow no iframe");
-    w.focus();
-    // pequeno delay para garantir render
-    setTimeout(() => {
-      try { w.print(); } catch (e) {}
-      // limpar iframe depois de imprimir
-      setTimeout(() => { try { iframe.remove(); } catch(e) {} }, 800);
-    }, 250);
-  } catch (e) {
-    console.warn("Falha ao imprimir via iframe, a tentar alternativa.", e);
-    try {
-      const win = window.open("", "_blank");
-      if (!win) {
-        alert("O browser bloqueou a impressão. Tenta permitir pop-ups para este site.");
-        iframe.remove();
-        return;
+    const cleanup = () => { try { iframe.remove(); } catch(e) {} };
+
+    const doPrint = () => {
+      try {
+        const w = iframe.contentWindow;
+        if (!w) throw new Error("Sem contentWindow no iframe");
+        w.focus();
+        setTimeout(() => {
+          try { w.print(); } catch(e) {}
+          setTimeout(cleanup, 800);
+        }, 250);
+      } catch (e) {
+        cleanup();
+        alert("O dispositivo bloqueou a impressão nesta janela. Tenta novamente no browser (não PWA) ou permite pop-ups.");
       }
-      win.document.open();
-      win.document.write(html);
-      win.document.close();
-      win.focus();
-      setTimeout(() => { try { win.print(); } catch (e) {} }, 350);
-      setTimeout(() => { try { iframe.remove(); } catch(e) {} }, 800);
-    } catch (e2) {
-      console.error(e2);
-      alert("Não foi possível exportar/imprimir neste dispositivo.");
-      try { iframe.remove(); } catch(e) {}
-    }
-  }
-};
+    };
 
-// Alguns browsers só imprimem após o iframe estar carregado
-iframe.onload = doPrint;
-// fallback caso onload não dispare
-setTimeout(doPrint, 600);} catch (e) {} }, 350);
+    // alguns browsers não disparam onload no srcdoc → usamos ambos
+    iframe.onload = () => doPrint();
+    setTimeout(doPrint, 700);
+
   } catch (e) {
     console.error(e);
     alert("Erro ao exportar/imprimir o histórico.");
   }
 }
-
 
 function printTreinosPdf() {
   try {
