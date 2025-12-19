@@ -6,6 +6,119 @@ const STORAGE_TREINO = "crossfit_treinos";
 const STORAGE_WOD_RESULT = "crossfit_wod_result";
 const STORAGE_BACKUP_META = "crossfit_backup_meta";
 
+/* ===== QUADRO DA BOX (texto por dia, offline) ===== */
+const STORAGE_QUADRO_BOX = "crossfit_quadro_box_v1";
+
+function loadQuadroBoxMap() {
+  try {
+    const raw = localStorage.getItem(STORAGE_QUADRO_BOX);
+    const obj = raw ? JSON.parse(raw) : {};
+    return (obj && typeof obj === "object") ? obj : {};
+  } catch (e) {
+    console.warn("Erro a ler quadro da box:", e);
+    return {};
+  }
+}
+
+function saveQuadroBoxMap() {
+  try {
+    localStorage.setItem(STORAGE_QUADRO_BOX, JSON.stringify(quadroBoxMap));
+  } catch (e) {
+    console.warn("Erro a guardar quadro da box:", e);
+  }
+}
+
+let quadroBoxMap = loadQuadroBoxMap();
+let quadroBoxCurrentDate = null;
+
+function getSelectedDateSafe() {
+  try {
+    if (treinoDataEl && treinoDataEl.value) return treinoDataEl.value;
+  } catch(e) {}
+  return new Date().toISOString().slice(0, 10);
+}
+
+function getQuadroBoxText(date) {
+  const d = date || getSelectedDateSafe();
+  return (quadroBoxMap && quadroBoxMap[d]) ? String(quadroBoxMap[d]) : "";
+}
+
+function setQuadroBoxText(date, text) {
+  const d = date || getSelectedDateSafe();
+  const val = String(text || "");
+  if (val.trim()) {
+    quadroBoxMap[d] = val;
+  } else {
+    delete quadroBoxMap[d];
+  }
+  saveQuadroBoxMap();
+}
+
+/* Modal (se existir no HTML) */
+const btnQuadroBox = document.getElementById("btnQuadroBox");
+const quadroModal = document.getElementById("quadroModal");
+const quadroTextarea = document.getElementById("quadroTextarea");
+const btnQuadroModelo = document.getElementById("btnQuadroModelo");
+const btnQuadroLimpar = document.getElementById("btnQuadroLimpar");
+const btnQuadroFechar = document.getElementById("btnQuadroFechar");
+
+function openQuadroModalForDate(date) {
+  const d = date || getSelectedDateSafe();
+  quadroBoxCurrentDate = d;
+
+  const txt = getQuadroBoxText(d);
+
+  if (quadroTextarea) {
+    quadroTextarea.value = txt;
+    // auto-save leve ao escrever (offline)
+    quadroTextarea.oninput = () => {
+      setQuadroBoxText(quadroBoxCurrentDate, quadroTextarea.value);
+      try { registerBackupMeta && registerBackupMeta("Quadro da box atualizado"); } catch(e) {}
+    };
+  }
+
+  if (quadroModal) {
+    quadroModal.classList.remove("hide");
+    document.body.classList.add("modal-open");
+  } else {
+    // fallback sem modal: mostra o texto
+    alert(txt ? txt : "Sem quadro da box registado para este dia.");
+  }
+}
+
+function closeQuadroModal() {
+  if (quadroModal) quadroModal.classList.add("hide");
+  document.body.classList.remove("modal-open");
+}
+
+if (btnQuadroBox) {
+  btnQuadroBox.addEventListener("click", () => openQuadroModalForDate(getSelectedDateSafe()));
+}
+if (btnQuadroFechar) btnQuadroFechar.addEventListener("click", closeQuadroModal);
+
+if (btnQuadroLimpar) {
+  btnQuadroLimpar.addEventListener("click", () => {
+    const d = quadroBoxCurrentDate || getSelectedDateSafe();
+    if (quadroTextarea) quadroTextarea.value = "";
+    setQuadroBoxText(d, "");
+  });
+}
+
+if (btnQuadroModelo) {
+  btnQuadroModelo.addEventListener("click", () => {
+    const modelo = "A)\n\nB)\n\nC)\n\nD)\n";
+    const d = quadroBoxCurrentDate || getSelectedDateSafe();
+    if (quadroTextarea && !quadroTextarea.value.trim()) {
+      quadroTextarea.value = modelo;
+      setQuadroBoxText(d, quadroTextarea.value);
+    } else if (quadroTextarea) {
+      // se já tiver texto, acrescenta no fim
+      quadroTextarea.value = (quadroTextarea.value.trimEnd() + "\n\n" + modelo);
+      setQuadroBoxText(d, quadroTextarea.value);
+    }
+  });
+}
+
 /* NOVOS ARMAZENAMENTOS */
 const STORAGE_RESERVAS = "crossfit_reservas";
 const STORAGE_PRESENCAS = "crossfit_presencas";
@@ -1891,6 +2004,25 @@ tr.addEventListener("mouseleave", cancelPress);
 
     const tdDate = document.createElement("td");
     tdDate.textContent = t.date || "";
+
+    // Se existir "Quadro da box" para este dia, mostra ícone para abrir
+    try {
+      const qt = getQuadroBoxText(t.date || "");
+      if (qt && String(qt).trim()) {
+        const qbtn = document.createElement("button");
+        qbtn.type = "button";
+        qbtn.className = "btn-quadro-mini";
+        qbtn.textContent = "📋";
+        qbtn.title = "Ver quadro da box";
+        qbtn.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          openQuadroModalForDate(t.date || "");
+        });
+        tdDate.appendChild(document.createTextNode(" "));
+        tdDate.appendChild(qbtn);
+      }
+    } catch(e) {}
+
     tr.appendChild(tdDate);
 
     const tdParte = document.createElement("td");
@@ -3875,136 +4007,4 @@ document.addEventListener("click", (e) => {
     setTimeout(() => { try { updateRmChart(); } catch(_) {} }, 60);
   }
 });
-
-
-
-
-/* ==============================
-   QUADRO DA BOX (texto por dia)
-   - Guarda offline por data
-   - Não interfere com registos estruturados
-   ============================== */
-(function initQuadroDaBox(){
-  const STORAGE_QUADRO_BOX = "crossfit_quadro_box_v1";
-
-  function todayISO(){
-    return new Date().toISOString().slice(0,10);
-  }
-
-  function getDiaSelecionado(){
-    const el = document.getElementById("treinoData");
-    return (el && el.value) ? el.value : todayISO();
-  }
-
-  function loadMap(){
-    try { return JSON.parse(localStorage.getItem(STORAGE_QUADRO_BOX) || "{}") || {}; }
-    catch(e){ return {}; }
-  }
-
-  function saveMap(map){
-    try { localStorage.setItem(STORAGE_QUADRO_BOX, JSON.stringify(map || {})); }
-    catch(e){}
-  }
-
-  function setStatus(msg){
-    const st = document.getElementById("quadroBoxStatus");
-    if (!st) return;
-    st.textContent = msg || "";
-  }
-
-  function openModal(){
-    const modal = document.getElementById("modalQuadroBox");
-    if (!modal) return;
-    modal.classList.remove("hidden");
-    modal.setAttribute("aria-hidden", "false");
-    document.body.classList.add("modal-open");
-  }
-
-  function closeModal(){
-    const modal = document.getElementById("modalQuadroBox");
-    if (!modal) return;
-    modal.classList.add("hidden");
-    modal.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("modal-open");
-  }
-
-  function refreshTextarea(){
-    const ta = document.getElementById("quadroBoxText");
-    if (!ta) return;
-    const dia = getDiaSelecionado();
-    const map = loadMap();
-    ta.value = map[dia] || "";
-    setStatus(map[dia] ? `Guardado para ${dia}` : `Sem quadro guardado para ${dia}`);
-  }
-
-  function applyModelo(){
-    const ta = document.getElementById("quadroBoxText");
-    if (!ta) return;
-    const base = "A) \n\nB) \n\nC) \n\nD) \n";
-    if (!ta.value.trim()){
-      ta.value = base;
-    } else {
-      // não destruir o que já existe; apenas acrescenta modelo no fim
-      ta.value = ta.value.trimEnd() + "\n\n" + base;
-    }
-    ta.focus();
-    setStatus("Modelo inserido (não guardado).");
-  }
-
-  function saveCurrent(){
-    const ta = document.getElementById("quadroBoxText");
-    if (!ta) return;
-    const dia = getDiaSelecionado();
-    const map = loadMap();
-    const val = (ta.value || "").trimEnd();
-    if (val) map[dia] = val;
-    else delete map[dia];
-    saveMap(map);
-    setStatus(val ? `Guardado ✅ (${dia})` : `Removido ✅ (${dia})`);
-  }
-
-  function clearCurrent(){
-    const ta = document.getElementById("quadroBoxText");
-    if (!ta) return;
-    ta.value = "";
-    saveCurrent(); // remove para o dia
-  }
-
-  // Wiring — só depois do DOM existir
-  function wire(){
-    const btnOpen = document.getElementById("btnQuadroBox");
-    const btnClose = document.getElementById("btnQuadroClose");
-    const btnSave = document.getElementById("btnQuadroSave");
-    const btnClear = document.getElementById("btnQuadroClear");
-    const btnModelo = document.getElementById("btnQuadroModelo");
-    const backdrop = document.querySelector("#modalQuadroBox .cb-modal__backdrop");
-    const dateEl = document.getElementById("treinoData");
-
-    if (btnOpen) btnOpen.addEventListener("click", () => { refreshTextarea(); openModal(); });
-    if (btnClose) btnClose.addEventListener("click", closeModal);
-    if (backdrop) backdrop.addEventListener("click", closeModal);
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
-
-    if (btnModelo) btnModelo.addEventListener("click", applyModelo);
-    if (btnSave) btnSave.addEventListener("click", saveCurrent);
-    if (btnClear) btnClear.addEventListener("click", clearCurrent);
-
-    if (dateEl) dateEl.addEventListener("change", () => {
-      // se o modal estiver aberto, atualiza o texto do quadro imediatamente
-      const modal = document.getElementById("modalQuadroBox");
-      const isOpen = modal && !modal.classList.contains("hidden");
-      if (isOpen) refreshTextarea();
-      else setStatus("");
-    });
-
-    // Se o utilizador abrir o modal antes de selecionar data
-    refreshTextarea();
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", wire);
-  } else {
-    wire();
-  }
-})();
 
