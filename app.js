@@ -1040,7 +1040,9 @@ const wodPhotoInput = document.getElementById("wodPhotoInput");
 const wodPhotoStatusEl = document.getElementById("wodPhotoStatus");
 const wodOcrPreviewEl = document.getElementById("wodOcrPreview");
 const wodOcrApplyBtn = document.getElementById("wodOcrApplyBtn");
-renderQuadroWodDia(treinoData.value);
+if (treinoDataEl && document.getElementById("wodQuadroCard")) {
+  renderQuadroWodDia(treinoDataEl.value);
+}
 
   
 
@@ -1510,11 +1512,8 @@ if (calcBtn) {
 function updateRmChart() {
   if (!rmChartCanvas || !graphExerciseEl) return;
 
-  // Se a biblioteca não carregou, não rebenta o resto da app
-  if (typeof Chart === "undefined") {
-    console.warn("Chart.js não está disponível. O gráfico de 1RM foi desativado.");
-    return;
-  }
+  // Fallback: se Chart.js não estiver disponível, desenha um gráfico simples no canvas (offline-safe)
+  const hasChartJs = (typeof Chart !== "undefined");
 
   const ex = graphExerciseEl.value;
   let labels = [];
@@ -1536,7 +1535,63 @@ function updateRmChart() {
     }
   }
 
+  // Canvas context
   const ctx = rmChartCanvas.getContext("2d");
+  if (!ctx) return;
+
+  // Se não houver Chart.js, desenhar manualmente e sair
+  if (!hasChartJs) {
+    // limpar canvas
+    ctx.clearRect(0, 0, rmChartCanvas.width, rmChartCanvas.height);
+
+    const W = rmChartCanvas.clientWidth || rmChartCanvas.width || 320;
+    const H = rmChartCanvas.clientHeight || rmChartCanvas.height || 160;
+
+    // garantir tamanho mesmo quando o canvas estava escondido ao abrir a secção
+    rmChartCanvas.width = W;
+    rmChartCanvas.height = H;
+
+    // se não há dados, escrever "Sem dados"
+    if (!labels.length || !values.length) {
+      ctx.font = "14px Arial";
+      ctx.fillText("Sem dados", 12, 24);
+      return;
+    }
+
+    const padL = 34, padR = 12, padT = 12, padB = 28;
+    const minV = Math.min(...values);
+    const maxV = Math.max(...values);
+    const span = (maxV - minV) || 1;
+
+    // eixos
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padL, padT);
+    ctx.lineTo(padL, H - padB);
+    ctx.lineTo(W - padR, H - padB);
+    ctx.stroke();
+
+    // linha
+    ctx.beginPath();
+    values.forEach((v, i) => {
+      const x = padL + (i * (W - padL - padR)) / Math.max(1, (values.length - 1));
+      const y = (H - padB) - ((v - minV) * (H - padT - padB)) / span;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // labels Y (min/max)
+    ctx.font = "10px Arial";
+    ctx.fillText(String(maxV), 4, padT + 8);
+    ctx.fillText(String(minV), 4, H - padB);
+
+    // labels X (primeiro/último)
+    ctx.fillText(String(labels[0]), padL, H - 10);
+    ctx.fillText(String(labels[labels.length - 1]), Math.max(padL, W - padR - 60), H - 10);
+
+    return;
+  }
 
   if (rmChart) {
     rmChart.destroy();
@@ -1916,27 +1971,37 @@ function exportHistoricoPdf() {
       .slice()
       .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
 
-    let html = `
-      <style>
-        body{font-family:Arial,Helvetica,sans-serif;margin:18px;color:#111;}
-        h1{margin:0 0 10px 0;font-size:18px;}
-        .muted{color:#555;font-size:11px;margin:0 0 14px 0;}
-        table{width:100%;border-collapse:collapse;font-size:11px;}
-        th,td{border:1px solid #bbb;padding:6px;vertical-align:top;}
-        th{background:#f2f2f2;text-align:left;}
-      </style>
-      <h1>Histórico WOD</h1>
-      <p class="muted">Gerado em ${new Date().toLocaleString("pt-PT")}</p>
+    const geradoEm = new Date().toLocaleString("pt-PT");
+
+    // Construir HTML apenas do conteúdo (vamos imprimir na mesma página, sem pop-ups/iframes)
+    let bodyHtml = `
+      <h1 style="margin:0 0 10px 0;font-size:18px;">Histórico WOD</h1>
+      <p style="color:#555;font-size:11px;margin:0 0 14px 0;">Gerado em ${escapeHtml(geradoEm)}</p>
     `;
 
-    html += `<table><thead><tr>
-      <th>Data</th><th>Parte</th><th>Formato</th><th>Exercício</th><th>Tipo</th>
-      <th>Rondas</th><th>Reps</th><th>Peso</th><th>% 1RM</th><th>Tempo</th>
-      <th>Distância (km)</th><th>Carga (kg)</th>
-    </tr></thead><tbody>`;
+    bodyHtml += `
+      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+        <thead>
+          <tr>
+            <th style="border:1px solid #bbb;padding:6px;background:#f2f2f2;text-align:left;">Data</th>
+            <th style="border:1px solid #bbb;padding:6px;background:#f2f2f2;text-align:left;">Parte</th>
+            <th style="border:1px solid #bbb;padding:6px;background:#f2f2f2;text-align:left;">Formato</th>
+            <th style="border:1px solid #bbb;padding:6px;background:#f2f2f2;text-align:left;">Exercício</th>
+            <th style="border:1px solid #bbb;padding:6px;background:#f2f2f2;text-align:left;">Tipo</th>
+            <th style="border:1px solid #bbb;padding:6px;background:#f2f2f2;text-align:left;">Rondas</th>
+            <th style="border:1px solid #bbb;padding:6px;background:#f2f2f2;text-align:left;">Reps</th>
+            <th style="border:1px solid #bbb;padding:6px;background:#f2f2f2;text-align:left;">Peso</th>
+            <th style="border:1px solid #bbb;padding:6px;background:#f2f2f2;text-align:left;">% 1RM</th>
+            <th style="border:1px solid #bbb;padding:6px;background:#f2f2f2;text-align:left;">Tempo</th>
+            <th style="border:1px solid #bbb;padding:6px;background:#f2f2f2;text-align:left;">Distância (km)</th>
+            <th style="border:1px solid #bbb;padding:6px;background:#f2f2f2;text-align:left;">Carga (kg)</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
 
-    listaFull.forEach(t => {
-      if (!t || typeof t !== "object") return;
+    for (const t of listaFull) {
+      if (!t || typeof t !== "object") continue;
 
       const peso  = (t.peso!=null && t.peso!=="" && !isNaN(Number(t.peso))) ? Number(t.peso) : "";
       const reps  = (t.reps!=null && t.reps!=="" && !isNaN(Number(t.reps))) ? Number(t.reps) : "";
@@ -1945,67 +2010,83 @@ function exportHistoricoPdf() {
       const dist  = (t.distanciaKm!=null && t.distanciaKm!=="" && !isNaN(Number(t.distanciaKm))) ? Number(t.distanciaKm) : "";
       const carga = (t.carga!=null && t.carga!=="" && !isNaN(Number(t.carga))) ? Number(t.carga) : "";
 
-      // compatível com versões antigas: alguns registos usam ex e não exercicio
-      const exTxt = (t.exercicio != null && t.exercicio !== "") ? t.exercicio : (t.ex || "");
+      bodyHtml += `
+        <tr>
+          <td style="border:1px solid #bbb;padding:6px;vertical-align:top;">${escapeHtml(t.date || "")}</td>
+          <td style="border:1px solid #bbb;padding:6px;vertical-align:top;">${escapeHtml(t.parte || "")}</td>
+          <td style="border:1px solid #bbb;padding:6px;vertical-align:top;">${escapeHtml(t.formato || "")}</td>
+          <td style="border:1px solid #bbb;padding:6px;vertical-align:top;">${escapeHtml(t.exercicio || "")}</td>
+          <td style="border:1px solid #bbb;padding:6px;vertical-align:top;">${escapeHtml(t.tipo || "")}</td>
+          <td style="border:1px solid #bbb;padding:6px;vertical-align:top;text-align:center;">${rond===""?"":rond}</td>
+          <td style="border:1px solid #bbb;padding:6px;vertical-align:top;text-align:center;">${reps===""?"":reps}</td>
+          <td style="border:1px solid #bbb;padding:6px;vertical-align:top;text-align:center;">${peso===""?"":peso}</td>
+          <td style="border:1px solid #bbb;padding:6px;vertical-align:top;text-align:center;">${perc===""?"":perc}</td>
+          <td style="border:1px solid #bbb;padding:6px;vertical-align:top;">${escapeHtml(t.tempo || "")}</td>
+          <td style="border:1px solid #bbb;padding:6px;vertical-align:top;text-align:center;">${dist===""?"":dist}</td>
+          <td style="border:1px solid #bbb;padding:6px;vertical-align:top;text-align:center;">${carga===""?"":carga}</td>
+        </tr>
+      `;
+    }
 
-      html += `<tr>`
-        + `<td>${escapeHtml(t.date || "")}</td>`
-        + `<td>${escapeHtml(t.parte || "")}</td>`
-        + `<td>${escapeHtml(t.formato || "")}</td>`
-        + `<td>${escapeHtml(exTxt)}</td>`
-        + `<td>${escapeHtml(t.tipo || "")}</td>`
-        + `<td>${rond===""?"":rond}</td>`
-        + `<td>${reps===""?"":reps}</td>`
-        + `<td>${peso===""?"":peso}</td>`
-        + `<td>${perc===""?"":perc}</td>`
-        + `<td>${escapeHtml(t.tempo || "")}</td>`
-        + `<td>${dist===""?"":dist}</td>`
-        + `<td>${carga===""?"":carga}</td>`
-        + `</tr>`;
-    });
+    bodyHtml += `
+        </tbody>
+      </table>
+    `;
 
-    html += `</tbody></table>`;
+    // Impressão "same-page": cria uma área de impressão temporária e chama window.print().
+    const existingArea = document.getElementById("printArea");
+    if (existingArea) existingArea.remove();
+    const existingStyle = document.getElementById("printStyle");
+    if (existingStyle) existingStyle.remove();
 
-    // Impressão “no mesmo ecrã” (sem pop-ups e sem iframe) – mais compatível em PWA/iPhone
-    const root = document.createElement("div");
-    root.id = "__print_root__";
-    root.innerHTML = html;
+    const style = document.createElement("style");
+    style.id = "printStyle";
+    style.textContent = `
+      @media print {
+        body * { visibility: hidden !important; }
+        #printArea, #printArea * { visibility: visible !important; }
+        #printArea {
+          position: fixed !important;
+          left: 0; top: 0;
+          width: 100%;
+          padding: 18px;
+          background: #fff !important;
+          color: #111 !important;
+          box-sizing: border-box;
+        }
+      }
+      #printArea {
+        position: fixed;
+        left: 0; top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        padding: 18px;
+        background: #fff;
+        color: #111;
+        z-index: 999999;
+        box-sizing: border-box;
+      }
+    `;
+    document.head.appendChild(style);
 
-    const body = document.body;
-    if (!body) throw new Error("document.body indisponível");
-
-    // esconder UI atual sem destruir estado
-    const prevDisplays = [];
-    Array.from(body.children).forEach((el, idx) => {
-      prevDisplays[idx] = el.style.display;
-      el.style.display = "none";
-    });
-
-    body.appendChild(root);
+    const area = document.createElement("div");
+    area.id = "printArea";
+    area.innerHTML = bodyHtml;
+    document.body.appendChild(area);
 
     const cleanup = () => {
-      try { root.remove(); } catch(e) {}
-      Array.from(body.children).forEach((el, idx) => {
-        if (el.id === "__print_root__") return;
-        el.style.display = prevDisplays[idx] ?? "";
-      });
+      try { area.remove(); } catch(e) {}
+      try { style.remove(); } catch(e) {}
+      window.removeEventListener("afterprint", cleanup);
     };
 
-    // restaurar após impressão
-    const oldAfterPrint = window.onafterprint;
-    window.onafterprint = () => {
-      cleanup();
-      window.onafterprint = oldAfterPrint || null;
-    };
+    window.addEventListener("afterprint", cleanup);
 
-    // iOS/Safari às vezes não chama onafterprint → fallback
+    // alguns dispositivos precisam de um pequeno delay
     setTimeout(() => {
-      try { window.print(); } catch(e) {
-        cleanup();
-        alert("O dispositivo bloqueou a impressão. Tenta no browser (não PWA) ou permite pop-ups.");
-      }
-      setTimeout(() => { try { cleanup(); } catch(e) {} }, 1500);
-    }, 50);
+      try { window.print(); } catch (e) { cleanup(); alert("O dispositivo não permitiu imprimir."); }
+    }, 250);
 
   } catch (e) {
     console.error(e);
@@ -3706,13 +3787,14 @@ atualizarRankingsMensais();// rankings
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
-    navigator.serviceWorker.register("./service-worker.js?v=5", { scope: "./" });
+    navigator.serviceWorker.register("./service-worker.js?v=6", { scope: "./" });
   });
 }
 function renderQuadroWodDia(dataSelecionada) {
   const card = document.getElementById("wodQuadroCard");
   const dataDiv = document.getElementById("wodQuadroData");
   const conteudo = document.getElementById("wodQuadroConteudo");
+  if (!card || !dataDiv || !conteudo) return;
 
   const treinos = JSON.parse(localStorage.getItem("treinos")) || [];
   const doDia = treinos.filter(t => t.data === dataSelecionada);
@@ -3783,3 +3865,13 @@ function abrirEdicaoWod(id) {
 
   renderQuadroWodDia(treino.data);
           }
+
+// Re-desenhar o gráfico quando o utilizador abre a secção (canvas pode estar escondido antes)
+document.addEventListener("click", (e) => {
+  const btn = e.target && e.target.closest ? e.target.closest(".opt-btn") : null;
+  if (!btn) return;
+  const tgt = btn.getAttribute("data-target") || "";
+  if (tgt === "opt-graficos" || tgt === "opt-performance") {
+    setTimeout(() => { try { updateRmChart(); } catch(_) {} }, 60);
+  }
+});
