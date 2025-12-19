@@ -3876,3 +3876,135 @@ document.addEventListener("click", (e) => {
   }
 });
 
+
+
+
+/* ==============================
+   QUADRO DA BOX (texto por dia)
+   - Guarda offline por data
+   - Não interfere com registos estruturados
+   ============================== */
+(function initQuadroDaBox(){
+  const STORAGE_QUADRO_BOX = "crossfit_quadro_box_v1";
+
+  function todayISO(){
+    return new Date().toISOString().slice(0,10);
+  }
+
+  function getDiaSelecionado(){
+    const el = document.getElementById("treinoData");
+    return (el && el.value) ? el.value : todayISO();
+  }
+
+  function loadMap(){
+    try { return JSON.parse(localStorage.getItem(STORAGE_QUADRO_BOX) || "{}") || {}; }
+    catch(e){ return {}; }
+  }
+
+  function saveMap(map){
+    try { localStorage.setItem(STORAGE_QUADRO_BOX, JSON.stringify(map || {})); }
+    catch(e){}
+  }
+
+  function setStatus(msg){
+    const st = document.getElementById("quadroBoxStatus");
+    if (!st) return;
+    st.textContent = msg || "";
+  }
+
+  function openModal(){
+    const modal = document.getElementById("modalQuadroBox");
+    if (!modal) return;
+    modal.classList.remove("hidden");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
+  }
+
+  function closeModal(){
+    const modal = document.getElementById("modalQuadroBox");
+    if (!modal) return;
+    modal.classList.add("hidden");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("modal-open");
+  }
+
+  function refreshTextarea(){
+    const ta = document.getElementById("quadroBoxText");
+    if (!ta) return;
+    const dia = getDiaSelecionado();
+    const map = loadMap();
+    ta.value = map[dia] || "";
+    setStatus(map[dia] ? `Guardado para ${dia}` : `Sem quadro guardado para ${dia}`);
+  }
+
+  function applyModelo(){
+    const ta = document.getElementById("quadroBoxText");
+    if (!ta) return;
+    const base = "A) \n\nB) \n\nC) \n\nD) \n";
+    if (!ta.value.trim()){
+      ta.value = base;
+    } else {
+      // não destruir o que já existe; apenas acrescenta modelo no fim
+      ta.value = ta.value.trimEnd() + "\n\n" + base;
+    }
+    ta.focus();
+    setStatus("Modelo inserido (não guardado).");
+  }
+
+  function saveCurrent(){
+    const ta = document.getElementById("quadroBoxText");
+    if (!ta) return;
+    const dia = getDiaSelecionado();
+    const map = loadMap();
+    const val = (ta.value || "").trimEnd();
+    if (val) map[dia] = val;
+    else delete map[dia];
+    saveMap(map);
+    setStatus(val ? `Guardado ✅ (${dia})` : `Removido ✅ (${dia})`);
+  }
+
+  function clearCurrent(){
+    const ta = document.getElementById("quadroBoxText");
+    if (!ta) return;
+    ta.value = "";
+    saveCurrent(); // remove para o dia
+  }
+
+  // Wiring — só depois do DOM existir
+  function wire(){
+    const btnOpen = document.getElementById("btnQuadroBox");
+    const btnClose = document.getElementById("btnQuadroClose");
+    const btnSave = document.getElementById("btnQuadroSave");
+    const btnClear = document.getElementById("btnQuadroClear");
+    const btnModelo = document.getElementById("btnQuadroModelo");
+    const backdrop = document.querySelector("#modalQuadroBox .cb-modal__backdrop");
+    const dateEl = document.getElementById("treinoData");
+
+    if (btnOpen) btnOpen.addEventListener("click", () => { refreshTextarea(); openModal(); });
+    if (btnClose) btnClose.addEventListener("click", closeModal);
+    if (backdrop) backdrop.addEventListener("click", closeModal);
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+
+    if (btnModelo) btnModelo.addEventListener("click", applyModelo);
+    if (btnSave) btnSave.addEventListener("click", saveCurrent);
+    if (btnClear) btnClear.addEventListener("click", clearCurrent);
+
+    if (dateEl) dateEl.addEventListener("change", () => {
+      // se o modal estiver aberto, atualiza o texto do quadro imediatamente
+      const modal = document.getElementById("modalQuadroBox");
+      const isOpen = modal && !modal.classList.contains("hidden");
+      if (isOpen) refreshTextarea();
+      else setStatus("");
+    });
+
+    // Se o utilizador abrir o modal antes de selecionar data
+    refreshTextarea();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", wire);
+  } else {
+    wire();
+  }
+})();
+
