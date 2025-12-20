@@ -660,6 +660,33 @@
 }
 
 
+
+/* Resumo (registos) no WOD: evitar overflow horizontal no telemóvel (sem crescer para o lado) */
+#wodResumoDetails { max-width: 100%; }
+#wodResumoDetails > .card{
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden; /* o scroll horizontal fica no bloco da tabela */
+}
+@media (max-width: 600px){
+  #wodResumoDetails > .card{
+    width: calc(100vw - 16px);
+    max-width: calc(100vw - 16px);
+  }
+}
+
+/* Scroll horizontal apenas dentro da tabela do resumo */
+#treinoScroll{
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+#treinoScroll table{
+  width: max-content;
+  min-width: 100%;
+}
+#treinoScroll th, #treinoScroll td{ white-space: nowrap; }
 .cb-modal.hidden { display:none; }
 .cb-modal { position: fixed; inset: 0; z-index: 9999; }
 .cb-modal__backdrop { position:absolute; inset:0; background: rgba(0,0,0,0.55); }
