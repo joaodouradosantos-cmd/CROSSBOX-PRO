@@ -1,5 +1,5 @@
 // service-worker.js – CrossBox (robusto, evita ecrã branco no 1º arranque)
-const CACHE_NAME = "crossbox-cache-v5-fixprint-wodui";
+const CACHE_NAME = "crossbox-cache-v6-fixprint-wodui";
 
 // Só ficheiros locais (nada de CDNs) para não falhar a instalação
 const APP_SHELL = [
