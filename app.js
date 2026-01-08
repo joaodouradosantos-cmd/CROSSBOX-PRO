@@ -1,3 +1,4 @@
+
  
 const STORAGE_PROFILE = "crossfit_profile";
 const STORAGE_RM = "crossfit_1rm";
@@ -1734,65 +1735,35 @@ if (formato && formatosMetcon.includes(formato)) {
   registerBackupMeta("WOD registado");
   renderTreinos();
 
-  // 2) 1RM a partir do WOD (rep × kg) — funciona mesmo sem 1RM prévio
-  // Regras (para evitar falsos positivos):
-  // - apenas exercícios de carga (presentes em MOVES)
-  // - apenas séries "de força" (1–10 reps)
-  // - evita metcon (AMRAP/EMOM/For Time, etc.)
+  // 2) MODO ASSISTIDO DE 1RM – só corre se fizer sentido
   const current1rm = dataRm[ex];
-
+  if (!current1rm || current1rm <= 0) return;
   if (!peso || peso <= 0) return;
-  if (!MOVES.includes(ex)) return;
-  if (reps < 1 || reps > 10) return;
-  if (tipo === "metcon") return;
+  if (reps < 1 || reps > 10) return; // apenas séries "de força"
 
-  // Estimativa simples de 1RM (Epley): 1RM ≈ peso × (1 + reps/30)
-  const est1rm = peso * (1 + reps / 30);
-
-  // arredondar para 0.5 kg
-  const est1rmRounded = Math.round(est1rm * 2) / 2;
-
-  const label = MOVES_PT[ex] ? `${ex} – ${MOVES_PT[ex]}` : ex;
-
-  // Caso A: ainda não existe 1RM registado → sugerir criar o primeiro
-  if (!current1rm || current1rm <= 0) {
-    const msg = `1RM (estimado) a partir do WOD\n\nExercício: ${label}\nSérie registada: ${reps} repetições com ${formatKg(peso)}\n\n1RM estimado: ${formatKg(est1rmRounded)}\n\nNão tens 1RM registado para este exercício.\nQueres guardar este valor como o teu 1RM atual?`;
-
-    const aceitar = confirm(msg);
-    if (!aceitar) return;
-
-    dataRm[ex] = est1rmRounded;
-    localStorage.setItem(STORAGE_RM, JSON.stringify(dataRm));
-
-    // iniciar histórico vazio (mantém consistência)
-    if (!rmHistory[ex]) rmHistory[ex] = [];
-    localStorage.setItem(STORAGE_RM_HISTORY, JSON.stringify(rmHistory));
-
-    // atualizar %1RM do registo que acabámos de criar
-    const idx = treinos.indexOf(entry);
-    if (idx !== -1) {
-      treinos[idx].perc1rm = peso > 0 ? (peso / est1rmRounded) : null;
-      saveTreinos();
-    }
-
-    registerBackupMeta("1RM criado a partir do WOD");
-    renderRm();
-    renderTreinos();
-
-    alert(`1RM registado para ${label}: ${formatKg(est1rmRounded)} (estimado a partir do WOD).`);
-    return;
-  }
-
-  // Caso B: já existe 1RM → sugerir atualização apenas se houver subida credível
   const approxPerc = peso / current1rm;
   if (approxPerc < 0.6) return; // séries muito leves não contam
 
-  const diff = est1rmRounded - current1rm;
+  // estimativa simples de 1RM (Epley)
+  const est1rm = peso * (1 + reps / 30);
+
+  // arredondar para 0.5 kg
+  const new1rmVal = Math.round(est1rm * 2) / 2;
+  const diff = new1rmVal - current1rm;
 
   // só sugerir se for uma subida "real" (>= 1 kg e pelo menos +2%)
-  if (diff < 1 || est1rmRounded < current1rm * 1.02) return;
+  if (diff < 1 || new1rmVal < current1rm * 1.02) return;
 
-  const msg = `Modo assistido de 1RM\n\nExercício: ${label}\nSérie registada: ${reps} repetições com ${formatKg(peso)}\n\n1RM atual registado: ${formatKg(current1rm)}\n1RM estimado a partir desta série: ${formatKg(est1rmRounded)}\n\nEsta série parece indicar que o teu 1RM subiu.\nQueres atualizar o 1RM para este novo valor?`;
+  const label = MOVES_PT[ex] ? `${ex} – ${MOVES_PT[ex]}` : ex;
+
+  const msg =
+    "Modo assistido de 1RM\n\n" +
+    `Exercício: ${label}\n` +
+    `Série registada: ${reps} repetições com ${formatKg(peso)}\n\n` +
+    `1RM atual registado: ${formatKg(current1rm)}\n` +
+    `1RM estimado a partir desta série: ${formatKg(new1rmVal)}\n\n` +
+    "Esta série parece indicar que o teu 1RM subiu.\n" +
+    "Queres atualizar o 1RM para este novo valor?";
 
   const aceitar = confirm(msg);
   if (!aceitar) return;
@@ -1803,13 +1774,13 @@ if (formato && formatosMetcon.includes(formato)) {
     value: current1rm
   });
 
-  dataRm[ex] = est1rmRounded;
+  dataRm[ex] = new1rmVal;
   localStorage.setItem(STORAGE_RM, JSON.stringify(dataRm));
   localStorage.setItem(STORAGE_RM_HISTORY, JSON.stringify(rmHistory));
 
   const idx = treinos.indexOf(entry);
   if (idx !== -1) {
-    treinos[idx].perc1rm = peso > 0 ? (peso / est1rmRounded) : null;
+    treinos[idx].perc1rm = peso > 0 ? (peso / new1rmVal) : null;
     saveTreinos();
   }
 
@@ -1817,7 +1788,9 @@ if (formato && formatosMetcon.includes(formato)) {
   renderRm();
   renderTreinos();
 
-  alert(`Novo 1RM registado para ${label}: ${formatKg(est1rmRounded)} (estimado a partir do WOD).`);
+  alert(
+    `Novo 1RM registado para ${label}: ${formatKg(new1rmVal)} (estimado a partir do WOD).`
+  );
 }
 
 
@@ -3903,4 +3876,3 @@ document.addEventListener("click", (e) => {
     setTimeout(() => { try { updateRmChart(); } catch(_) {} }, 60);
   }
 });
-
