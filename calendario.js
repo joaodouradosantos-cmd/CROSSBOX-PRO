@@ -107,30 +107,53 @@ function temBio(tel) { return !!localStorage.getItem(bioKey(tel)); }
 async function registarBio(tel) {
   if (!window.PublicKeyCredential) return false;
   try {
+    // Challenge: 32 bytes aleatórios (requisito WebAuthn)
+    const challenge = crypto.getRandomValues(new Uint8Array(32));
+    // User ID: hash fixo do telefone (16 bytes) — não pode mudar entre sessões
     const enc = new TextEncoder();
+    const hashBuf = await crypto.subtle.digest("SHA-256", enc.encode("cbuid-"+tel));
+    const userId = new Uint8Array(hashBuf).slice(0,16);
+
     const c = await navigator.credentials.create({ publicKey: {
-      challenge: enc.encode("cb-"+tel+"-"+Date.now()),
-      rp: { name:"CrossBox" },
-      user: { id: enc.encode(tel), name: tel, displayName: session?.nome||tel },
-      pubKeyCredParams: [{ type:"public-key", alg:-7 }],
-      authenticatorSelection: { authenticatorAttachment:"platform", userVerification:"required" },
+      challenge,
+      rp: { name:"CrossBox", id: location.hostname },
+      user: { id: userId, name: tel, displayName: session?.nome||tel },
+      pubKeyCredParams: [{ type:"public-key", alg:-7 }, { type:"public-key", alg:-257 }],
+      authenticatorSelection: {
+        authenticatorAttachment: "platform",
+        userVerification: "required",
+        residentKey: "discouraged"
+      },
+      excludeCredentials: [],
       timeout: 60000
     }});
-    if (c) { localStorage.setItem(bioKey(tel),"1"); return true; }
-  } catch(e) { console.log("Bio reg:",e.message); }
+    if (c) {
+      // Guarda o credentialId para usar no get() — sem isto o browser abre o seletor
+      const credId = btoa(String.fromCharCode(...new Uint8Array(c.rawId)));
+      localStorage.setItem(bioKey(tel), credId);
+      return true;
+    }
+  } catch(e) { console.log("Bio reg:", e.message); }
   return false;
 }
 
 async function autenticarBio(tel) {
-  if (!window.PublicKeyCredential || !temBio(tel)) return false;
+  if (!window.PublicKeyCredential) return false;
+  const credId = localStorage.getItem(bioKey(tel));
+  if (!credId) return false;
   try {
-    const enc = new TextEncoder();
+    const challenge = crypto.getRandomValues(new Uint8Array(32));
+    // Decodifica o credentialId guardado no registo
+    const rawId = Uint8Array.from(atob(credId), c => c.charCodeAt(0));
+
     const c = await navigator.credentials.get({ publicKey: {
-      challenge: enc.encode("cb-auth-"+Date.now()),
-      userVerification:"required", timeout:60000
+      challenge,
+      allowCredentials: [{ type:"public-key", id: rawId, transports:["internal"] }],
+      userVerification: "required",
+      timeout: 60000
     }});
     return !!c;
-  } catch(e) { return false; }
+  } catch(e) { console.log("Bio auth:", e.message); return false; }
 }
 
 // ─── NOTIFICAÇÕES ─────────────────────────────────────────────
